@@ -6,7 +6,7 @@ const api = {
     authenticateUser: 'https://ecoconductor-dev-api-account.azurewebsites.net/user_access_token',
     registerProcess: 'https://ecoconductor-dev-api-notification.azurewebsites.net/processes',
     getActivityMessage: function (componentTypeId) {
-        return 'https://ecocomposermockapis.azurewebsites.net/ecocomposer-meta-model/component_types/' + componentTypeId + '/messages?page_size=5&page=1&recommended=false'
+        return 'https://ecoconductor-dev-api-notification.azurewebsites.net/messages'
     },
     getComponentById: function (componentTypeId) {
         return 'https://ecoconductor-dev-api-model.azurewebsites.net/component_types/' + componentTypeId

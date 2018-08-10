@@ -31,8 +31,8 @@ export default function ComponentTypeComponent (props) {
     console.log('name', componentTypeComponentRelationshipsList)
 
     if (props.componentTypeComponentData !== '') {
-      componentTypeComponentName = props.componentTypeComponentData.data.resource.name
-      componentTypeComponentDescription = props.componentTypeComponentData.data.resource.description
+      componentTypeComponentName = props.componentTypeComponentData.resources[0].name
+      componentTypeComponentDescription = props.componentTypeComponentData.resources[0].description
     }
 
     if (typeof componentTypeComponentProperties !== 'undefined') {
@@ -46,8 +46,8 @@ export default function ComponentTypeComponent (props) {
       })
     }
     if (props.componentTypeComponentData !== '') {
-      componentTypeComponentRelName = props.componentTypeComponentData.data.resource.component_type_name
-      componentTypeComponentChildName = props.componentTypeComponentData.data.resource.name
+      componentTypeComponentRelName = props.componentTypeComponentData.resources[0].component_type_name
+      componentTypeComponentChildName = props.componentTypeComponentData.resources[0].name
     }
 
     if (typeof componentTypeComponentRelationships !== 'undefined') {

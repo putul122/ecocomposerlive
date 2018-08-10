@@ -60,7 +60,7 @@ export default compose(
       if (nextProps.componentTypeComponentData && nextProps.componentDetail && (nextProps.componentTypeComponentData !== this.props.componentTypeComponentData)) {
         console.log('inside com Xxxxxxxxxxxxxxxxxxxxx', this.props, nextProps)
         let breadcrumb = {
-          title: nextProps.componentTypeComponentData.data.resource.name,
+          title: nextProps.componentTypeComponentData.resources[0].name,
           items: [
             {
               name: 'Home',
@@ -79,16 +79,16 @@ export default compose(
               separator: true
             },
             {
-              name: nextProps.componentDetail.resource.name ? this.props.componentDetail.resource.name : '',
-              href: '/components/' + nextProps.componentDetail.resource.id,
+              name: nextProps.componentDetail.resources[0].name ? this.props.componentDetail.resources[0].name : '',
+              href: '/components/' + nextProps.componentDetail.resources[0].id,
               separator: false
             },
             {
               separator: true
             },
             {
-              name: nextProps.componentTypeComponentData.data.resource.name,
-              href: '/components/' + nextProps.componentDetail.resource.id + '/' + nextProps.componentTypeComponentData.data.resource.id,
+              name: nextProps.componentTypeComponentData.resources[0].name,
+              href: '/components/' + nextProps.componentDetail.resources[0].id + '/' + nextProps.componentTypeComponentData.resources[0].id,
               separator: false
             }
           ]

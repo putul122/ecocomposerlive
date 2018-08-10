@@ -48,6 +48,11 @@ export function * getComponentById (action) {
       axios.get,
       api.getComponentById(action.payload.id)
     )
+    const messages = yield call(
+      axios.get,
+      'https://ecoconductor-dev-api-notification.azurewebsites.net/messages'
+    )
+    console.log('Messages GGGGGGGGGGGGGGGGg', messages)
     yield put(actionCreators.fetchComponentByIdSuccess(componentDetails.data))
   } catch (error) {
     yield put(actionCreators.fetchComponentByIdFailure(error))
