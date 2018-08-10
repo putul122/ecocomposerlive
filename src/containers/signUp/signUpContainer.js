@@ -6,7 +6,7 @@ import { actionCreators as signUpActionCreators } from '../../redux/reducers/sig
 // Global State
 export function mapStateToProps (state, props) {
   return {
-    isLoggedin: state.loginReducer.isLoggedin,
+    isLoggedin: state.signUpReducer.isLoggedin,
     client_id: state.basicReducer.client_id,
     client_secret: state.basicReducer.client_secret,
     clientAccessToken: state.basicReducer.clientAccessToken,
@@ -43,6 +43,7 @@ export default compose(
       if (nextProps.createUserResponse) {
         if (!nextProps.createUserResponse.error_code) {
           localStorage.setItem('userAccessToken', nextProps.createUserResponse.resources[0]['access_token'])
+          localStorage.setItem('isLoggedin', true)
           console.log('create user response', nextProps)
           this.props.history.push('/registering')
         }

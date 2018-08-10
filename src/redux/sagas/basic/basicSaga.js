@@ -30,7 +30,7 @@ export function * getClientAccessToken (action) {
   try {
     const clientAccessToken = yield call(
       axios.post,
-      'http://discovery.eco.dev.ecoconductor.com/client_access_token',
+      'http://ecoconductor-dev-api-discovery.azurewebsites.net/client_access_token',
       action.payload
     )
     yield put(actionCreators.fetchClientAccessTokenSuccess(clientAccessToken.data))

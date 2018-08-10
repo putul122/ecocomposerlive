@@ -1,8 +1,8 @@
 const api = {
     getComponentTypes: 'https://ecoconductor-dev-api-model.azurewebsites.net/component_types',
     clientAccessToken: 'https://ecoconductor-dev-api-discovery.azurewebsites.net/client_access_token',
-    createUser: 'https://account.eco.dev.ecoconductor.com/users',
-    loginUser: 'https://account.eco.dev.ecoconductor.com/user_access_token',
+    createUser: 'https://ecoconductor-dev-api-account.azurewebsites.net/users',
+    loginUser: 'https://ecoconductor-dev-api-account.azurewebsites.net/user_access_token',
     registerProcess: 'https://ecoconductor-dev-api-notification.azurewebsites.net/processes',
     getActivityMessage: function (componentTypeId) {
         return 'https://ecocomposermockapis.azurewebsites.net/ecocomposer-meta-model/component_types/' + componentTypeId + '/messages?page_size=5&page=1&recommended=false'
