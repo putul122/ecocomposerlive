@@ -9,6 +9,7 @@ import { actionCreators as basicActionCreators } from '../../redux/reducers/basi
 export function mapStateToProps (state, props) {
   console.log('app detail state', state)
   return {
+    authenticateUser: state.basicReducer.authenticateUser,
     componentDetail: state.applicationDetailReducer.componentDetail,
     componentConstraints: state.applicationDetailReducer.componentConstraints,
     componentComponents: state.applicationDetailReducer.componentComponents,
@@ -17,6 +18,7 @@ export function mapStateToProps (state, props) {
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   fetchComponentById: sagaActions.applicationDetailActions.fetchComponentById,
   fetchComponentConstraint: sagaActions.applicationDetailActions.fetchComponentConstraint,
   fetchComponentComponent: sagaActions.applicationDetailActions.fetchComponentComponent,
@@ -37,7 +39,7 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      console.log('app detail props', this)
+      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       const componentTypeId = this.props.match.params.id
       this.props.selectedComponentType(componentTypeId)
       let payload = {
@@ -55,9 +57,15 @@ export default compose(
     },
     componentDidMount: function () {},
     componentWillReceiveProps: function (nextProps) {
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
+        }
+      }
       if (nextProps.componentDetail && (nextProps.componentDetail !== this.props.componentDetail)) {
+        console.log('inside receive props detail props', nextProps)
         let breadcrumb = {
-          title: nextProps.componentDetail.resource.name,
+          title: nextProps.componentDetail.resources[0].name,
           items: [
             {
               name: 'Home',
@@ -76,8 +84,8 @@ export default compose(
               separator: true
             },
             {
-              name: nextProps.componentDetail.resource.name,
-              href: '/components/' + nextProps.componentDetail.resource.id,
+              name: nextProps.componentDetail.resources[0].name,
+              href: '/components/' + nextProps.componentDetail.resources[0].id,
               separator: false
             }
           ]

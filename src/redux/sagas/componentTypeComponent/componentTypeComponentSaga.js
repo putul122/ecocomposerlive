@@ -36,6 +36,7 @@ export default function * watchComponentTypeComponent () {
 
 export function * getComponentTypeComponent (action) {
   try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const componentTypes = yield call(
       axios.get,
       api.getComponent(action.payload)
@@ -49,6 +50,7 @@ export function * getComponentTypeComponent (action) {
 
 export function * getComponentTypeComponentProperties (action) {
   try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const componentTypes = yield call(
       axios.get,
       api.getComponentProperty(action.payload)
@@ -62,6 +64,7 @@ export function * getComponentTypeComponentProperties (action) {
 
 export function * getComponentTypeComponentRelationships (action) {
   try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const componentTypes = yield call(
       axios.get,
       api.getComponentRelationships(action.payload)

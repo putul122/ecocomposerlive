@@ -7,6 +7,9 @@ import { actionCreators as basicActionCreators } from '../../redux/reducers/basi
 // Global State
 export function mapStateToProps (state, props) {
   return {
+    // client_id: state.basicReducer.client_id,
+    // client_secret: state.basicReducer.client_secret,
+    authenticateUser: state.basicReducer.authenticateUser,
     componentTypes: state.componentTypeReducer.componentTypes,
     // searchComponentType: state.componentTypeReducer.searchComponentType,
     isComponentTypeLoading: state.componentTypeReducer.isComponentTypeLoading,
@@ -18,6 +21,7 @@ export function mapStateToProps (state, props) {
 export const propsMapping: Callbacks = {
   fetchComponent: sagaActions.componentTypeActions.fetchComponent,
   searchComponent: sagaActions.componentTypeActions.searchComponent,
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   // setSearchComponentType: actionCreators.setSearchComponentType,
   setComponentTypeLoading: componentTypeActioncreators.setComponentTypeLoading,
   setCurrentPage: componentTypeActioncreators.setCurrentPage,
@@ -35,33 +39,34 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-    this.props.setComponentTypeLoading && this.props.setComponentTypeLoading(true)
-    let payload = {
-      'search': '',
-      'page_size': 10,
-      'page': 1,
-      'recommended': true
-    }
-    this.props.fetchComponent && this.props.fetchComponent(payload)
-    let breadcrumb = {
-      title: 'Components',
-      items: [
-        {
-          name: 'Home',
-          href: '/home',
-          separator: false
-        },
-        {
-          separator: true
-        },
-        {
-          name: 'Components',
-          href: '/components',
-          separator: false
-        }
-      ]
-    }
-    this.props.setBreadcrumb && this.props.setBreadcrumb(breadcrumb)
+      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
+      this.props.setComponentTypeLoading && this.props.setComponentTypeLoading(true)
+      let payload = {
+        'search': '',
+        'page_size': 10,
+        'page': 1,
+        'recommended': true
+      }
+      this.props.fetchComponent && this.props.fetchComponent(payload)
+      let breadcrumb = {
+        title: 'Components',
+        items: [
+          {
+            name: 'Home',
+            href: '/home',
+            separator: false
+          },
+          {
+            separator: true
+          },
+          {
+            name: 'Components',
+            href: '/components',
+            separator: false
+          }
+        ]
+      }
+      this.props.setBreadcrumb && this.props.setBreadcrumb(breadcrumb)
     },
     componentDidMount: function () {
     // Block
@@ -73,6 +78,11 @@ export default compose(
     },
     componentWillReceiveProps: function (nextProps) {
       console.log('component types next props response', nextProps)
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
+        }
+      }
     }
   })
 )(ComponentType)

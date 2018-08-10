@@ -2,7 +2,6 @@ import axios from 'axios'
 import { takeLatest, call, put } from 'redux-saga/effects'
 import { createAction } from 'redux-actions'
 import api from '../../../constants'
-let token = localStorage.getItem('userAccessToken') || ''
 
 // Saga action strings
 export const FETCH_COMPONENT = 'saga/componentType/FETCH_COMPONENT'
@@ -30,18 +29,12 @@ export default function * watchComponentType () {
 
 export function * getComponents (action) {
   try {
-    console.log('ct ---- action', action)
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const componentTypes = yield call(
       axios.get,
       api.getComponentTypes,
       {params: action.payload}
     )
-    const icon = yield call(
-      axios.get,
-      'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/1'
-    )
-    console.log('icon link', icon)
     yield put(actionCreators.fetchComponentSuccess(componentTypes.data))
   } catch (error) {
     yield put(actionCreators.fetchComponentFailure(error))
@@ -50,7 +43,7 @@ export function * getComponents (action) {
 
 export function * searchComponents (action) {
   try {
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const componentTypes = yield call(
       axios.get,
       api.getComponentTypes,

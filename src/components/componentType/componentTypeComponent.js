@@ -22,6 +22,7 @@ export default function ComponentType (props) {
     let totalComponentType
     let listPage = []
     let paginationLimit = 6
+    let componentLoading = props.isComponentTypeLoading
 
     console.log('Appppppppppppppppppppppppppppp details props', props)
     console.log('Id Type', props.componentTypes)
@@ -78,6 +79,9 @@ export default function ComponentType (props) {
 
     let handleInputChange = function (event) {
       // props.setSearchComponentType(searchTextBox.value)
+      props.setComponentTypeLoading(true)
+      componentLoading = true
+      componentTypesList = ''
       let payload = {
         'search': searchTextBox.value ? searchTextBox.value : '',
         'page_size': 10,
@@ -100,6 +104,9 @@ export default function ComponentType (props) {
       } else if (page === totalNoPages) {
         nextClass = 'm-datatable__pager-link--disabled'
       }
+      props.setComponentTypeLoading(true)
+      componentLoading = true
+      componentTypesList = ''
       let payload = {
         'search': searchTextBox.value ? searchTextBox.value : '',
         'page_size': 10,
@@ -126,6 +133,8 @@ export default function ComponentType (props) {
           'page': currentPage - 1,
           'recommended': searchTextBox.value === ''
         }
+        props.setComponentTypeLoading(true)
+        componentLoading = true
         props.fetchComponent(payload)
         props.setCurrentPage(currentPage - 1)
       }
@@ -147,6 +156,9 @@ export default function ComponentType (props) {
           'page': currentPage + 1,
           'recommended': searchTextBox.value === ''
         }
+        props.setComponentTypeLoading(true)
+        componentLoading = true
+        componentTypesList = ''
         props.fetchComponent(payload)
         props.setCurrentPage(currentPage + 1)
       }
@@ -174,27 +186,25 @@ export default function ComponentType (props) {
           </div>
         </div>
       </div>
-      {props.isComponentTypeLoading && (
-      <div className='vertical-align:middle; text-align: left;'>
-        <div className='m-loader m-loader--brand' />
-        <div className='m-loader m-loader--primary' />
-        <div className='m-loader m-loader--success' />
-        <div className='m-loader m-loader--info' />
-        <div className='m-loader m-loader--warning' />
-        <div className='m-loader m-loader--info' />
+      {componentLoading && (
+      <div className='row'>
+        <div className={'m-loader m-loader--info ' + styles.contentLoader} />
+        <div className={'m-loader m-loader--success ' + styles.contentLoader} />
+        <div className={'m-loader m-loader--warning ' + styles.contentLoader} />
+        <div className={'m-loader m-loader--danger ' + styles.contentLoader} />
       </div>
-       ) }
+      ) }
 
       {!props.isComponentTypeLoading && (
-      <div>
-        <div>
+      <div className='row clearfix'>
+        <div className='row col-md-12' id='m_blockui_1_content'>
           <ul>{componentTypesList}</ul>
         </div>
-        <div className='m_datatable' id='scrolling_vertical'>
+        <div className='row col-md-12' id='scrolling_vertical'>
           <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
             <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'text-align': 'center' }}>
               <ul className='m-datatable__pager-nav'>
-                <li><a href='' title='Previous' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handlePrevious} data-page='4'><i className='la la-angle-left' /></a></li>
+                <li><a href='' title='Previous' id='m_blockui_1_5' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handlePrevious} data-page='4'><i className='la la-angle-left' /></a></li>
                 {listPage[0] && listPage[0].map(function (page, index) {
                         if (page.number === currentPage) {
                                 page.class = 'm-datatable__pager-link--active'

@@ -8,6 +8,7 @@ console.log('saga', sagaActions)
 export function mapStateToProps (state, props) {
   console.log('com type com detail state', state)
   return {
+    authenticateUser: state.basicReducer.authenticateUser,
     componentTypeComponentData: state.componentTypeComponentReducer.componentTypeComponentData,
     componentTypeComponentProperties: state.componentTypeComponentReducer.componentTypeComponentProperties,
     componentDetail: state.applicationDetailReducer.componentDetail,
@@ -16,6 +17,7 @@ export function mapStateToProps (state, props) {
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
+  fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   setBreadcrumb: basicActionCreators.setBreadcrumb,
   fetchComponentById: sagaActions.applicationDetailActions.fetchComponentById,
   fetchComponentTypeComponent: sagaActions.componentTypeComponentActions.fetchComponentTypeComponent,
@@ -35,6 +37,7 @@ export default compose(
   lifecycle({
     componentWillMount: function () {
       console.log('com typecom cont', this.props)
+      this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       const componentTypeComponentId = this.props.match.params.componentId
       const componentTypeId = this.props.match.params.componentTypeId
       let payload = {
@@ -49,6 +52,11 @@ export default compose(
     },
     componentWillReceiveProps: function (nextProps) {
       console.log('will receive props mmmmmmmmmmmmm', nextProps)
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+        if (!nextProps.authenticateUser.resources[0].result) {
+          this.props.history.push('/')
+        }
+      }
       if (nextProps.componentTypeComponentData && nextProps.componentDetail && (nextProps.componentTypeComponentData !== this.props.componentTypeComponentData)) {
         console.log('inside com Xxxxxxxxxxxxxxxxxxxxx', this.props, nextProps)
         let breadcrumb = {

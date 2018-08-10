@@ -18,7 +18,7 @@ export const actionCreators = {
 
 export const initialState = {
     componentTypes: '',
-    isComponentTypeLoading: false,
+    isComponentTypeLoading: true,
     currentPage: 1
 }
 
@@ -26,12 +26,14 @@ export default handleActions(
   {
     [FETCH_COMPONENT_SUCCESS]: (state, action) => ({
       ...state,
-      componentTypes: action.payload
+      componentTypes: action.payload,
+      isComponentTypeLoading: false
     }),
     [SEARCH_COMPONENT_SUCCESS]: (state, action) => ({
       ...state,
       componentTypes: action.payload,
-      currentPage: 1
+      currentPage: 1,
+      isComponentTypeLoading: false
     }),
     [SET_COMPONENT_TYPE_LOADING]: (state, action) => ({
       ...state,

@@ -17,8 +17,9 @@ var divStyle = {
 export default function ApplicationDetail (props) {
   let ComponentName = ''
   let ComponentDescription = ''
+  let ComponentTypeIcon = ''
   let searchTextBox
-  let componentComponents = props.componentComponents.data
+  let componentComponents = props.componentComponents.resources
   let componentComponentsList
   let totalNoPages
   let perPage = 10
@@ -31,25 +32,25 @@ export default function ApplicationDetail (props) {
   let listPage = []
   let paginationLimit = 4
   // let paginationList
-  console.log('Appppppppppppppppppppppppppppp details props', props)
   if (props.componentDetail !== '') {
-    ComponentName = props.componentDetail.resource.name
-    ComponentDescription = props.componentDetail.resource.description
-    ComponentTypeId = props.componentDetail.resource.id
+    ComponentName = props.componentDetail.resources[0].name
+    ComponentDescription = props.componentDetail.resources[0].description
+    ComponentTypeId = props.componentDetail.resources[0].id
+    ComponentTypeIcon = props.componentDetail.resources[0].links.find(function (link) { return link.rel === 'icon' })
   }
   if (typeof componentComponents !== 'undefined') {
     componentComponentsList = componentComponents.map(function (componentComponent, index) {
       return (
         <tr className='m-datatable__row m-datatable__row--even' key={index} style={{ 'left': '0px' }} >
           <td className='m-datatable__cell--sorted m-datatable__cell' >
-            <span style={{ 'width': '150px', 'text-align': 'center' }}><Link to={'/components/' + ComponentTypeId + '/' + componentComponent.resource.id}>{ componentComponent.resource.name }</Link></span>
+            <span style={{ 'width': '150px', 'text-align': 'center' }}><Link to={'/components/' + ComponentTypeId + '/' + componentComponent.id}>{ componentComponent.name }</Link></span>
           </td>
-          <td className='m-datatable__cell--sorted m-datatable__cell'><p>{ componentComponent.resource.description }</p></td>
+          <td className='m-datatable__cell--sorted m-datatable__cell'><p>{ componentComponent.description }</p></td>
         </tr>
       )
     })
 
-    totalComponentTypeComponent = props.componentComponents.total_record_count
+    totalComponentTypeComponent = props.componentComponents.count
     totalNoPages = Math.ceil(totalComponentTypeComponent / perPage)
 
     if (currentPage === 1) {
@@ -171,10 +172,12 @@ export default function ApplicationDetail (props) {
     <div>
       <div className={styles.borderline}>
         <div className={'row' + styles.description}>
-          <i className={styles.iconcenter + ' fa fa-share'} />
           <div>
-            <h2>{ ComponentName }</h2>
-            <p>{ ComponentDescription }</p>
+            <img className={styles.iconcenter} src={ComponentTypeIcon.href} alt={ComponentName} />
+            <span className='row col-sm-12 col-md-6'>
+              <h2>{ ComponentName }</h2>
+            </span>
+            <span className='row col-sm-12 col-md-6'><p>{ ComponentDescription }</p></span>
           </div>
         </div>
         <div className='row clearfix'>

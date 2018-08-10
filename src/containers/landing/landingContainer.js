@@ -4,7 +4,6 @@ import Landing from '../../components/landingComponent/landingComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 // Global State
 export function mapStateToProps (state, props) {
-  console.log('state---', state)
   return {
     client_id: state.basicReducer.client_id,
     client_secret: state.basicReducer.client_secret
@@ -26,8 +25,6 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      console.log('component will mount landing', this.props)
-      console.log(this.props.fetchClientAccessToken)
       let payload = {
         'client_id': this.props.client_id,
         'client_secret': this.props.client_secret

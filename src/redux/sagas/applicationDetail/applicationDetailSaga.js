@@ -43,12 +43,13 @@ export default function * watchApplicationDetail () {
 
 export function * getComponentById (action) {
   try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const componentDetails = yield call(
       axios.get,
       api.getComponentById(action.payload.id)
       // 'https://ecocomposermockapis.azurewebsites.net/ecocomposer-meta-model/component_types/' + action.payload.id
     )
-    yield put(actionCreators.fetchComponentByIdSuccess(componentDetails.data.data))
+    yield put(actionCreators.fetchComponentByIdSuccess(componentDetails.data))
   } catch (error) {
     yield put(actionCreators.fetchComponentByIdFailure(error))
   }
@@ -56,12 +57,17 @@ export function * getComponentById (action) {
 
 export function * getComponentConstraint (action) {
     try {
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
       const componentConstraints = yield call(
         axios.get,
         api.getComponentConstraint(action.payload.id)
-        // 'https://ecocomposermockapis.azurewebsites.net/ecocomposer-meta-model/component_types/' + action.payload.id + '/constraints'
       )
-      yield put(actionCreators.fetchComponentConstraintSuccess(componentConstraints.data.data))
+      const allConstraints = yield call(
+        axios.get,
+        'https://model.eco.dev.ecoconductor.com/meta_models/1/constraints'
+      )
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>', allConstraints)
+      yield put(actionCreators.fetchComponentConstraintSuccess(componentConstraints.data))
     } catch (error) {
       yield put(actionCreators.fetchComponentConstraintFailure(error))
     }
@@ -69,11 +75,11 @@ export function * getComponentConstraint (action) {
 
 export function * getComponentComponent (action) {
     try {
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
       const componentComponents = yield call(
         axios.get,
         api.getComponentComponent(action.payload.id),
         {params: action.payload.ComponentTypeComponent}
-        // 'https://ecocomposermockapis.azurewebsites.net/ecocomposer-meta-model/component_types/' + action.payload.id + '/components?search=' + action.payload.ComponentTypeComponent.search + '&page_size=' + action.payload.ComponentTypeComponent.page_size + '&page=' + action.payload.ComponentTypeComponent.page + '&recommended=true'
       )
       yield put(actionCreators.fetchComponentComponentSuccess(componentComponents.data))
     } catch (error) {
@@ -83,13 +89,12 @@ export function * getComponentComponent (action) {
 
 export function * searchComponentComponent (action) {
   try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const componentComponents = yield call(
       axios.get,
       api.getComponentComponent(action.payload.id),
       {params: action.payload.ComponentTypeComponent}
-      // 'https://ecocomposermockapis.azurewebsites.net/ecocomposer-meta-model/component_types/' + action.payload.id + '/components?search=' + action.payload.ComponentTypeComponent.search + '&page_size=' + action.payload.ComponentTypeComponent.page_size + '&page=' + action.payload.ComponentTypeComponent.page + '&recommended=false'
     )
-    console.log('Component Components search action', action.payload)
     yield put(actionCreators.searchComponentComponentSuccess(componentComponents.data))
   } catch (error) {
     yield put(actionCreators.searchComponentComponentFailure(error))

@@ -1,15 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ApplicationActivity from '../../containers/applicationActivity/applicationActivityContainer'
-import { Redirect } from 'react-router-dom'
+// import { Redirect } from 'react-router-dom'
 
 export default function HeaderComponent (props) {
   let isQuickSlideOpen = props.isQuickSlideOpen
   let quickSlideClass = 'm-quick-sidebar--off'
   let isLoginSlideOpen = props.isLoginSlideOpen
   let loginSlideClass = 'm-dropdown--close'
-  console.log('header props----------------------------', props)
-  // console.log('isLoginSlideOpen', isLoginSlideOpen)
 
   if (isQuickSlideOpen) {
     quickSlideClass = 'm-quick-sidebar--on'
@@ -18,14 +16,12 @@ export default function HeaderComponent (props) {
   }
   let openQuickSlide = function (event) {
     event.preventDefault()
-    console.log(' open quick', props)
     quickSlideClass = 'm-quick-sidebar--on'
     props.setQuickslideFlag(true)
   }
 
   let closeQuickSlide = function (event) {
     event.preventDefault()
-    console.log(' close quick', props)
     quickSlideClass = 'm-quick-sidebar--off'
     props.setQuickslideFlag(false)
   }
@@ -36,7 +32,6 @@ export default function HeaderComponent (props) {
     loginSlideClass = ''
   }
   let openLoginSlide = function (event) {
-    // alert('HIII')
     event.preventDefault()
     console.log(' open login', props)
     loginSlideClass = 'm-dropdown--open'
@@ -44,16 +39,16 @@ export default function HeaderComponent (props) {
   }
   let logOut = function (event) {
     event.preventDefault()
-    console.log('log out')
-    localStorage.clear()
-    return (
-      <Redirect to='/' push />
-    )
+    localStorage.removeItem('isLoggedin')
+    localStorage.removeItem('showToasterSuccess')
+    localStorage.removeItem('userAccessToken')
+    props.setLoginslideFlag(false)
+    // localStorage.clear()
+    props.history.push('/')
   }
 
   let closeLoginSlide = function (event) {
     event.preventDefault()
-    console.log(' close login', props)
     loginSlideClass = 'm-dropdown--close'
     props.setLoginslideFlag(false)
   }

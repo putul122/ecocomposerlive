@@ -19,7 +19,7 @@ class ActivityPageRoute extends React.Component {
         <Breadcrumb />
         {/* <!-- END: Subheader --> */}
         <div className='m-content'>
-          <Home />
+          <Home {...this.props} />
           {/* <div className='row'>
             <div className='col-md-8'>
               <RecentPlaces />

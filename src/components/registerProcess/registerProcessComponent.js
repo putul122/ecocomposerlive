@@ -16,11 +16,13 @@ export default function RegisterProcess (props) {
 
   // window.setTimeout(() => {
   // if (props.isAccountCreated && props.isAbacusFileProvisioned && props.isComposerModelConnected && props.registerProcessStatus === 'Completed') {
-  if (props.isAccountCreated && props.isComposerModelConnected && props.registerProcessResponse.resources[0]['status'] === 'Completed') {
-    console.log('final process in redirect to home', props)
-    return (
-      <Redirect to='/home' push />
-    )
+  if (props.registerProcessResponse && props.registerProcessResponse.resources.length > 0) {
+    if (props.isAccountCreated && props.isComposerModelConnected && props.registerProcessResponse.resources[0]['status'] === 'Completed') {
+      console.log('final process in redirect to home', props)
+      return (
+        <Redirect to='/home' push />
+      )
+    }
   }
   // }, 1000)
 

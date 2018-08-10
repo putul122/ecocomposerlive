@@ -20,9 +20,7 @@ export default function * watchLoginUser () {
 
 export function * loginUser (action) {
   try {
-    console.log('action c user', action)
-    let token = localStorage.getItem('clientAccessToken') || ''
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
     const loginUser = yield call(
       axios.post,
       api.loginUser,

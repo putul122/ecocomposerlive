@@ -2,8 +2,6 @@ import axios from 'axios'
 import { takeLatest, call, put } from 'redux-saga/effects'
 import { createAction } from 'redux-actions'
 import api from '../../../constants'
-let token = localStorage.getItem('userAccessToken') || ''
-// axios.defaults.headers.common['Accept'] = 'application/json'
 
 // Saga action strings
 export const FETCH_REGISTER_PROCESS = 'saga/RegisterProcess/FETCH_REGISTER_PROCESS'
@@ -22,8 +20,7 @@ export default function * watchRegisterProcess () {
 
 export function * getRegisterProcess (action) {
   try {
-    console.log('token', token)
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const registerProcess = yield call(
       axios.get,
       api.registerProcess

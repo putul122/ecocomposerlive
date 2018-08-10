@@ -4,15 +4,12 @@ import styles from './applicationActivityComponent.scss'
 // import _ from 'lodash'
 import ReactHtmlParser from 'react-html-parser'
 import messageData from './GetMessages'
-console.log('messages 22222222222222', messageData)
 export default function ApplicationActivity (props) {
   let activityMessages = messageData.resources
   let activityMessagesList = ''
   if (activityMessages !== '') {
     activityMessagesList = activityMessages.map(function (messageGroup, index) {
-      console.log('------>messag ', index, messageGroup)
       let contextIconlink = messageGroup.links.find(function (link) { console.log(link); return link.rel === 'context_icon' })
-      console.log(contextIconlink)
       let context = messageGroup.context_name
       let discussion = messageGroup.discussion_name
       // let messageList = messageGroup.map(function (message, i) {

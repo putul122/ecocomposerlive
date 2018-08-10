@@ -2,15 +2,22 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styles from './signUpComponent.scss'
 
-// class UserRegistration extends React.Component {
-//   render () {
-    export default function SignUp (props) {
-    let FullNameBox
-    let EmailBox
-    let PasswordBox
-    let messageBlock = ''
-    let createUserResponse = props.createUserResponse
-    let handleInput = function (event) {
+export default function SignUp (props) {
+  let apiCalling = props.createUserProcess
+  let FullNameBox
+  let EmailBox
+  let PasswordBox
+  let messageBlock = ''
+  let loadingClass = ''
+  let createUserResponse = props.createUserResponse
+  let loggedInMessageResponse = function (message) {
+    return (<div className='m-alert m-alert--outline alert alert-danger alert-dismissible animated fadeIn' role='alert'>
+      <button type='button' className='close' data-dismiss='alert' aria-label='Close' />
+      <span>{message}</span>
+    </div>
+    )
+  }
+  let handleInput = function (event) {
     event.preventDefault()
     if (typeof (EmailBox) !== 'undefined' && typeof (PasswordBox) !== 'undefined') {
       let name = FullNameBox.value
@@ -37,27 +44,24 @@ import styles from './signUpComponent.scss'
         'client_id': props.client_id,
         'client_secret': props.client_secret
       }
-
+      props.setCreateUserProcessStatus(true)
       props.createUser(payload)
     }
   }
 
-  let loggedInMessageResponse = function (message) {
-    return (<div className='m-alert m-alert--outline alert alert-danger alert-dismissible animated fadeIn' role='alert'>
-      <button type='button' className='close' data-dismiss='alert' aria-label='Close' />
-      <span>{message}</span>
-    </div>
-    )
+  if (apiCalling) {
+    loadingClass = 'm-loader m-loader--right m-loader--light ' + styles.disabled
+  } else {
+    loadingClass = ''
   }
 
-  if (typeof createUserResponse !== 'undefined') {
+  if (createUserResponse !== '') {
     if (createUserResponse.error_code) {
       messageBlock = loggedInMessageResponse(createUserResponse.error_message)
     } else {
       messageBlock = ''
     }
   }
-  console.log('is logged in ', props.isLoggedin)
     return (
       <div className='m-login__wrapper-1 m-portlet-full-height'>
         <div className='m-login__wrapper-1-1'>
@@ -84,7 +88,7 @@ import styles from './signUpComponent.scss'
                 </div>
               </div>
               <div className='m-login__form-action'>
-                <button type='button' onClick={handleInput} id='m_login_signup' className={styles.buttonbg}>Get An Account</button>
+                <button type='button' onClick={handleInput} id='m_login_signup' className={styles.buttonbg + ' ' + loadingClass}>Get An Account</button>
               </div>
             </div>
           </div>
@@ -93,9 +97,11 @@ import styles from './signUpComponent.scss'
     )
   }
   SignUp.propTypes = {
-    isLoggedin: PropTypes.any,
+    // isLoggedin: PropTypes.any,
     client_id: PropTypes.any,
     client_secret: PropTypes.any,
     createUser: PropTypes.func,
-    createUserResponse: PropTypes.any
+    createUserResponse: PropTypes.any,
+    createUserProcess: PropTypes.any,
+    setCreateUserProcessStatus: PropTypes.func
   }
