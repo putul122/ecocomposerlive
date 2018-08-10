@@ -47,7 +47,6 @@ export function * getComponentById (action) {
     const componentDetails = yield call(
       axios.get,
       api.getComponentById(action.payload.id)
-      // 'https://ecocomposermockapis.azurewebsites.net/ecocomposer-meta-model/component_types/' + action.payload.id
     )
     yield put(actionCreators.fetchComponentByIdSuccess(componentDetails.data))
   } catch (error) {
@@ -62,11 +61,6 @@ export function * getComponentConstraint (action) {
         axios.get,
         api.getComponentConstraint(action.payload.id)
       )
-      const allConstraints = yield call(
-        axios.get,
-        'https://model.eco.dev.ecoconductor.com/meta_models/1/constraints'
-      )
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>', allConstraints)
       yield put(actionCreators.fetchComponentConstraintSuccess(componentConstraints.data))
     } catch (error) {
       yield put(actionCreators.fetchComponentConstraintFailure(error))

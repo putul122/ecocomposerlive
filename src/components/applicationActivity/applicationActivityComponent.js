@@ -9,7 +9,7 @@ export default function ApplicationActivity (props) {
   let activityMessagesList = ''
   if (activityMessages !== '') {
     activityMessagesList = activityMessages.map(function (messageGroup, index) {
-      let contextIconlink = messageGroup.links.find(function (link) { console.log(link); return link.rel === 'context_icon' })
+      let contextIconlink = messageGroup.links.find(function (link) { return link.rel === 'context_icon' })
       let context = messageGroup.context_name
       let discussion = messageGroup.discussion_name
       // let messageList = messageGroup.map(function (message, i) {
