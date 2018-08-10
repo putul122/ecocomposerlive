@@ -41,7 +41,7 @@ export function * getClientAccessToken (action) {
 
 export function * getUserAuthentication (action) {
   try {
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken') ? localStorage.getItem('userAccessToken') : ''
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + (localStorage.getItem('userAccessToken') ? localStorage.getItem('userAccessToken') : '')
     const userAuthentication = yield call(
       axios.get,
       'https://ecoconductor-dev-api-account.azurewebsites.net/user_access_token'

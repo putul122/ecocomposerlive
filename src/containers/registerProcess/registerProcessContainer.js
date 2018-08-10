@@ -78,7 +78,7 @@ export default compose(
     },
     componentWillReceiveProps: function (nextProps) {
       console.log('will receive props mmmmmmmmmmmmm', nextProps)
-      if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
+      if (nextProps.authenticateUser && nextProps.authenticateUser.resources && nextProps.authenticateUser.resources !== this.props.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
           this.props.history.push('/')
         }
