@@ -82,7 +82,7 @@ export default function ApplicationDetail (props) {
       previousClass = 'm-datatable__pager-link--disabled'
     } else {
       let payload = {
-        'id': props.componentDetail.resource.id,
+        'id': props.componentDetail.resources[0].id,
         'ComponentTypeComponent': {
           'search': searchTextBox.value ? searchTextBox.value : '',
           'page_size': 10,
@@ -105,7 +105,7 @@ export default function ApplicationDetail (props) {
       nextClass = 'm-datatable__pager-link--disabled'
     } else {
       let payload = {
-      'id': props.componentDetail.resource.id,
+      'id': props.componentDetail.resources[0].id,
       'ComponentTypeComponent': {
         'search': searchTextBox.value ? searchTextBox.value : '',
         'page_size': 10,
@@ -129,7 +129,7 @@ export default function ApplicationDetail (props) {
       nextClass = 'm-datatable__pager-link--disabled'
     }
     let payload = {
-      'id': props.componentDetail.resource.id,
+      'id': props.componentDetail.resources[0].id,
       'ComponentTypeComponent': {
         'search': searchTextBox.value ? searchTextBox.value : '',
         'page_size': 10,
@@ -148,7 +148,7 @@ export default function ApplicationDetail (props) {
 
   let handleInputChange = function (event) {
     let payload = {
-      'id': props.componentDetail.resource.id,
+      'id': props.componentDetail.resources[0].id,
       'ComponentTypeComponent': {
         'search': searchTextBox.value ? searchTextBox.value : '',
         'page_size': 10,

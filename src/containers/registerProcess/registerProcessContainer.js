@@ -39,15 +39,12 @@ export default compose(
       this.props.fetchRegisterProcess && this.props.fetchRegisterProcess()
     },
     componentDidMount: function () {
-      console.log('this 0000099999', this.props)
       window.setTimeout(() => {
         this.props.accountCreation && this.props.accountCreation(true)
         if (this.props.registerProcessResponse && this.props.registerProcessResponse.resources.length > 0) {
           if (this.props.registerProcessResponse.resources[0]['status'] !== 'Completed') {
             this.props.fetchRegisterProcess && this.props.fetchRegisterProcess()
           }
-        } else {
-          this.props.fetchRegisterProcess && this.props.fetchRegisterProcess()
         }
       }, 2000)
       // window.setTimeout(() => {
@@ -56,32 +53,32 @@ export default compose(
       //     this.props.fetchRegisterProcess && this.props.fetchRegisterProcess()
       //   }
       // }, 4000)
-      window.setTimeout(() => {
-        this.props.composerModelConnected && this.props.composerModelConnected(true)
-        if (this.props.registerProcessResponse && this.props.registerProcessResponse.resources.length > 0) {
-          if (this.props.registerProcessResponse.resources[0]['status'] !== 'Completed') {
-            this.props.fetchRegisterProcess && this.props.fetchRegisterProcess()
-          }
-        } else {
-          this.props.fetchRegisterProcess && this.props.fetchRegisterProcess()
-        }
-      }, 4000)
     },
     componentDidUpdate: function () {
       if (this.props.registerProcessResponse && this.props.registerProcessResponse.resources.length > 0) {
-        if (this.props.registerProcessResponse.resources[0]['status'] !== 'Completed') {
-          this.props.fetchRegisterProcess && this.props.fetchRegisterProcess()
+        if (this.props.isAccountCreated && this.props.isComposerModelConnected && this.props.registerProcessResponse.resources[0]['status'] === 'Completed') {
+          console.log('final process in redirect to home', this.props)
+          window.setTimeout(() => {
+            this.props.history.push('/home')
+          }, 100)
         }
-      } else {
-        this.props.fetchRegisterProcess && this.props.fetchRegisterProcess()
       }
     },
     componentWillReceiveProps: function (nextProps) {
-      console.log('will receive props mmmmmmmmmmmmm', nextProps)
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources && nextProps.authenticateUser.resources !== this.props.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
           this.props.history.push('/')
         }
+      }
+
+      if (nextProps.registerProcessResponse && (nextProps.registerProcessResponse.resources.length > 0) && nextProps.registerProcessResponse !== this.props.registerProcessResponse) {
+        if (nextProps.registerProcessResponse.resources[0]['status'] !== 'Completed') {
+          this.props.fetchRegisterProcess && this.props.fetchRegisterProcess()
+        } else {
+          this.props.composerModelConnected && this.props.composerModelConnected(true)
+        }
+      } else {
+        this.props.fetchRegisterProcess && this.props.fetchRegisterProcess()
       }
     }
   })

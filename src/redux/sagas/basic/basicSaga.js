@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { takeLatest, call, put } from 'redux-saga/effects'
 import { createAction } from 'redux-actions'
+import api from '../../../constants'
 
 // Saga action strings
 export const FETCH_CLIENT_ACCESS_TOKEN = 'saga/Basic/FETCH_CLIENT_ACCESS_TOKEN'
@@ -30,7 +31,7 @@ export function * getClientAccessToken (action) {
   try {
     const clientAccessToken = yield call(
       axios.post,
-      'http://ecoconductor-dev-api-discovery.azurewebsites.net/client_access_token',
+      api.clientAccessToken,
       action.payload
     )
     yield put(actionCreators.fetchClientAccessTokenSuccess(clientAccessToken.data))
@@ -44,9 +45,8 @@ export function * getUserAuthentication (action) {
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + (localStorage.getItem('userAccessToken') ? localStorage.getItem('userAccessToken') : '')
     const userAuthentication = yield call(
       axios.get,
-      'https://ecoconductor-dev-api-account.azurewebsites.net/user_access_token'
+      api.authenticateUser
     )
-    console.log('user Authentication JJJJJJJJ', userAuthentication)
     yield put(actionCreators.fetchUserAuthenticationSuccess(userAuthentication.data))
   } catch (error) {
     yield put(actionCreators.fetchUserAuthenticationFailure(error))

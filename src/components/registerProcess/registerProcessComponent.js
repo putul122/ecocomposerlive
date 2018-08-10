@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styles from './registerProcessComponent.scss'
-import { Redirect } from 'react-router-dom'
+// import { Redirect } from 'react-router-dom'
 
 export default function RegisterProcess (props) {
   let message
@@ -13,17 +13,16 @@ export default function RegisterProcess (props) {
   } else if (props.isAccountCreated && !props.isComposerModelConnected) {
     message = 'Connecting Composer to Abacus'
   }
-
   // window.setTimeout(() => {
   // if (props.isAccountCreated && props.isAbacusFileProvisioned && props.isComposerModelConnected && props.registerProcessStatus === 'Completed') {
-  if (props.registerProcessResponse && props.registerProcessResponse.resources.length > 0) {
-    if (props.isAccountCreated && props.isComposerModelConnected && props.registerProcessResponse.resources[0]['status'] === 'Completed') {
-      console.log('final process in redirect to home', props)
-      return (
-        <Redirect to='/home' push />
-      )
-    }
-  }
+  // if (props.registerProcessResponse && props.registerProcessResponse.resources.length > 0) {
+  //   if (props.isAccountCreated && props.isComposerModelConnected && props.registerProcessResponse.resources[0]['status'] === 'Completed') {
+  //     console.log('final process in redirect to home', props)
+  //     return (
+  //       <Redirect to='/home' push />
+  //     )
+  //   }
+  // }
   // }, 1000)
 
   return (
@@ -63,8 +62,8 @@ export default function RegisterProcess (props) {
 RegisterProcess.propTypes = {
   isAccountCreated: PropTypes.any,
   isAbacusFileProvisioned: PropTypes.any,
-  isComposerModelConnected: PropTypes.any,
-  registerProcessResponse: PropTypes.any
+  isComposerModelConnected: PropTypes.any
+  // registerProcessResponse: PropTypes.any
   // accountCreation: PropTypes.func,
   // abacusFileProvisioned: PropTypes.func,
   // composerModelConnected: PropTypes.func
