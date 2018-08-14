@@ -10,10 +10,13 @@ import '../node_modules/bootstrap/dist/css/bootstrap.css'
 // import './assets/vendors/base/vendors.bundle.css'
 // import './assets/demo/demo7/base/style.bundle.css'
 // import './assets/vendors/base/vendors.bundle.js'
+// eslint-disable-next-line
 // import './assets/demo/demo7/base/scripts.bundle.js'
+// import createHistory from 'history/createBrowserHistory'
 
 const store = createReduxStore()
 // const history = syncHistoryWithStore(browserHistory, store)
+// const history = createHistory()
 const render = Component => {
   ReactDOM.render(
     <AppContainer>

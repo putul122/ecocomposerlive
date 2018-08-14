@@ -4,8 +4,8 @@ import $ from 'jquery/dist/jquery'
 import * as d3 from 'd3'
 import './componentModelComponent.scss'
 // let colors = d3.scaleOrdinal(d3.schemeCategory10)
-let width = 900
-let height = 600
+let width = 600
+let height = 500
 let diagramLayout
 let simulation
 
@@ -22,7 +22,6 @@ function forceInitialize (graphData) {
     function zoomed () {
         diagramLayout.attr('transform', d3.event.transform)
     }
-    console.log('diagramLayout', diagramLayout)
 
     simulation = d3.forceSimulation()
     simulation.force('link', d3.forceLink().id(function (d) {
@@ -62,6 +61,7 @@ function force (graphData) {
         .attr('fill-opacity', 0)
         // .attr('stroke-opacity', 0.6)
         .attr('stroke', '#000')
+        .attr('stroke-width', function (d) { return d.strokeWidth })
         .attr('id', function (d, i) { return 'edgepath' + i })
         // .style('pointer-events', 'none')
 
@@ -72,8 +72,8 @@ function force (graphData) {
             .style('pointer-events', 'none')
             .attr('class', 'edgelabel')
             .attr('id', function (d, i) { return 'edgelabel' + i })
-            .attr('font-size', 12)
-            .attr('font-family', 'sans-serif')
+            .attr('font-size', function (d) { return d.fontSize })
+            .attr('font-family', function (d) { return d.fontFamily })
             .attr('fill', '#000')
 
         edgelabels.append('textPath')
@@ -140,7 +140,7 @@ function force (graphData) {
       .attr('rx', 10)
       .attr('width', function (node, i) { return node.width })
       .attr('height', function (node, i) { return node.height })
-      .attr('stroke-width', 2)
+      .attr('stroke-width', function (node, i) { return node.strokeWidth })
       //  .attr('stroke-opacity', '0.3')
       .attr('stroke', '#000000')
       .attr('fill', '#FFFFFF')
@@ -150,12 +150,12 @@ function force (graphData) {
       .text(function (d) { return d.title })
 
     nodeEnter.append('text')
-          .attr('x', function (node, i) { return ((node.width / 2) - 20) })
-          .attr('y', function (node, i) { return ((node.height / 2) - 20) })
-          .attr('dy', '.25em')
-          .attr('text-anchor', 'middle')
-          .attr('font-size', 10)
-          .attr('font-family', 'sans-serif')
+        .attr('x', function (node, i) { return ((node.width / 2) - 20) })
+        .attr('y', function (node, i) { return ((node.height / 2) - 20) })
+        .attr('dy', function (node, i) { return node.dy })
+        .attr('text-anchor', function (node, i) { return node.textAnchor })
+        .attr('font-size', function (node, i) { return node.fontSize })
+        .attr('font-family', function (node, i) { return node.fontFamily })
         .text(function (d) { return d.name })
     // nodeIcon.call(d3.drag()
     //   .on("start", dragstarted)
@@ -292,9 +292,7 @@ class ComponentModelComponent extends React.Component {
     //     console.log('component did mount Component 666 model', this.props)
     // }
     componentDidMount () {
-        console.log('component will receive props Component 666 model', this.props)
         if (this.props.relationships && this.props.relationships.length > 0) {
-            console.log('inside if -------------------------------', this.props.relationships)
             let nodeData = this.props.relationships
             let leftCordinates = []
             let rightCordinates = []
@@ -306,13 +304,19 @@ class ComponentModelComponent extends React.Component {
             let graphData = {}
             // Setting first node
             node.id = 0
-            node.name = nodeData[0].component_name
-            node.Title = nodeData[0].component_name
+            node.name = this.props.startNode.name
+            node.Title = this.props.startNode.title
             node.width = 140
             node.height = 70
             node.x = 400
             node.y = 450
             node.Attributes = ['']
+            node.strokeWidth = 4
+            node.textAnchor = 'middle'
+            node.fontSize = 20
+            node.fontWeight = 900
+            node.fontFamily = 'sans-serif'
+            node.dy = '0.25em'
             nodeArray.push(node)
             // end
 
@@ -325,6 +329,12 @@ class ComponentModelComponent extends React.Component {
                 node.Attributes = ['']
                 node.width = 90
                 node.height = 45
+                node.strokeWidth = 3
+                node.textAnchor = 'middle'
+                node.fontSize = 10
+                node.fontWeight = 500
+                node.fontFamily = 'sans-serif'
+                node.dy = '0.25em'
                 if (data.constraint_type === 'Parent') {
                     let topLength = topCordinates.length
                     if (topLength < 1) {
@@ -420,10 +430,11 @@ class ComponentModelComponent extends React.Component {
                 nodeArray.push(node)
 
                 var link = {}
-                // link.Id = data.resource.id;
-                // link.Title = data.resource.name;
                 link.type = data.name || 'empty'
                 link.direction = 'output'
+                link.strokeWidth = 1.2
+                link.fontFamily = 'sans-serif'
+                link.fontSize = 12
                 if (data.constraint_type === 'Parent') {  // down
                     link.source = 0
                     link.target = index
@@ -442,11 +453,11 @@ class ComponentModelComponent extends React.Component {
 
                 linkArray.push(link)
                 if (index === nodeData.length) {
-                    console.log('linkArray', linkArray)
-                    console.log('nodeArray', nodeArray)
+                    // console.log('linkArray', linkArray)
+                    // console.log('nodeArray', nodeArray)
                     graphData.nodes = nodeArray
                     graphData.links = linkArray
-                    console.log('------------------', JSON.stringify(graphData))
+                    // console.log('------------------', JSON.stringify(graphData))
                     forceInitialize(graphData)
                 }
             })
@@ -461,7 +472,8 @@ class ComponentModelComponent extends React.Component {
     }
 
     props: {
-        relationships: any
+        relationships: any,
+        startNode: any
     }
 }
 export default ComponentModelComponent

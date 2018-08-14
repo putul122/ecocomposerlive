@@ -3,8 +3,8 @@ import * as d3 from 'd3'
 import './applicationModelComponent.scss'
 
 // let colors = d3.scaleOrdinal(d3.schemeCategory10)
-let width = 900
-let height = 900
+let width = 600
+let height = 500
 let diagramLayout
 let simulation
 
@@ -21,7 +21,6 @@ function forceInitialize (graphData) {
     function zoomed () {
         diagramLayout.attr('transform', d3.event.transform)
     }
-    console.log('diagramLayout', diagramLayout)
 
     simulation = d3.forceSimulation()
     simulation.force('link', d3.forceLink().id(function (d) {
@@ -287,15 +286,13 @@ function force (graphData) {
 class ApplicationModelComponent extends React.Component {
     construct (props) {}
     componentWillMount () {
-        console.log('component will mount app model', this.props)
+        // console.log('component will mount app model', this.props)
     }
     componentDidMount () {
-        console.log('component did mount app model', this.props)
+        // console.log('component did mount app model', this.props)
     }
     componentWillReceiveProps (nextProps) {
-        console.log('component will receive props app model', nextProps)
         if (nextProps.componentConstraints !== this.props.componentConstraints) {
-            console.log('inside if -------------------------------', nextProps.componentConstraints)
             let nodeData = nextProps.componentConstraints.resources
             let leftCordinates = []
             let rightCordinates = []
@@ -327,11 +324,11 @@ class ApplicationModelComponent extends React.Component {
             // eslint-disable-next-line
             nodeData.forEach(function (data, index) {
                 index++
-                if (data.target_component_type) {
+                // if (data.target_component_type) {
                     node = {}
                     node.id = index
-                    node.name = data.target_component_type.name
-                    node.Title = data.target_component_type.name
+                    node.name = data.target_component_type ? data.target_component_type.name : 'Any'
+                    node.Title = data.target_component_type ? data.target_component_type.name : 'Any'
                     node.Attributes = ['']
                     node.width = 90
                     node.height = 45
@@ -535,8 +532,6 @@ class ApplicationModelComponent extends React.Component {
                     nodeArray.push(node)
 
                     var link = {}
-                    // link.Id = data.resource.id;
-                    // link.Title = data.resource.name;
                     link.type = data.name
                     link.direction = 'output'
                     link.strokeWidth = 1.2
@@ -559,7 +554,7 @@ class ApplicationModelComponent extends React.Component {
                     }
 
                     linkArray.push(link)
-                }
+                // }
                 if (index === nodeData.length) {
                     // console.log('linkArray', linkArray)
                     // console.log('nodeArray', nodeArray)

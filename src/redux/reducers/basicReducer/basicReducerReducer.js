@@ -4,6 +4,7 @@ import { FETCH_CLIENT_ACCESS_TOKEN_SUCCESS, FETCH_USER_AUTHENTICATION_SUCCESS } 
 const INCREMENT = 'BasicReducer/INCREMENT'
 const DECREMENT = 'BasicReducer/DECREMENT'
 const SET_MODAL_OPEN_STATUS = 'BasicReducer/SET_MODAL_OPEN_STATUS'
+const SET_CONFIRMATION_MODAL_OPEN_STATUS = 'BasicReducer/SET_CONFIRMATION_MODAL_OPEN_STATUS'
 const SET_CURRENT_PAGE = 'BasicReducer/SET_CURRENT_PAGE'
 const SET_QUICKSLIDE_FLAG = 'BasicReducer/SET_QUICKSLIDE_FLAG'
 const SET_LOGINSLIDE_FLAG = 'BasicReducer/SET_LOGINSLIDE_FLAG'
@@ -16,6 +17,7 @@ export const actions = {
   DECREMENT,
   FETCH_CLIENT_ACCESS_TOKEN_SUCCESS,
   SET_MODAL_OPEN_STATUS,
+  SET_CONFIRMATION_MODAL_OPEN_STATUS,
   SET_CURRENT_PAGE,
   SET_QUICKSLIDE_FLAG,
   SET_LOGINSLIDE_FLAG,
@@ -28,6 +30,7 @@ export const actionCreators = {
   increment: createAction(INCREMENT),
   decrement: createAction(DECREMENT),
   setModalOpenStatus: createAction(SET_MODAL_OPEN_STATUS),
+  setConfirmationModalOpenStatus: createAction(SET_CONFIRMATION_MODAL_OPEN_STATUS),
   setCurrentPage: createAction(SET_CURRENT_PAGE),
   setQuickslideFlag: createAction(SET_QUICKSLIDE_FLAG),
   setLoginslideFlag: createAction(SET_LOGINSLIDE_FLAG),
@@ -40,6 +43,7 @@ export const initialState = {
   // count: 0,
   // string: 'number',
   modalIsOpen: false,
+  successmodalIsOpen: false,
   currentPage: 1,
   isQuickSlideOpen: false,
   isLoginSlideOpen: false,
@@ -69,6 +73,10 @@ export default handleActions(
     [SET_MODAL_OPEN_STATUS]: (state, action) => ({
       ...state,
       modalIsOpen: action.payload
+    }),
+    [SET_CONFIRMATION_MODAL_OPEN_STATUS]: (state, action) => ({
+      ...state,
+      successmodalIsOpen: action.payload
     }),
     [SET_CURRENT_PAGE]: (state, action) => ({
       ...state,

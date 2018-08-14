@@ -5,7 +5,7 @@ class RecentPlaces extends React.Component {
   render () {
     return (
       <div className={styles.borderline}>
-        <h2 className='m-section__heading'>Recent Places</h2>
+        <h2 className='m-section__heading'>Recent Places</h2><br />
         <ul>
           <li>
             <img src='assets/application.png' width='40px' alt='pic' /><br />

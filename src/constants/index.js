@@ -21,10 +21,13 @@ const api = {
         return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentTypeComponentId
     },
     getComponentProperty: function (payload) {
-        return 'https://ecocomposermockapis.azurewebsites.net/ecocomposer-meta-model/components/' + payload.componentTypeComponentId + '/properties'
+        return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentTypeComponentId + '/component_properties'
     },
     getComponentRelationships: function (payload) {
-        return 'https://ecocomposermockapis.azurewebsites.net/ecocomposer-meta-model/components/' + payload.componentTypeComponentId + '/componentrelationships'
+        return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentTypeComponentId + '/component_relationships'
+    },
+    addComponent: function (payload) {
+        return 'https://ecoconductor-dev-api-model.azurewebsites.net/components'
     }
   }
 

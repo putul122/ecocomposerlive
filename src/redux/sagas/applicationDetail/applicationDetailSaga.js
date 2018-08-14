@@ -16,6 +16,9 @@ export const FETCH_COMPONENT_COMPONENT_FAILURE = 'saga/componentType/FETCH_COMPO
 export const SEARCH_COMPONENT_COMPONENT = 'saga/componentType/SEARCH_COMPONENT_COMPONENT'
 export const SEARCH_COMPONENT_COMPONENT_SUCCESS = 'saga/componentType/SEARCH_COMPONENT_COMPONENT_SUCCESS'
 export const SEARCH_COMPONENT_COMPONENT_FAILURE = 'saga/componentType/SEARCH_COMPONENT_COMPONENT_FAILURE'
+export const ADD_COMPONENT_COMPONENT = 'saga/componentType/ADD_COMPONENT_COMPONENT'
+export const ADD_COMPONENT_COMPONENT_SUCCESS = 'saga/componentType/ADD_COMPONENT_COMPONENT_SUCCESS'
+export const ADD_COMPONENT_COMPONENT_FAILURE = 'saga/componentType/ADD_COMPONENT_COMPONENT_FAILURE'
 
 export const actionCreators = {
   fetchComponentById: createAction(FETCH_COMPONENT_BY_ID),
@@ -29,7 +32,10 @@ export const actionCreators = {
   fetchComponentConstraintFailure: createAction(FETCH_COMPONENT_CONSTRAINT_FAILURE),
   fetchComponentComponent: createAction(FETCH_COMPONENT_COMPONENT),
   fetchComponentComponentSuccess: createAction(FETCH_COMPONENT_COMPONENT_SUCCESS),
-  fetchComponentComponentFailure: createAction(FETCH_COMPONENT_COMPONENT_FAILURE)
+  fetchComponentComponentFailure: createAction(FETCH_COMPONENT_COMPONENT_FAILURE),
+  addComponentComponent: createAction(ADD_COMPONENT_COMPONENT),
+  addComponentComponentSuccess: createAction(ADD_COMPONENT_COMPONENT_SUCCESS),
+  addComponentComponentFailure: createAction(ADD_COMPONENT_COMPONENT_FAILURE)
 }
 
 export default function * watchApplicationDetail () {
@@ -37,7 +43,8 @@ export default function * watchApplicationDetail () {
     takeLatest(FETCH_COMPONENT_BY_ID, getComponentById),
     takeLatest(FETCH_COMPONENT_CONSTRAINT, getComponentConstraint),
     takeLatest(FETCH_COMPONENT_COMPONENT, getComponentComponent),
-    takeLatest(SEARCH_COMPONENT_COMPONENT, searchComponentComponent)
+    takeLatest(SEARCH_COMPONENT_COMPONENT, searchComponentComponent),
+    takeLatest(ADD_COMPONENT_COMPONENT, addComponentComponent)
   ]
 }
 
@@ -97,5 +104,21 @@ export function * searchComponentComponent (action) {
     yield put(actionCreators.searchComponentComponentSuccess(componentComponents.data))
   } catch (error) {
     yield put(actionCreators.searchComponentComponentFailure(error))
+  }
+}
+
+export function * addComponentComponent (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const addComponent = yield call(
+      axios.post,
+      // api.addComponent,
+      api.addComponent(action.payload),
+      // {params: action.payload.component_type}
+      action.payload
+    )
+    yield put(actionCreators.addComponentComponentSuccess(addComponent.data))
+  } catch (error) {
+    yield put(actionCreators.addComponentComponentFailure(error))
   }
 }

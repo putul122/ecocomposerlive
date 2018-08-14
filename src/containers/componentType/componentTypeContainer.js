@@ -41,6 +41,7 @@ export default compose(
     componentWillMount: function () {
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       this.props.setComponentTypeLoading && this.props.setComponentTypeLoading(true)
+      this.props.setCurrentPage(1)
       let payload = {
         'search': '',
         'page_size': 10,
@@ -48,6 +49,8 @@ export default compose(
         'recommended': true
       }
       this.props.fetchComponent && this.props.fetchComponent(payload)
+      // eslint-disable-next-line
+      // mApp || false &&  mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let breadcrumb = {
         title: 'Components',
         items: [
@@ -82,6 +85,10 @@ export default compose(
         if (!nextProps.authenticateUser.resources[0].result) {
           this.props.history.push('/')
         }
+      }
+      if (nextProps.componentTypes && nextProps.componentTypes !== this.props.componentTypes) {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
       }
     }
   })

@@ -44,7 +44,7 @@ export default compose(
     },
     componentDidMount: function () {
       // if (!this.props.showToasterSuccess) {
-        if (!localStorage.getItem('showToasterSuccess') && localStorage.getItem('isLoggedin')) {
+        if (!localStorage.getItem('showToasterSuccess') && localStorage.getItem('isLoggedin') && localStorage.getItem('userAccessToken')) {
           // eslint-disable-next-line
           toastr.options = {
             'closeButton': false,

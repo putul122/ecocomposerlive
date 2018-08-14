@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
-import componentTypeComponent from '../../components/componentTypeComponent/componentTypeComponentComponent'
+import componentTypeComponent from '../../components/componentTypeComponent/componentTypeComponentComponent1'
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators as basicActionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
 console.log('saga', sagaActions)
@@ -12,7 +12,8 @@ export function mapStateToProps (state, props) {
     componentTypeComponentData: state.componentTypeComponentReducer.componentTypeComponentData,
     componentTypeComponentProperties: state.componentTypeComponentReducer.componentTypeComponentProperties,
     componentDetail: state.applicationDetailReducer.componentDetail,
-    componentTypeComponentRelationships: state.componentTypeComponentReducer.componentTypeComponentRelationships
+    componentTypeComponentRelationships: state.componentTypeComponentReducer.componentTypeComponentRelationships,
+    modalIsOpen: state.basicReducer.modalIsOpen
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -22,7 +23,8 @@ export const propsMapping: Callbacks = {
   fetchComponentById: sagaActions.applicationDetailActions.fetchComponentById,
   fetchComponentTypeComponent: sagaActions.componentTypeComponentActions.fetchComponentTypeComponent,
   fetchcomponentTypeComponentProperties: sagaActions.componentTypeComponentActions.fetchcomponentTypeComponentProperties,
-  fetchcomponentTypeComponentRelationships: sagaActions.componentTypeComponentActions.fetchcomponentTypeComponentRelationships
+  fetchcomponentTypeComponentRelationships: sagaActions.componentTypeComponentActions.fetchcomponentTypeComponentRelationships,
+  setModalOpenStatus: basicActionCreators.setModalOpenStatus
 }
 
 // If you want to use the function mapping

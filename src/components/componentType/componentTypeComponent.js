@@ -1,14 +1,10 @@
 import React from 'react'
 import styles from './componentTypeComponent.scss'
 import PropTypes from 'prop-types'
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 import _ from 'lodash'
-// import applicationDetailPageRoute from '../../routes/applicationDetailPage/applicationDetailPageRoute'
 
 export default function ComponentType (props) {
-  console.log('-com-', props)
-    const { match } = props
-    console.log('match', match)
     let searchTextBox
     let componentTypes = props.componentTypes.resources
     let componentTypesList
@@ -24,36 +20,18 @@ export default function ComponentType (props) {
     let paginationLimit = 6
     let componentLoading = props.isComponentTypeLoading
 
-    console.log('Appppppppppppppppppppppppppppp details props', props)
-    console.log('Id Type', props.componentTypes)
-    console.log('IdResourse Type', props.componentTypes.resource)
-    // if (props.componentTypes !== '') {
-    //   ComponentName = props.componentDetail.resource.name
-    //   ComponentDescription = props.componentDetail.resource.description
-    //   ComponentTypeId = props.componentTypes.resource.id
-    //  console.log('ComponentTypeId', ComponentTypeId)
-    // }
-
     if (typeof componentTypes !== 'undefined') {
       componentTypesList = componentTypes.map(function (componentType, index) {
         let iconlink = componentType.links.find(function (link) { return link.rel === 'icon' })
         return (
           <li key={index} ><img src={iconlink.href} alt={componentType.name} /><br />
-            <Link to={'/components/' + componentType.id}>{componentType.name}</Link>
+            <a href={'/components/' + componentType.id} >{componentType.name}</a>
           </li>
         )
       })
 
       totalComponentType = props.componentTypes.total_count
       totalNoPages = Math.ceil(totalComponentType / perPage)
-
-    //   if (currentPage === 1) {
-    //     previousClass = styles.disabled
-    //   }
-
-    //   if (currentPage === totalNoPages) {
-    //     nextClass = styles.disabled
-    //   }
     }
     if (currentPage === 1) {
       previousClass = 'm-datatable__pager-link--disabled'
@@ -90,6 +68,8 @@ export default function ComponentType (props) {
       }
       // if (searchTextBox.value.length >= 0) {
         props.searchComponent(payload)
+        // eslint-disable-next-line
+        mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
         // props.setComponentTypeLoading(true)
       // }
       listPage = _.filter(pageArray, function (group) {
@@ -98,7 +78,6 @@ export default function ComponentType (props) {
       })
     }
     let handlePage = function (page) {
-      console.log('cur page', page)
       if (page === 1) {
         previousClass = 'm-datatable__pager-link--disabled'
       } else if (page === totalNoPages) {
@@ -114,6 +93,8 @@ export default function ComponentType (props) {
         'recommended': searchTextBox.value === ''
       }
       props.fetchComponent(payload)
+      // eslint-disable-next-line
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       props.setCurrentPage(page)
 
       listPage = _.filter(pageArray, function (group) {
@@ -136,6 +117,8 @@ export default function ComponentType (props) {
         props.setComponentTypeLoading(true)
         componentLoading = true
         props.fetchComponent(payload)
+        // eslint-disable-next-line
+        mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
         props.setCurrentPage(currentPage - 1)
       }
       listPage = _.filter(pageArray, function (group) {
@@ -149,7 +132,6 @@ export default function ComponentType (props) {
       if (currentPage === totalNoPages) {
         nextClass = styles.disabled
       } else {
-        console.log('ccccppppppp', currentPage)
         let payload = {
           'search': searchTextBox.value ? searchTextBox.value : '',
           'page_size': 10,
@@ -160,13 +142,14 @@ export default function ComponentType (props) {
         componentLoading = true
         componentTypesList = ''
         props.fetchComponent(payload)
+        // eslint-disable-next-line
+        mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
         props.setCurrentPage(currentPage + 1)
       }
       listPage = _.filter(pageArray, function (group) {
         let found = _.filter(group, {'number': currentPage + 1})
         if (found.length > 0) { return group }
       })
-      console.log('handle next', listPage)
     }
 
   return (
@@ -234,8 +217,7 @@ ComponentType.propTypes = {
   // searchComponent: PropTypes.func,
   // setComponentTypeLoading: PropTypes.func,
   isComponentTypeLoading: PropTypes.any,
-  currentPage: PropTypes.any,
+  currentPage: PropTypes.any
   // setCurrentPage: PropTypes.func,
   // fetchComponent: PropTypes.func,
-  match: PropTypes.any
 }

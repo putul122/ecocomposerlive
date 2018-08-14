@@ -7,13 +7,15 @@ import { actionCreators as basicActionCreators } from '../../redux/reducers/basi
 
 // Global State
 export function mapStateToProps (state, props) {
-  console.log('app detail state', state)
   return {
     authenticateUser: state.basicReducer.authenticateUser,
     componentDetail: state.applicationDetailReducer.componentDetail,
     componentConstraints: state.applicationDetailReducer.componentConstraints,
     componentComponents: state.applicationDetailReducer.componentComponents,
-    currentPage: state.applicationDetailReducer.currentPage
+    currentPage: state.applicationDetailReducer.currentPage,
+    addComponent: state.applicationDetailReducer.addComponent,
+    modalIsOpen: state.basicReducer.modalIsOpen,
+    successmodalIsOpen: state.basicReducer.successmodalIsOpen
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -25,7 +27,10 @@ export const propsMapping: Callbacks = {
   searchComponentComponent: sagaActions.applicationDetailActions.searchComponentComponent,
   selectedComponentType: applicationDetailActionCreators.selectedComponentType,
   setCurrentPage: applicationDetailActionCreators.setCurrentPage,
-  setBreadcrumb: basicActionCreators.setBreadcrumb
+  addComponentComponent: sagaActions.applicationDetailActions.addComponentComponent,
+  setBreadcrumb: basicActionCreators.setBreadcrumb,
+  setModalOpenStatus: basicActionCreators.setModalOpenStatus,
+  setConfirmationModalOpenStatus: basicActionCreators.setConfirmationModalOpenStatus
 }
 
 // If you want to use the function mapping
@@ -39,6 +44,7 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
+      console.log('comp will mountct', this.props)
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       const componentTypeId = this.props.match.params.id
       this.props.selectedComponentType(componentTypeId)
@@ -51,12 +57,16 @@ export default compose(
           'recommended': true
         }
       }
+      // eslint-disable-next-line
+      // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       this.props.fetchComponentById && this.props.fetchComponentById(payload)
       this.props.fetchComponentById && this.props.fetchComponentConstraint(payload)
       this.props.fetchComponentComponent && this.props.fetchComponentComponent(payload)
     },
     componentDidMount: function () {},
     componentWillReceiveProps: function (nextProps) {
+      console.log('comp will receive props mountct', this.props)
+      console.log('comp will receive props mountct', nextProps)
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
           this.props.history.push('/')
@@ -64,6 +74,8 @@ export default compose(
       }
       if (nextProps.componentDetail && (nextProps.componentDetail !== this.props.componentDetail)) {
         console.log('inside receive props detail props', nextProps)
+        // eslint-disable-next-line
+        // mApp.unblockPage()
         let breadcrumb = {
           title: nextProps.componentDetail.resources[0].name,
           items: [

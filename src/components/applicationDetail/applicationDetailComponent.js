@@ -2,6 +2,7 @@ import React from 'react'
 import styles from './applicationDetailComponent.scss'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
+import Modal from 'react-modal'
 // import ApplicationModelComponent for graph Model Visualization
 import ApplicationModelComponent from '../applicationModel/applicationModelComponent'
 import { Link, Route } from 'react-router-dom'
@@ -13,8 +14,31 @@ var divStyle = {
   'overflow-x': 'scroll',
   'border': '1px solid #000000'
 }
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    border: 'none',
+    background: 'none',
+    transform: 'translate(-50%, -50%)'
+  }
+}
 
 export default function ApplicationDetail (props) {
+  // let addComponentMessageResponse = function (message) {
+  //   if (message) {
+  //     return (<div className='m-alert m-alert--outline alert alert-danger alert-dismissible animated fadeIn' role='alert'>
+  //       <button type='button' className='close' data-dismiss='alert' aria-label='Close' />
+  //       <span>{message}</span>
+  //     </div>
+  //     )
+  //   } else {
+  //     return (<div />)
+  //   }
+  // }
   let ComponentName = ''
   let ComponentDescription = ''
   let ComponentTypeIcon = ''
@@ -29,8 +53,17 @@ export default function ApplicationDetail (props) {
   let totalComponentTypeComponent
   let pageArray = []
   let ComponentTypeId
+  // let componentId
   let listPage = []
   let paginationLimit = 4
+  let NameInputBox
+  let DescriptionBox
+  // let messageBlock = addComponentMessageResponse('')
+  console.log('props', props.setModalOpenStatus)
+  // console.log('propsforredirect ', props.addComponent)
+  console.log('props', props.setConfirmationModalOpenStatus)
+  console.log('componentdata', props.addComponent)
+  // console.log('props', props.showToasterSuccess)
   // let paginationList
   if (props.componentDetail !== '') {
     ComponentName = props.componentDetail.resources[0].name
@@ -38,14 +71,18 @@ export default function ApplicationDetail (props) {
     ComponentTypeId = props.componentDetail.resources[0].id
     ComponentTypeIcon = props.componentDetail.resources[0].links.find(function (link) { return link.rel === 'icon' })
   }
+  if (props.addComponent) {
+    let componentId = props.addComponent.resources[0].id
+    props.history.push('/components/' + ComponentTypeId + '/' + componentId)
+  }
   if (typeof componentComponents !== 'undefined') {
     componentComponentsList = componentComponents.map(function (componentComponent, index) {
       return (
         <tr className='m-datatable__row m-datatable__row--even' key={index} style={{ 'left': '0px' }} >
           <td className='m-datatable__cell--sorted m-datatable__cell' >
-            <span style={{ 'width': '150px', 'text-align': 'center' }}><Link to={'/components/' + ComponentTypeId + '/' + componentComponent.id}>{ componentComponent.name }</Link></span>
+            <span><Link to={'/components/' + ComponentTypeId + '/' + componentComponent.id}>{ componentComponent.name }</Link></span>
           </td>
-          <td className='m-datatable__cell--sorted m-datatable__cell'><p>{ componentComponent.description }</p></td>
+          <td className='m-datatable__cell--sorted m-datatable__cell'><span>{ componentComponent.description }</span></td>
         </tr>
       )
     })
@@ -168,6 +205,51 @@ export default function ApplicationDetail (props) {
       if (found.length > 0) { return group }
     })
   }
+  let openModal = function (event) {
+    event.preventDefault()
+    props.setModalOpenStatus(true)
+    console.log('props', props.setModalOpenStatus)
+   }
+  let closeModal = function () {
+    props.setModalOpenStatus(false)
+  }
+  let closeConfirmationModal = function (event) {
+    event.preventDefault()
+    let payload = {
+      'component_type': {
+        'id': props.componentDetail.resources[0].id
+      }
+      // 'name': NameInputBox.value,
+      // 'description': DescriptionBox.value
+    }
+    console.log('demopayload', payload)
+    // let path = `{'/components/' + nextProps.componentDetail.resources[0].id}`
+    // this.props.history.push(path)
+    // props.addComponent(true)
+    // this.props.router.push('/components/' + props.componentDetail.resources[0].id)
+    props.setConfirmationModalOpenStatus(false)
+    // this.props.router.push('/components/' + props.componentDetail.resources[0].id)
+   }
+  let createComponent = function (event) {
+    event.preventDefault()
+    // messageBlock = addComponentMessageResponse('')
+    let payload = {
+      'component_type': {
+        'id': props.componentDetail.resources[0].id
+      },
+      'name': NameInputBox.value,
+      'description': DescriptionBox.value
+    }
+    console.log('demopayload', payload)
+    console.log('newcomponent', payload.name)
+    props.addComponentComponent(payload)
+    props.setConfirmationModalOpenStatus(false)
+    props.setModalOpenStatus(false)
+    // messageBlock = loggedInMessageResponse('')
+    // props.history.push('/')
+    // props.history.push('/components/' + ComponentTypeId + '/' + componentId)
+    // props.showToasterSuccess(true)
+  }
   return (
     <div>
       <div className={styles.borderline}>
@@ -176,8 +258,68 @@ export default function ApplicationDetail (props) {
             <img className={styles.iconcenter} src={ComponentTypeIcon.href} alt={ComponentName} />
             <span className='row col-sm-12 col-md-6'>
               <h2>{ ComponentName }</h2>
+              <div className=''><button type='button' onClick={openModal} id='m_login_signup' className={styles.buttonbg}>Add Application</button></div>
+              <div>
+                <Modal isOpen={props.modalIsOpen}
+                  onRequestClose={closeModal}
+                  style={customStyles} >
+                  {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
+                  <div className={styles.modalwidth}>
+                    <div className='modal-dialog'>
+                      <div className='modal-content'>
+                        <div className='modal-header'>
+                          <h4 className='modal-title' id='exampleModalLabel'>New Application</h4>
+                          <button type='button' onClick={closeModal} className='close' data-dismiss='modal' aria-label='Close'>
+                            <span aria-hidden='true'>×</span>
+                          </button>
+                        </div>
+                        <div className='modal-body'>
+                          <form>
+                            {/* {messageBlock} */}
+                            <div className='form-group'>
+                              <label htmlFor='component-name' className='form-control-label'>Name:</label>
+                              <input type='text' className='form-control' ref={input => (NameInputBox = input)} id='component-name' required />
+                            </div>
+                            <div className='form-group'>
+                              <label htmlFor='description-text' className='form-control-label'>Description:</label>
+                              <textarea className='form-control'ref={textarea => (DescriptionBox = textarea)} defaultValue={''} required />
+                            </div>
+                          </form>
+                        </div>
+                        <div className='modal-footer'>
+                          {/* <button type='button' className='btn btn-primary'>Save changes</button> */}
+                          <button type='button' onClick={createComponent} id='m_login_signup' className={styles.buttonbg}>Add Component</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Modal>
+                <Modal isOpen={props.successmodalIsOpen}
+                  style={customStyles} >
+                  {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
+                  <div className={styles.modalwidth}>
+                    <div className='modal-dialog'>
+                      <div className='modal-content'>
+                        <div className='modal-header'>
+                          <h4 className='modal-title' id='exampleModalLabel'>Confirmation</h4>
+                          {/* <button type='button' onClick={closeModal} className='close' data-dismiss='modal' aria-label='Close'>
+                            <span aria-hidden='true'>×</span>
+                          </button> */}
+                        </div>
+                        <div className='modal-body'>
+                          <h5 className={styles.confirmsg}>New Application created successfully</h5>
+                        </div>
+                        <div className='modal-footer'>
+                          {/* <button type='button' className='btn btn-primary'>Save changes</button> */}
+                          <button type='button' onClick={closeConfirmationModal} id='m_login_signup' className={styles.buttonbg}>Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Modal>
+              </div>
             </span>
-            <span className='row col-sm-12 col-md-6'><p>{ ComponentDescription }</p></span>
+            <span className='row col-sm-12 col-md-4'><p>{ ComponentDescription }</p></span>
           </div>
         </div>
         <div className='row clearfix'>
@@ -210,8 +352,8 @@ export default function ApplicationDetail (props) {
                         {/* <th data-field='RecordID' className='m-datatable__cell m-datatable__cell--check'>
                           <span style={{width: 40}}><label htmlFor='m-checkbox m-checkbox--single m-checkbox--all m-checkbox--solid m-checkbox--brand'>
                             <input type='checkbox' /><span /></label></span></th> */}
-                        <th className='m-datatable__cell m-datatable__cell--sort' style={{ 'text-align': 'center' }}>Name</th>
-                        <th className='m-datatable__cell m-datatable__cell--sort' style={{ 'text-align': 'center' }}>Description</th>
+                        <th className='m-datatable__cell m-datatable__cell--sort'>Name</th>
+                        <th className='m-datatable__cell m-datatable__cell--sort'>Description</th>
                       </tr>
                     </thead>
                     <tbody style={{ 'max-height': '495px' }} className='m-datatable__body ps ps--active-y ps--scrolling-y'>
@@ -272,8 +414,16 @@ export default function ApplicationDetail (props) {
 ApplicationDetail.propTypes = {
   componentDetail: PropTypes.any,
   componentComponents: PropTypes.any,
+  // addComponent: PropTypes.func,
+  modalIsOpen: PropTypes.any,
+  successmodalIsOpen: PropTypes.any,
+  setModalOpenStatus: PropTypes.func,
+  setConfirmationModalOpenStatus: PropTypes.func,
   // searchComponentComponent: PropTypes.func,
-  currentPage: PropTypes.any
+  // showToasterSuccess: PropTypes.func,
+  currentPage: PropTypes.any,
+  addComponent: PropTypes.any,
+  history: PropTypes.any
   // setCurrentPage: PropTypes.func,
   // fetchComponentComponent: PropTypes.func
 }

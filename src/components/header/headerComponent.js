@@ -33,7 +33,6 @@ export default function HeaderComponent (props) {
   }
   let openLoginSlide = function (event) {
     event.preventDefault()
-    console.log(' open login', props)
     loginSlideClass = 'm-dropdown--open'
     props.setLoginslideFlag(true)
   }
