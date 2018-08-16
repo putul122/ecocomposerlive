@@ -5,7 +5,7 @@ import * as d3 from 'd3'
 import './componentModelComponent.scss'
 // let colors = d3.scaleOrdinal(d3.schemeCategory10)
 let width = 600
-let height = 500
+let height = 700
 let diagramLayout
 let simulation
 
@@ -285,190 +285,195 @@ function force (graphData) {
 
 class ComponentModelComponent extends React.Component {
     construct (props) {}
-    // componentWillMount () {
-    //     console.log('component will mount Component 666 model', this.props)
-    // }
-    // componentDidMount () {
-    //     console.log('component did mount Component 666 model', this.props)
-    // }
+    componentWillMount () {
+        console.log('component will mount Component 666 model', this.props)
+    }
     componentDidMount () {
-        if (this.props.relationships && this.props.relationships.length > 0) {
-            let nodeData = this.props.relationships
-            let leftCordinates = []
-            let rightCordinates = []
-            let topCordinates = []
-            let downCordinates = []
-            var linkArray = []
-            var nodeArray = []
-            let node = {}
-            let graphData = {}
-            // Setting first node
-            node.id = 0
-            node.name = this.props.startNode.name
-            node.Title = this.props.startNode.title
-            node.width = 140
-            node.height = 70
-            node.x = 400
-            node.y = 450
-            node.Attributes = ['']
-            node.strokeWidth = 4
-            node.textAnchor = 'middle'
-            node.fontSize = 20
-            node.fontWeight = 900
-            node.fontFamily = 'sans-serif'
-            node.dy = '0.25em'
-            nodeArray.push(node)
-            // end
-
-            $.each(nodeData, function (index, data) {
-                index++
-                node = {}
-                node.id = index
-                node.name = (data.constraint_type === 'Outgoing') ? data.target_component_name : data.related_component_name
-                node.Title = (data.constraint_type === 'Outgoing') ? data.target_component_name : data.related_component_name
+        console.log('component did mount Component 666 model', this.props)
+    }
+    componentWillReceiveProps (nextProps) {
+      console.log('Component Model ---------->>', nextProps)
+    }
+    render () {
+        if (Object.keys(this.props.startNode).length > 0 && this.props.startNode.constructor === Object) {
+            if (this.props.relationships && this.props.relationships) {
+                let nodeData = this.props.relationships
+                let leftCordinates = []
+                let rightCordinates = []
+                let topCordinates = []
+                let downCordinates = []
+                var linkArray = []
+                var nodeArray = []
+                let node = {}
+                let graphData = {}
+                // Setting first node
+                node.id = 0
+                node.name = this.props.startNode.name
+                node.Title = this.props.startNode.title
+                node.width = 140
+                node.height = 70
+                node.x = 400
+                node.y = 450
                 node.Attributes = ['']
-                node.width = 90
-                node.height = 45
-                node.strokeWidth = 3
+                node.strokeWidth = 4
                 node.textAnchor = 'middle'
-                node.fontSize = 10
-                node.fontWeight = 500
+                node.fontSize = 20
+                node.fontWeight = 900
                 node.fontFamily = 'sans-serif'
                 node.dy = '0.25em'
-                if (data.constraint_type === 'Parent') {
-                    let topLength = topCordinates.length
-                    if (topLength < 1) {
-                    let cor = {
-                        x: 200,
-                        y: 10
-                        }
-                    topCordinates.push(cor)
-                    node.x = cor.x
-                    node.y = cor.y
-                    } else {
-                        let prevCor = topCordinates[topLength - 1]
-                        if (typeof prevCor !== 'undefined') {
+                nodeArray.push(node)
+                // end
+                if (nodeData.length > 0) {
+                    $.each(nodeData, function (index, data) {
+                        index++
+                        node = {}
+                        node.id = index
+                        node.name = data.target_component.name
+                        node.Title = data.target_component.name
+                        node.Attributes = ['']
+                        node.width = 90
+                        node.height = 45
+                        node.strokeWidth = 3
+                        node.textAnchor = 'middle'
+                        node.fontSize = 10
+                        node.fontWeight = 500
+                        node.fontFamily = 'sans-serif'
+                        node.dy = '0.25em'
+                        if (data.constraint_type === 'Parent') {
+                            let topLength = topCordinates.length
+                            if (topLength < 1) {
                             let cor = {
-                                x: prevCor.x + 200,
+                                x: 200,
                                 y: 10
                                 }
                             topCordinates.push(cor)
                             node.x = cor.x
                             node.y = cor.y
-                        }
-                    }
-                } else if (data.constraint_type === 'Child') {
-                    let downLength = downCordinates.length
-                    if (downLength < 1) {
-                    let cor = {
-                        x: 200,
-                        y: 900
-                        }
-                    downCordinates.push(cor)
-                    node.x = cor.x
-                    node.y = cor.y
-                    } else {
-                        let prevCor = downCordinates[downLength - 1]
-                        if (typeof prevCor !== 'undefined') {
+                            } else {
+                                let prevCor = topCordinates[topLength - 1]
+                                if (typeof prevCor !== 'undefined') {
+                                    let cor = {
+                                        x: prevCor.x + 200,
+                                        y: 10
+                                        }
+                                    topCordinates.push(cor)
+                                    node.x = cor.x
+                                    node.y = cor.y
+                                }
+                            }
+                        } else if (data.relationship_type === 'Child') {
+                            let downLength = downCordinates.length
+                            if (downLength < 1) {
                             let cor = {
-                                x: prevCor.x + 200,
+                                x: 200,
                                 y: 900
                                 }
                             downCordinates.push(cor)
                             node.x = cor.x
                             node.y = cor.y
-                        }
-                    }
-                } else if (data.constraint_type === 'Incoming') {
-                    // Left Side Cordinates
-                    let leftLength = leftCordinates.length
-                    if (leftLength < 1) {
-                        let cor = {
-                            x: 10,
-                            y: 300
-                            }
-                        leftCordinates.push(cor)
-                        node.x = cor.x
-                        node.y = cor.y
-                    } else {
-                        let prevCor = leftCordinates[leftLength - 1]
-                        if (typeof prevCor !== 'undefined') {
-                            let cor = {
-                                x: 10,
-                                y: prevCor.y + 100
+                            } else {
+                                let prevCor = downCordinates[downLength - 1]
+                                if (typeof prevCor !== 'undefined') {
+                                    let cor = {
+                                        x: prevCor.x + 200,
+                                        y: 900
+                                        }
+                                    downCordinates.push(cor)
+                                    node.x = cor.x
+                                    node.y = cor.y
                                 }
-                            leftCordinates.push(cor)
-                            node.x = cor.x
-                            node.y = cor.y
-                        }
-                    }
-                } else if (data.constraint_type === 'Outgoing') {  // Right
-                    // Right Side Cordinates
-                    let rightLength = rightCordinates.length
-                    if (rightLength < 1) {
-                        let cor = {
-                            x: 800,
-                            y: 300
                             }
-                        rightCordinates.push(cor)
-                        node.x = cor.x
-                        node.y = cor.y
-                    } else {
-                        let prevCor = rightCordinates[rightLength - 1]
-                        if (typeof prevCor !== 'undefined') {
-                            let cor = {
-                                x: 800,
-                                y: prevCor.y + 100
+                        } else if (data.relationship_type === 'ConnectFrom') {
+                            // Left Side Cordinates
+                            let leftLength = leftCordinates.length
+                            if (leftLength < 1) {
+                                let cor = {
+                                    x: 10,
+                                    y: 300
+                                    }
+                                leftCordinates.push(cor)
+                                node.x = cor.x
+                                node.y = cor.y
+                            } else {
+                                let prevCor = leftCordinates[leftLength - 1]
+                                if (typeof prevCor !== 'undefined') {
+                                    let cor = {
+                                        x: 10,
+                                        y: prevCor.y + 100
+                                        }
+                                    leftCordinates.push(cor)
+                                    node.x = cor.x
+                                    node.y = cor.y
+                                }
                             }
-                            rightCordinates.push(cor)
-                            node.x = cor.x
-                            node.y = cor.y
+                        } else if (data.relationship_type === 'ConnectTo') {  // Right
+                            // Right Side Cordinates
+                            let rightLength = rightCordinates.length
+                            if (rightLength < 1) {
+                                let cor = {
+                                    x: 800,
+                                    y: 300
+                                    }
+                                rightCordinates.push(cor)
+                                node.x = cor.x
+                                node.y = cor.y
+                            } else {
+                                let prevCor = rightCordinates[rightLength - 1]
+                                if (typeof prevCor !== 'undefined') {
+                                    let cor = {
+                                        x: 800,
+                                        y: prevCor.y + 100
+                                    }
+                                    rightCordinates.push(cor)
+                                    node.x = cor.x
+                                    node.y = cor.y
+                                }
+                            }
                         }
-                    }
-                }
-
-                nodeArray.push(node)
-
-                var link = {}
-                link.type = data.name || 'empty'
-                link.direction = 'output'
-                link.strokeWidth = 1.2
-                link.fontFamily = 'sans-serif'
-                link.fontSize = 12
-                if (data.constraint_type === 'Parent') {  // down
-                    link.source = 0
-                    link.target = index
-                    link.direction = 'output'
-                } else if (data.constraint_type === 'Child') {  // up
-                    link.source = 0
-                    link.target = index
-                    link.direction = 'output'
-                } else if (data.constraint_type === 'Incoming') {  // Left
-                    link.source = index
-                    link.target = 0
-                } else if (data.constraint_type === 'Outgoing') {  // Right
-                    link.source = 0
-                    link.target = index
-                }
-
-                linkArray.push(link)
-                if (index === nodeData.length) {
-                    // console.log('linkArray', linkArray)
-                    // console.log('nodeArray', nodeArray)
+                        nodeArray.push(node)
+                        var link = {}
+                        link.type = data.name || 'empty'
+                        link.direction = 'output'
+                        link.strokeWidth = 1.2
+                        link.fontFamily = 'sans-serif'
+                        link.fontSize = 12
+                        if (data.relationship_type === 'Parent') {  // down
+                            link.source = 0
+                            link.target = index
+                            link.direction = 'output'
+                        } else if (data.relationship_type === 'Child') {  // up
+                            link.source = 0
+                            link.target = index
+                            link.direction = 'output'
+                        } else if (data.relationship_type === 'ConnectFrom') {  // Left
+                            link.source = index
+                            link.target = 0
+                        } else if (data.relationship_type === 'ConnectTo') {  // Right
+                            link.source = 0
+                            link.target = index
+                        }
+                        linkArray.push(link)
+                        if (index === nodeData.length) {
+                            // console.log('linkArray', linkArray)
+                            // console.log('nodeArray', nodeArray)
+                            graphData.nodes = nodeArray
+                            graphData.links = linkArray
+                            // console.log('------------------', JSON.stringify(graphData))
+                            forceInitialize(graphData)
+                        }
+                    })
+                } else {
                     graphData.nodes = nodeArray
-                    graphData.links = linkArray
-                    // console.log('------------------', JSON.stringify(graphData))
+                    graphData.links = []
                     forceInitialize(graphData)
                 }
-            })
+            }
         }
-    }
-    render () {
-      return (
-        <div id='mainScreen' >
-          <svg id='diagramLayout1' />
-        </div>
-      )
+        return (
+          <div id='mainScreen' >
+            <svg id='diagramLayout1' />
+          </div>
+          )
     }
 
     props: {

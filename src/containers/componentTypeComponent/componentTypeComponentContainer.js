@@ -1,8 +1,9 @@
 import { connect } from 'react-redux'
 import { compose, lifecycle } from 'recompose'
-import componentTypeComponent from '../../components/componentTypeComponent/componentTypeComponentComponent1'
+import componentTypeComponent from '../../components/componentTypeComponent/componentTypeComponentComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators as basicActionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
+import { actionCreators as componentTypeComponentActionCreators } from '../../redux/reducers/componentTypeComponentReducer/componentTypeComponentReducerReducer'
 console.log('saga', sagaActions)
 // Global State
 export function mapStateToProps (state, props) {
@@ -13,6 +14,7 @@ export function mapStateToProps (state, props) {
     componentTypeComponentProperties: state.componentTypeComponentReducer.componentTypeComponentProperties,
     componentDetail: state.applicationDetailReducer.componentDetail,
     componentTypeComponentRelationships: state.componentTypeComponentReducer.componentTypeComponentRelationships,
+    showTabs: state.componentTypeComponentReducer.showTabs,
     modalIsOpen: state.basicReducer.modalIsOpen
   }
 }
@@ -24,7 +26,8 @@ export const propsMapping: Callbacks = {
   fetchComponentTypeComponent: sagaActions.componentTypeComponentActions.fetchComponentTypeComponent,
   fetchcomponentTypeComponentProperties: sagaActions.componentTypeComponentActions.fetchcomponentTypeComponentProperties,
   fetchcomponentTypeComponentRelationships: sagaActions.componentTypeComponentActions.fetchcomponentTypeComponentRelationships,
-  setModalOpenStatus: basicActionCreators.setModalOpenStatus
+  setModalOpenStatus: basicActionCreators.setModalOpenStatus,
+  setCurrentTab: componentTypeComponentActionCreators.setCurrentTab
 }
 
 // If you want to use the function mapping
@@ -59,7 +62,7 @@ export default compose(
           this.props.history.push('/')
         }
       }
-      if (nextProps.componentTypeComponentData && nextProps.componentDetail && (nextProps.componentTypeComponentData !== this.props.componentTypeComponentData)) {
+      if (nextProps.componentDetail && nextProps.componentTypeComponentData && (nextProps.componentTypeComponentData !== '')) {
         console.log('inside com Xxxxxxxxxxxxxxxxxxxxx', this.props, nextProps)
         let breadcrumb = {
           title: nextProps.componentTypeComponentData.resources[0].name,
@@ -81,7 +84,7 @@ export default compose(
               separator: true
             },
             {
-              name: nextProps.componentDetail.resources[0].name ? this.props.componentDetail.resources[0].name : '',
+              name: nextProps.componentDetail.resources[0].name ? nextProps.componentDetail.resources[0].name : '',
               href: '/components/' + nextProps.componentDetail.resources[0].id,
               separator: false
             },

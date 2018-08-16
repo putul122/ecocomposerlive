@@ -3,18 +3,21 @@ import { FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS, FETCH_COMPONENT_TYPE_COMPONENT_
 // Name Spaced Action Types
 const SET_DATA_LOADING = 'ComponentTypeComponentReducer/SET_DATA_LOADING'
 const SET_CURRENT_PAGE = 'ComponentTypeComponentReducer/SET_CURRENT_PAGE'
+const SET_CURRENT_TAB = 'ComponentTypeComponentReducer/SET_CURRENT_TAB'
 
 export const actions = {
   FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENT_PROPERTIES_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
   SET_DATA_LOADING,
-  SET_CURRENT_PAGE
+  SET_CURRENT_PAGE,
+  SET_CURRENT_TAB
 }
 
 export const actionCreators = {
     setDataLoading: createAction(SET_DATA_LOADING),
-    setCurrentPage: createAction(SET_CURRENT_PAGE)
+    setCurrentPage: createAction(SET_CURRENT_PAGE),
+    setCurrentTab: createAction(SET_CURRENT_TAB)
 }
 
 export const initialState = {
@@ -22,7 +25,8 @@ export const initialState = {
     componentTypeComponentProperties: '',
     componentTypeComponentRelationships: '',
     isComponentTypeLoading: false,
-    currentPage: 1
+    currentPage: 1,
+    showTabs: {'showProperty': ' active show', 'showRelationship': ''}
 }
 
 export default handleActions(
@@ -43,6 +47,10 @@ export default handleActions(
     [SET_CURRENT_PAGE]: (state, action) => ({
       ...state,
       currentPage: action.payload
+    }),
+    [SET_CURRENT_TAB]: (state, action) => ({
+      ...state,
+      showTabs: action.payload
     })
   },
   initialState
