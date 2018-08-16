@@ -159,7 +159,7 @@ export default function ComponentTypeComponent (props) {
         })
         return (
           <div className='m-accordion__item'>
-            <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + parent[0].relationship_type} aria-expanded='false'>
+            <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + parent[0].relationship_type} aria-expanded='true'>
               <span className='m-accordion__item-title'>{parent[0].component.name} {parent[0].relationship_type} {'Components'}</span>
               <span className='m-accordion__item-mode' />
             </div>
@@ -182,7 +182,7 @@ export default function ComponentTypeComponent (props) {
         })
         return (
           <div className='m-accordion__item'>
-            <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + child[0].relationship_type} aria-expanded='false'>
+            <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + child[0].relationship_type} aria-expanded='true'>
               <span className='m-accordion__item-title'>{child[0].component.name} {child[0].relationship_type} {'Components'}</span>
               <span className='m-accordion__item-mode' />
             </div>
@@ -203,7 +203,7 @@ export default function ComponentTypeComponent (props) {
           let outgoingElements = []
           var outgoingGroup = _.chain(outgoing)
           .groupBy('connection.name')
-          .mapValues(connectionTypeGroup => _.groupBy(connectionTypeGroup, targetComponentTypeGroup => targetComponentTypeGroup.model.name))
+          .mapValues(connectionTypeGroup => _.groupBy(connectionTypeGroup, targetComponentTypeGroup => targetComponentTypeGroup.target_component.component_type.name))
           .value()
           for (let connectionKey in outgoingGroup) {
             if (outgoingGroup.hasOwnProperty(connectionKey)) {
@@ -220,7 +220,7 @@ export default function ComponentTypeComponent (props) {
                         <span className='m-accordion__item-title'>{outgoingGroup[connectionKey][targetComponentTypeKey][0].component.name} {connectionKey} {''}</span>
                         <span className='m-accordion__item-mode' />
                       </div>
-                      <div className='m-accordion__item-body collapse' id={'m_accordion_2_item_1_body' + targetComponentTypeKey} role='tabpanel' aria-labelledby='m_accordion_2_item_1_head' data-parent='#m_accordion_2' style={{}}>
+                      <div className='m-accordion__item-body collapse' id={'m_accordion_2_item_1_body' + targetComponentTypeKey} role='tabpanel' aria-labelledby='m_accordion_2_item_1_head' data-parent='#m_accordion_2'>
                         <div className='m-accordion__item-content'>
                           {childElementList}
                         </div>
@@ -241,7 +241,7 @@ export default function ComponentTypeComponent (props) {
         if (incoming.length > 0) {
           var incomingGroup = _.chain(incoming)
           .groupBy('connection.name')
-          .mapValues(connectionTypeGroup => _.groupBy(connectionTypeGroup, targetComponentTypeGroup => targetComponentTypeGroup.model.name))
+          .mapValues(connectionTypeGroup => _.groupBy(connectionTypeGroup, targetComponentTypeGroup => targetComponentTypeGroup.target_component.component_type.name))
           .value()
           let incomingElements = []
           for (let connectionKey in incomingGroup) {
@@ -255,11 +255,11 @@ export default function ComponentTypeComponent (props) {
                   })
                   incomingElements.push(
                     <div className='m-accordion__item'>
-                      <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + targetComponentTypeKey} aria-expanded='false'>
+                      <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + targetComponentTypeKey} aria-expanded='true'>
                         <span className='m-accordion__item-title'>{targetComponentTypeKey} {connectionKey} {incomingGroup[connectionKey][targetComponentTypeKey][0].component.name}</span>
                         <span className='m-accordion__item-mode' />
                       </div>
-                      <div className='m-accordion__item-body collapse' id={'m_accordion_2_item_1_body' + targetComponentTypeKey} role='tabpanel' aria-labelledby='m_accordion_2_item_1_head' data-parent='#m_accordion_2' style={{}}>
+                      <div className='m-accordion__item-body collapse' id={'m_accordion_2_item_1_body' + targetComponentTypeKey} role='tabpanel' aria-labelledby='m_accordion_2_item_1_head' data-parent='#m_accordion_2'>
                         <div className='m-accordion__item-content'>
                           {childElementList}
                         </div>
@@ -310,7 +310,7 @@ export default function ComponentTypeComponent (props) {
                   </table>
                 </div>
                 <div className={'tab-pane' + showRelationships} id='m_tabs_3_2' role='tabpanel'>
-                  <div className='m-accordion m-accordion--bordered' id='m_accordion_2' role='tablist'>
+                  <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' role='tablist' aria-multiselectable='true'>
                     {/* <div className='row'>
                       <button type='button' onClick={openModal} id='m_login_signup' className={'pull-right ' + styles.buttonbg}>Add Connections</button>
                     </div> */}

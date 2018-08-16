@@ -20,6 +20,7 @@ function forceInitialize (graphData) {
       .attr('transform', 'translate(' + 20 + ',' + 20 + ')')
 
     function zoomed () {
+        console.log('zooming action')
         diagramLayout.attr('transform', d3.event.transform)
     }
 
@@ -144,9 +145,11 @@ function force (graphData) {
       //  .attr('stroke-opacity', '0.3')
       .attr('stroke', '#000000')
       .attr('fill', '#FFFFFF')
+      .attr('word-wrap', 'break-word')
       // .style('fill', function (d, i) { return colors(i) })
 
     nodeEnter.append('title')
+      .attr('word-wrap', 'break-word')
       .text(function (d) { return d.title })
 
     nodeEnter.append('text')
