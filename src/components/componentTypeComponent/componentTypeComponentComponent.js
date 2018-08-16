@@ -6,7 +6,7 @@ import ComponentTypeComponentsData from './mockGetComponentTypeComponents'
 import ComponentTypeConstraintsData from './mockGetComponentTypeConstraints'
 import _ from 'lodash'
 import ComponentModelComponent from '../componentModel/componentModelComponent'
-// import Modal from 'react-modal'
+import Modal from 'react-modal'
 
 var divStyle = {
   width: '95%',
@@ -15,31 +15,33 @@ var divStyle = {
   'overflow-x': 'scroll',
   'border': '1px solid #000000'
 }
-// const customStyles = {
-//   content: {
-//     top: '50%',
-//     left: '50%',
-//     right: 'auto',
-//     bottom: 'auto',
-//     marginRight: '-50%',
-//     border: 'none',
-//     background: 'none',
-//     transform: 'translate(-50%, -50%)'
-//   }
-// }
+const customStyles = {
+  content: {
+    top: '40%',
+    left: '40%',
+    right: 'auto',
+    bottom: 'auto',
+    width: '90%',
+    // height: '600px',
+    margin: 'auto',
+    marginRight: '-50%',
+    border: 'none',
+    background: 'none',
+    transform: 'translate(-50%, -50%)'
+  }
+}
 
 export default function ComponentTypeComponent (props) {
     console.log('component type component properties', props)
     console.log(ComponentTypeComponentsData, relationshipData)
     console.log(ComponentTypeConstraintsData)
     console.log('Relationships', props.componentTypeComponentRelationships)
+    console.log('add con set', props.addNewConnectionSettings)
+    console.log('add con set func', props.setAddConnectionSettings)
     let componentTypeComponentName
     let componentTypeComponentDescription
     let componentTypeComponentProperties = props.componentTypeComponentProperties.resources
     let componentTypeComponentPropertiesList
-    // let componentTypeComponentRelName
-    // let componentTypeComponentChildName
-    // let componentTypeComponentRelationshipsList
     let componentTypeComponentRelationships = props.componentTypeComponentRelationships // relationshipData.resources // props.componentTypeComponentRelationships.data
     let modelRelationshipData = ''
     let parentComponentRelationshipList = ''
@@ -49,14 +51,6 @@ export default function ComponentTypeComponent (props) {
     let startNode = {}
     let showProperties = props.showTabs.showProperty
     let showRelationships = props.showTabs.showRelationship
-    // let openModal = function (event) {
-    //   event.preventDefault()
-    //   props.setModalOpenStatus(true)
-    // }
-    // let closeModal = function (event) {
-    //   event.preventDefault()
-    //   props.setModalOpenStatus(false)
-    // }
     let showProperty = function (event) {
       let payload = {'showProperty': ' active show', 'showRelationship': ''}
       props.setCurrentTab(payload)
@@ -65,15 +59,65 @@ export default function ComponentTypeComponent (props) {
       let payload = {'showProperty': '', 'showRelationship': ' active show'}
       props.setCurrentTab(payload)
     }
+    // Model ADD new Connections Code
+    let openModal = function (event) {
+      event.preventDefault()
+      props.setModalOpenStatus(true)
+    }
+    let closeModal = function (event) {
+      event.preventDefault()
+      props.setModalOpenStatus(false)
+    }
+    let addConnectionClass = props.addNewConnectionSettings.showCreateConnectionButton ? '' : 'disabled'
     let SelectedData
+    let selectComponentOptions = ''
     let optionItems = ''
-    // let handleFirstSelect = function (event) {
-    //   console.log(event.target.value)
-    // }
-    console.log('optionItems', optionItems)
-    // console.log('name', componentTypeComponentRelName)
-    // console.log('name', componentTypeComponentChildName)
-    // console.log('name', componentTypeComponentRelationshipsList)
+    let newRelationshipArray = props.addNewConnectionSettings.newConnectionArray
+    let handleFirstSelect = function (event) {
+      if (event.target.value !== 0) {
+        let index = event.target.value
+        let constraintObject = ComponentTypeConstraintsData.resources[index]
+        let displayText
+        if (constraintObject.constraint_type === 'Parent') {
+          displayText = constraintObject.target_component_type.name + ' is ' + constraintObject.connection_type.name + ' of ' + props.componentTypeComponentData.resources[0].name
+        } else if (constraintObject.constraint_type === 'Child') {
+          displayText = constraintObject.target_component_type.name + ' is ' + constraintObject.connection_type.name + ' of ' + props.componentTypeComponentData.resources[0].name
+        } else if (constraintObject.constraint_type === 'ConnectTo') {
+          displayText = props.componentTypeComponentData.resources[0].name + ' ' + constraintObject.connection_type.name + ' ' + constraintObject.target_component_type.name
+        } else if (constraintObject.constraint_type === 'ConnectFrom') {
+          displayText = props.componentTypeComponentData.resources[0].name + ' ' + constraintObject.connection_type.name + ' ' + constraintObject.target_component_type.name
+        }
+        let payload = {...props.addNewConnectionSettings, 'firstSelectboxSelected': true, 'secondSelectboxSelected': false, 'slectedConstraintObject': constraintObject, 'relationshipText': displayText}
+        props.setAddConnectionSettings(payload)
+      }
+    }
+    let handleSecondSelect = function (event) {
+      let index = event.target.value
+      let componentObject = ComponentTypeComponentsData.resources[index]
+      let payload = {...props.addNewConnectionSettings, 'secondSelectboxSelected': true, 'selectedComponentObject': componentObject, 'componentText': componentObject.name}
+      props.setAddConnectionSettings(payload)
+    }
+    let addRelationShip = function () {
+      let displayName = props.addNewConnectionSettings.relationshipText + ' ' + props.addNewConnectionSettings.componentText
+      let targetComponent = {}
+      targetComponent.name = props.addNewConnectionSettings.selectedComponentObject.name
+      targetComponent.id = props.addNewConnectionSettings.selectedComponentObject.id
+      targetComponent.component_type = props.addNewConnectionSettings.slectedConstraintObject.target_component_type
+      let component = {}
+      component.name = props.componentTypeComponentData.resources[0].name
+      component.id = props.componentTypeComponentData.resources[0].id
+      let newConnection = {}
+      newConnection.display_name = displayName
+      newConnection.relationship_type = props.addNewConnectionSettings.slectedConstraintObject.constraint_type
+      newConnection.component = component
+      // eslint-disable-next-line
+      newConnection.target_component = targetComponent
+      newConnection.connection = props.addNewConnectionSettings.slectedConstraintObject.connection_type
+      newRelationshipArray.push(newConnection)
+      let payload = {...props.addNewConnectionSettings, 'firstSelectboxSelected': false, 'secondSelectboxSelected': false, 'newConnectionArray': newRelationshipArray, 'showCreateConnectionButton': true, 'slectedConstraintObject': {}, 'selectedComponentObject': {}}
+      console.log('New relation Ships', newRelationshipArray)
+      props.setAddConnectionSettings(payload)
+    }
 
     if (props.componentTypeComponentData !== '') {
       componentTypeComponentName = props.componentTypeComponentData.resources[0].name
@@ -96,10 +140,14 @@ export default function ComponentTypeComponent (props) {
         data.is_disabled = false
         return data
       })
-      optionItems = SelectedData.map((option) =>
-        <option key={option.name} value={option}>{option.display_name}</option>
+      optionItems = SelectedData.map((option, index) =>
+        <option key={index} value={index}>{option.display_name}</option>
       )
       optionItems.unshift(<option key={0}>{'--Choose Relationship Type--'}</option>)
+      selectComponentOptions = ComponentTypeComponentsData.resources.map((option, index) =>
+        <option key={index} value={index}>{option.name}</option>
+      )
+      selectComponentOptions.unshift(<option key={0}>{'--Search Server--'}</option>)
     }
 
     if (typeof componentTypeComponentProperties !== 'undefined') {
@@ -138,10 +186,6 @@ export default function ComponentTypeComponent (props) {
         )
       })
     }
-    // if (props.componentTypeComponentData !== '') {
-    //   componentTypeComponentRelName = props.componentTypeComponentData.resources[0].component_type_name
-    //   componentTypeComponentChildName = props.componentTypeComponentData.resources[0].name
-    // }
 
     if (componentTypeComponentRelationships !== '') {
       modelRelationshipData = componentTypeComponentRelationships.resources
@@ -217,7 +261,7 @@ export default function ComponentTypeComponent (props) {
                   outgoingElements.push(
                     <div className='m-accordion__item'>
                       <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + targetComponentTypeKey} aria-expanded='false'>
-                        <span className='m-accordion__item-title'>{outgoingGroup[connectionKey][targetComponentTypeKey][0].component.name} {connectionKey} {''}</span>
+                        <span className='m-accordion__item-title'>{outgoingGroup[connectionKey][targetComponentTypeKey][0].component.name} {connectionKey} {targetComponentTypeKey}</span>
                         <span className='m-accordion__item-mode' />
                       </div>
                       <div className='m-accordion__item-body collapse' id={'m_accordion_2_item_1_body' + targetComponentTypeKey} role='tabpanel' aria-labelledby='m_accordion_2_item_1_head' data-parent='#m_accordion_2'>
@@ -310,10 +354,10 @@ export default function ComponentTypeComponent (props) {
                   </table>
                 </div>
                 <div className={'tab-pane' + showRelationships} id='m_tabs_3_2' role='tabpanel'>
+                  <div className='pull-right'>
+                    <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Connections</button>
+                  </div>
                   <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' role='tablist' aria-multiselectable='true'>
-                    {/* <div className='row'>
-                      <button type='button' onClick={openModal} id='m_login_signup' className={'pull-right ' + styles.buttonbg}>Add Connections</button>
-                    </div> */}
                     {parentComponentRelationshipList}
                     {outgoingComponentRelationshipList}
                     {incomingComponentRelationshipList}
@@ -334,11 +378,11 @@ export default function ComponentTypeComponent (props) {
             </div>
           </div>
         </div>
-        {/* <div>
+        <div>
           <Modal isOpen={props.modalIsOpen}
             onRequestClose={closeModal}
             style={customStyles} >
-            {/* <button onClick={closeModal} ><i className='la la-close' /></button>
+            {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
             <div className={styles.modalwidth}>
               <div className='modal-dialog'>
                 <div className='modal-content'>
@@ -349,22 +393,40 @@ export default function ComponentTypeComponent (props) {
                     </button>
                   </div>
                   <div className='modal-body'>
-                    <form>
-                      <div className='form-group m-form__group'>
-                        <label htmlFor='exampleSelect1'>Choose Relationship Type</label>
-                        <select className='form-control m-input' onBlur={handleFirstSelect} >{optionItems}</select>
+                    <div className='col-md-12'>
+                      <label className={''} htmlFor='exampleSelect1'>Choose Relationship Type</label>
+                      <select className='form-control m-input' onBlur={handleFirstSelect} >{optionItems}</select>
+                    </div>
+                    {props.addNewConnectionSettings.firstSelectboxSelected && (
+                      <div className='col-md-12'>
+                        <label className={''} htmlFor='exampleSelect1'>Select Related Component</label>
+                        <select className='form-control m-input' onBlur={handleSecondSelect} >{selectComponentOptions}</select>
                       </div>
-                    </form>
+                    )}
+                    {props.addNewConnectionSettings.secondSelectboxSelected && (
+                      <div className='col-md-12'>
+                        <p>{props.addNewConnectionSettings.relationshipText + ' ' + props.addNewConnectionSettings.componentText}</p>
+                        <button onClick={addRelationShip} className={'btn btn-sm btn-outline-info' + ' '}>Add Relationships</button>
+                      </div>
+                    )}
+                    <div className='col-md-12'>
+                      <hr size='3' />
+                      {props.addNewConnectionSettings.newConnectionArray.length > 0 &&
+                        props.addNewConnectionSettings.newConnectionArray.map(function (connection, index) {
+                          return (<span><p>{connection.display_name}</p>&nbsp;&nbsp;&nbsp;<a>remove</a></span>)
+                        })
+                      }
+                    </div>
                   </div>
                   <div className='modal-footer'>
-                    {/* <button type='button' className='btn btn-primary'>Save changes</button>
-                    <button type='button' id='m_login_signup' className={styles.buttonbg}>Add Connections</button>
+                    {/* <button type='button' className='btn btn-primary'>Save changes</button> */}
+                    <button className={'btn btn-sm btn-info ' + addConnectionClass}>Add Connections</button>
                   </div>
                 </div>
               </div>
             </div>
           </Modal>
-        </div> */}
+        </div>
       </div>
     )
 }
@@ -374,7 +436,9 @@ ComponentTypeComponent.propTypes = {
   componentTypeComponentProperties: PropTypes.any,
   showTabs: PropTypes.any,
   // setCurrentTab: PropTypes.func,
-  // modalIsOpen: PropTypes.any,
+  modalIsOpen: PropTypes.any,
   // setModalOpenStatus: PropTypes.func
-  componentTypeComponentRelationships: PropTypes.any
+  componentTypeComponentRelationships: PropTypes.any,
+  addNewConnectionSettings: PropTypes.any,
+  setAddConnectionSettings: PropTypes.func
 }

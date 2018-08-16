@@ -296,11 +296,9 @@ class ComponentModelComponent extends React.Component {
     }
     componentWillReceiveProps (nextProps) {
       console.log('Component Model ---------->>', nextProps)
-    }
-    render () {
-        if (Object.keys(this.props.startNode).length > 0 && this.props.startNode.constructor === Object) {
-            if (this.props.relationships && this.props.relationships) {
-                let nodeData = this.props.relationships
+        if (Object.keys(nextProps.startNode).length > 0 && nextProps.startNode.constructor === Object) {
+            if (nextProps.relationships && nextProps.relationships) {
+                let nodeData = nextProps.relationships
                 let leftCordinates = []
                 let rightCordinates = []
                 let topCordinates = []
@@ -311,8 +309,8 @@ class ComponentModelComponent extends React.Component {
                 let graphData = {}
                 // Setting first node
                 node.id = 0
-                node.name = this.props.startNode.name
-                node.Title = this.props.startNode.title
+                node.name = nextProps.startNode.name
+                node.Title = nextProps.startNode.title
                 node.width = 140
                 node.height = 70
                 node.x = 400
@@ -342,7 +340,7 @@ class ComponentModelComponent extends React.Component {
                         node.fontWeight = 500
                         node.fontFamily = 'sans-serif'
                         node.dy = '0.25em'
-                        if (data.constraint_type === 'Parent') {
+                        if (data.relationship_type === 'Parent') {
                             let topLength = topCordinates.length
                             if (topLength < 1) {
                             let cor = {
@@ -435,7 +433,7 @@ class ComponentModelComponent extends React.Component {
                         }
                         nodeArray.push(node)
                         var link = {}
-                        link.type = data.name || 'empty'
+                        link.type = data.connection.name || 'empty'
                         link.direction = 'output'
                         link.strokeWidth = 1.2
                         link.fontFamily = 'sans-serif'
@@ -472,6 +470,8 @@ class ComponentModelComponent extends React.Component {
                 }
             }
         }
+    }
+    render () {
         return (
           <div id='mainScreen' >
             <svg id='diagramLayout1' />

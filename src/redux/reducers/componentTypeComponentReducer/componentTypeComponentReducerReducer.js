@@ -4,6 +4,7 @@ import { FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS, FETCH_COMPONENT_TYPE_COMPONENT_
 const SET_DATA_LOADING = 'ComponentTypeComponentReducer/SET_DATA_LOADING'
 const SET_CURRENT_PAGE = 'ComponentTypeComponentReducer/SET_CURRENT_PAGE'
 const SET_CURRENT_TAB = 'ComponentTypeComponentReducer/SET_CURRENT_TAB'
+const SET_ADD_CONNECTION_SETTINGS = 'ComponentTypeComponentReducer/SET_ADD_CONNECTION_SETTINGS'
 
 export const actions = {
   FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS,
@@ -11,13 +12,15 @@ export const actions = {
   FETCH_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
   SET_DATA_LOADING,
   SET_CURRENT_PAGE,
-  SET_CURRENT_TAB
+  SET_CURRENT_TAB,
+  SET_ADD_CONNECTION_SETTINGS
 }
 
 export const actionCreators = {
     setDataLoading: createAction(SET_DATA_LOADING),
     setCurrentPage: createAction(SET_CURRENT_PAGE),
-    setCurrentTab: createAction(SET_CURRENT_TAB)
+    setCurrentTab: createAction(SET_CURRENT_TAB),
+    setAddConnectionSettings: createAction(SET_ADD_CONNECTION_SETTINGS)
 }
 
 export const initialState = {
@@ -26,7 +29,20 @@ export const initialState = {
     componentTypeComponentRelationships: '',
     isComponentTypeLoading: false,
     currentPage: 1,
-    showTabs: {'showProperty': ' active show', 'showRelationship': ''}
+    showTabs: {'showProperty': ' active show', 'showRelationship': ''},
+    addNewConnectionSettings: {
+      firstSelectboxSelected: false,
+      firstSelectboxIndex: '',
+      secondSelectboxSelected: false,
+      secondSelectboxIndex: '',
+      showAddRelationshipButton: false,
+      showCreateConnectionButton: false,
+      slectedConstraintObject: {},
+      selectedComponentObject: {},
+      relationshipText: '',
+      componentText: '',
+      newConnectionArray: []
+    }
 }
 
 export default handleActions(
@@ -51,6 +67,10 @@ export default handleActions(
     [SET_CURRENT_TAB]: (state, action) => ({
       ...state,
       showTabs: action.payload
+    }),
+    [SET_ADD_CONNECTION_SETTINGS]: (state, action) => ({
+      ...state,
+      addNewConnectionSettings: action.payload
     })
   },
   initialState

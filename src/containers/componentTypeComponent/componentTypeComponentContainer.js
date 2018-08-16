@@ -15,6 +15,7 @@ export function mapStateToProps (state, props) {
     componentDetail: state.applicationDetailReducer.componentDetail,
     componentTypeComponentRelationships: state.componentTypeComponentReducer.componentTypeComponentRelationships,
     showTabs: state.componentTypeComponentReducer.showTabs,
+    addNewConnectionSettings: state.componentTypeComponentReducer.addNewConnectionSettings,
     modalIsOpen: state.basicReducer.modalIsOpen
   }
 }
@@ -27,7 +28,8 @@ export const propsMapping: Callbacks = {
   fetchcomponentTypeComponentProperties: sagaActions.componentTypeComponentActions.fetchcomponentTypeComponentProperties,
   fetchcomponentTypeComponentRelationships: sagaActions.componentTypeComponentActions.fetchcomponentTypeComponentRelationships,
   setModalOpenStatus: basicActionCreators.setModalOpenStatus,
-  setCurrentTab: componentTypeComponentActionCreators.setCurrentTab
+  setCurrentTab: componentTypeComponentActionCreators.setCurrentTab,
+  setAddConnectionSettings: componentTypeComponentActionCreators.setAddConnectionSettings
 }
 
 // If you want to use the function mapping
