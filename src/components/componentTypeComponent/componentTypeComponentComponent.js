@@ -73,6 +73,7 @@ export default function ComponentTypeComponent (props) {
     let selectComponentOptions = ''
     let optionItems = ''
     let newRelationshipArray = props.addNewConnectionSettings.newConnectionArray
+    // Action for first select
     let handleFirstSelect = function (event) {
       if (event.target.value !== 0) {
         let index = event.target.value
