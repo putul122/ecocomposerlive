@@ -49,3 +49,31 @@
     .borderless td, .borderless th {
         border: none;
     }
+
+    .modal{
+        position: absolute;
+        top: 18%;
+        // left: 40px;
+        // right: 40px;
+        background-color: papayawhip;
+    }
+
+    .modalwidth{
+        width:1200px;
+        }
+
+    .modalStyle {
+        display: block; 
+        padding-right: 15px;    
+    }
+
+    .search1style {
+        width: 270.984px;
+    }
+    .search2style {
+        width: 268.969px;
+    }
+    .search3style {
+        width: 270.984px;
+    }
+    .pointerDisabled { pointer-events: none; }

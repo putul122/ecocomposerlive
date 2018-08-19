@@ -71,7 +71,7 @@ export function * getComponentConstraint (action) {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
       const componentConstraints = yield call(
         axios.get,
-        api.getComponentConstraint(action.payload.id)
+        api.getComponentTypeConstraints(action.payload.id)
       )
       yield put(actionCreators.fetchComponentConstraintSuccess(componentConstraints.data))
     } catch (error) {
@@ -84,7 +84,7 @@ export function * getComponentComponent (action) {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
       const componentComponents = yield call(
         axios.get,
-        api.getComponentComponent(action.payload.id),
+        api.getComponentTypeComponents(action.payload.id),
         {params: action.payload.ComponentTypeComponent}
       )
       yield put(actionCreators.fetchComponentComponentSuccess(componentComponents.data))

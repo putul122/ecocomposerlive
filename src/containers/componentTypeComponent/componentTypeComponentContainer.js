@@ -14,6 +14,8 @@ export function mapStateToProps (state, props) {
     componentTypeComponentProperties: state.componentTypeComponentReducer.componentTypeComponentProperties,
     componentDetail: state.applicationDetailReducer.componentDetail,
     componentTypeComponentRelationships: state.componentTypeComponentReducer.componentTypeComponentRelationships,
+    componentTypeComponents: state.componentTypeComponentReducer.componentTypeComponents,
+    componentTypeComponentConstraints: state.componentTypeComponentReducer.componentTypeComponentConstraints,
     showTabs: state.componentTypeComponentReducer.showTabs,
     addNewConnectionSettings: state.componentTypeComponentReducer.addNewConnectionSettings,
     modalIsOpen: state.basicReducer.modalIsOpen
@@ -27,8 +29,11 @@ export const propsMapping: Callbacks = {
   fetchComponentTypeComponent: sagaActions.componentTypeComponentActions.fetchComponentTypeComponent,
   fetchcomponentTypeComponentProperties: sagaActions.componentTypeComponentActions.fetchcomponentTypeComponentProperties,
   fetchcomponentTypeComponentRelationships: sagaActions.componentTypeComponentActions.fetchcomponentTypeComponentRelationships,
+  fetchComponentConstraints: sagaActions.componentTypeComponentActions.fetchComponentConstraints,
+  fetchComponentTypeComponents: sagaActions.componentTypeComponentActions.fetchComponentTypeComponents,
   setModalOpenStatus: basicActionCreators.setModalOpenStatus,
   setCurrentTab: componentTypeComponentActionCreators.setCurrentTab,
+  setRelationshipsValue: componentTypeComponentActionCreators.setRelationshipsValue,
   setAddConnectionSettings: componentTypeComponentActionCreators.setAddConnectionSettings
 }
 
@@ -56,6 +61,8 @@ export default compose(
       this.props.fetchComponentTypeComponent && this.props.fetchComponentTypeComponent(payload)
       this.props.fetchcomponentTypeComponentProperties && this.props.fetchcomponentTypeComponentProperties(payload)
       this.props.fetchcomponentTypeComponentRelationships && this.props.fetchcomponentTypeComponentRelationships(payload)
+      this.props.fetchComponentConstraints && this.props.fetchComponentConstraints(payload)
+      this.props.fetchComponentTypeComponents && this.props.fetchComponentTypeComponents(payload)
     },
     componentWillReceiveProps: function (nextProps) {
       console.log('will receive props mmmmmmmmmmmmm', nextProps)

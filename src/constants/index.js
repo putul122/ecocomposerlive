@@ -11,10 +11,10 @@ const api = {
     getComponentById: function (componentTypeId) {
         return 'https://ecoconductor-dev-api-model.azurewebsites.net/component_types/' + componentTypeId
     },
-    getComponentConstraint: function (componentTypeId) {
+    getComponentTypeConstraints: function (componentTypeId) {
         return 'https://ecoconductor-dev-api-model.azurewebsites.net/component_types/' + componentTypeId + '/constraints'
     },
-    getComponentComponent: function (componentTypeId) {
+    getComponentTypeComponents: function (componentTypeId) {
         return 'https://ecoconductor-dev-api-model.azurewebsites.net/component_types/' + componentTypeId + '/components'
     },
     getComponent: function (payload) {
@@ -28,6 +28,9 @@ const api = {
     },
     addComponent: function (payload) {
         return 'https://ecoconductor-dev-api-model.azurewebsites.net/components'
+    },
+    getComponentConstraints: function (payload) {
+        return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentTypeComponentId + '/constraints'
     }
   }
 

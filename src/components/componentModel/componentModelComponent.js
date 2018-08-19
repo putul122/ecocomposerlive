@@ -1,28 +1,26 @@
 import React from 'react'
-import $ from 'jquery/dist/jquery'
-// import _ from 'lodash'
 import * as d3 from 'd3'
 import './componentModelComponent.scss'
 // let colors = d3.scaleOrdinal(d3.schemeCategory10)
 let width = 600
-let height = 700
+let height = 500
 let diagramLayout
 let simulation
 
 function forceInitialize (graphData) {
-    diagramLayout = d3.select('#diagramLayout1')
-      .attr('id', 'diagramLayout') // set id
-      .attr('width', width) // set width
-      .attr('height', height) // set height
-      .call(d3.zoom().on('zoom', zoomed))
-      .attr('display', 'block')
-      .append('g')
-      .attr('transform', 'translate(' + 20 + ',' + 20 + ')')
+    // diagramLayout = d3.select('#diagramLayout1')
+    //   .attr('id', 'diagramLayout') // set id
+    //   .attr('width', width) // set width
+    //   .attr('height', height) // set height
+    //   .call(d3.zoom().on('zoom', zoomed))
+    //   .attr('display', 'block')
+    //   .append('g')
+    //   .attr('transform', 'translate(' + 20 + ',' + 20 + ')')
 
-    function zoomed () {
-        console.log('zooming action')
-        diagramLayout.attr('transform', d3.event.transform)
-    }
+    // function zoomed () {
+    //     console.log('zooming action')
+    //     diagramLayout.attr('transform', d3.event.transform)
+    // }
 
     simulation = d3.forceSimulation()
     simulation.force('link', d3.forceLink().id(function (d) {
@@ -33,7 +31,7 @@ function forceInitialize (graphData) {
       // .force("x", d3.forceX(55))
       // .force("y", d3.forceY(45))
       .force('collide', d3.forceCollide().radius(function (d) {
-        return 60
+        return 50
       }).iterations(2))
     simulation.on('end', function () {
       simulation.force('link', d3.forceLink().id(function (d) {
@@ -145,11 +143,11 @@ function force (graphData) {
       //  .attr('stroke-opacity', '0.3')
       .attr('stroke', '#000000')
       .attr('fill', '#FFFFFF')
-      .attr('word-wrap', 'break-word')
+      // .attr('word-wrap', 'break-word')
       // .style('fill', function (d, i) { return colors(i) })
 
     nodeEnter.append('title')
-      .attr('word-wrap', 'break-word')
+      // .attr('word-wrap', 'break-word')
       .text(function (d) { return d.title })
 
     nodeEnter.append('text')
@@ -293,11 +291,25 @@ class ComponentModelComponent extends React.Component {
     }
     componentDidMount () {
         console.log('component did mount Component 666 model', this.props)
+        diagramLayout = d3.select('#diagramLayout1')
+        .attr('id', 'diagramLayout') // set id
+        .attr('width', width) // set width
+        .attr('height', height) // set height
+        .call(d3.zoom().on('zoom', zoomed))
+        .attr('display', 'block')
+        .append('g')
+        .attr('transform', 'translate(' + 20 + ',' + 20 + ')')
+
+        function zoomed () {
+            console.log('zooming action')
+            diagramLayout.attr('transform', d3.event.transform)
+        }
     }
     componentWillReceiveProps (nextProps) {
       console.log('Component Model ---------->>', nextProps)
         if (Object.keys(nextProps.startNode).length > 0 && nextProps.startNode.constructor === Object) {
             if (nextProps.relationships && nextProps.relationships) {
+                console.log('inside if component model')
                 let nodeData = nextProps.relationships
                 let leftCordinates = []
                 let rightCordinates = []
@@ -325,7 +337,7 @@ class ComponentModelComponent extends React.Component {
                 nodeArray.push(node)
                 // end
                 if (nodeData.length > 0) {
-                    $.each(nodeData, function (index, data) {
+                    nodeData.forEach(function (data, index) {
                         index++
                         node = {}
                         node.id = index
@@ -455,25 +467,27 @@ class ComponentModelComponent extends React.Component {
                         }
                         linkArray.push(link)
                         if (index === nodeData.length) {
-                            // console.log('linkArray', linkArray)
-                            // console.log('nodeArray', nodeArray)
+                            console.log('linkArray', linkArray)
+                            console.log('nodeArray', nodeArray)
                             graphData.nodes = nodeArray
                             graphData.links = linkArray
-                            // console.log('------------------', JSON.stringify(graphData))
+                            console.log('------------------', JSON.stringify(graphData))
                             forceInitialize(graphData)
                         }
                     })
                 } else {
                     graphData.nodes = nodeArray
                     graphData.links = []
+                    console.log('------------------else', JSON.stringify(graphData))
                     forceInitialize(graphData)
+                    this.forceUpdate()
                 }
             }
         }
     }
     render () {
         return (
-          <div id='mainScreen' >
+          <div id='mainScreen1' >
             <svg id='diagramLayout1' />
           </div>
           )
