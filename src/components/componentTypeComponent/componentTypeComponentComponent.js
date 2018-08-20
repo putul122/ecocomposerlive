@@ -45,8 +45,8 @@ export default function ComponentTypeComponent (props) {
       props.setCurrentTab(payload)
     }
     // Model ADD new Connections Code
-    let firstSelectboxSelected = props.addNewConnectionSettings.firstSelectboxSelected
-    let secondSelectboxSelected = props.addNewConnectionSettings.secondSelectboxSelected
+    // let firstSelectboxSelected = props.addNewConnectionSettings.firstSelectboxSelected
+    // let secondSelectboxSelected = props.addNewConnectionSettings.secondSelectboxSelected
     let openModal = function (event) {
       // event.preventDefault()
       props.setModalOpenStatus(true)
@@ -56,6 +56,7 @@ export default function ComponentTypeComponent (props) {
       props.setModalOpenStatus(false)
       let payload = {...props.addNewConnectionSettings, 'firstSelectboxSelected': false, 'secondSelectboxSelected': false, 'slectedConstraintObject': {}, 'relationshipText': ''}
       props.setAddConnectionSettings(payload)
+      props.setRelationshipsValue({'resources': newRelationshipArray})
     }
     let addConnectionClass = props.addNewConnectionSettings.showCreateConnectionButton ? '' : 'disabled ' + styles.pointerDisabled
     let addRelationshipClass = props.addNewConnectionSettings.showAddRelationshipButton ? '' : 'disabled ' + styles.pointerDisabled
@@ -516,12 +517,12 @@ export default function ComponentTypeComponent (props) {
                       <div className='col-7'>
                         <select
                           className='form-control m-input'
-                          // value={}
+                          // value={props.addNewConnectionSettings.firstSelectboxIndex}
                           onBlur={handleFirstSelect}
                           >{optionItems}</select>
                       </div>
                     </div>
-                    {firstSelectboxSelected === true && (
+                    {props.addNewConnectionSettings.firstSelectboxSelected === true && (
                       <div className='form-group m-form__group row'>
                         <label htmlFor='SelectRelatedComponent' className='col-5 col-form-label'>Choose Select Related Component</label>
                         <div className='col-7'>
@@ -540,7 +541,7 @@ export default function ComponentTypeComponent (props) {
                         <div className='m--space-10' />
                       </div>
                     )}
-                    {secondSelectboxSelected === true && !props.addNewConnectionSettings.isNewComponent && (
+                    {props.addNewConnectionSettings.secondSelectboxSelected === true && !props.addNewConnectionSettings.isNewComponent && (
                       <div className='row'>
                         <p className='col-8'>{props.addNewConnectionSettings.relationshipText + ' ' + props.addNewConnectionSettings.componentText}</p>
                         <div className='col-4'>
@@ -549,7 +550,7 @@ export default function ComponentTypeComponent (props) {
                         <div className='m--space-10' />
                       </div>
                     )}
-                    {secondSelectboxSelected === true && props.addNewConnectionSettings.isNewComponent && (
+                    {props.addNewConnectionSettings.secondSelectboxSelected === true && props.addNewConnectionSettings.isNewComponent && (
                       <div className='row'>
                         <p className='col-5'>{props.addNewConnectionSettings.relationshipText + ' '}</p>
                         <input type='text' className='col-4 form-control m-input' onChange={handleNewComponent} value={props.addNewConnectionSettings.newComponentName} placeholder='New Component' aria-describedby='basic-addon2' />

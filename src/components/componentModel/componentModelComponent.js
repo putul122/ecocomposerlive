@@ -6,23 +6,22 @@ let width = 600
 let height = 500
 let diagramLayout
 let simulation
-// let d3Select = d3.select('#diagramLayout1')
 
 function forceInitialize (graphData) {
-    // d3.selectAll('svg > *').remove()
-    // diagramLayout = d3.select('#diagramLayout1')
-    //   .attr('id', 'diagramLayout') // set id
-    //   .attr('width', width) // set width
-    //   .attr('height', height) // set height
-    //   .call(d3.zoom().on('zoom', zoomed))
-    //   .attr('display', 'block')
-    //   .append('g')
-    //   .attr('transform', 'translate(' + 20 + ',' + 20 + ')')
+    d3.selectAll('svg > *').remove()
+    diagramLayout = d3.select('svg')
+      .attr('id', 'diagramLayout') // set id
+      .attr('width', width) // set width
+      .attr('height', height) // set height
+      .call(d3.zoom().on('zoom', zoomed))
+      .attr('display', 'block')
+      .append('g')
+      .attr('transform', 'translate(' + 20 + ',' + 20 + ')')
 
-    // function zoomed () {
-    //     console.log('zooming action')
-    //     diagramLayout.attr('transform', d3.event.transform)
-    // }
+    function zoomed () {
+        console.log('zooming action')
+        diagramLayout.attr('transform', d3.event.transform)
+    }
 
     simulation = d3.forceSimulation()
     simulation.force('link', d3.forceLink().id(function (d) {
@@ -293,20 +292,6 @@ class ComponentModelComponent extends React.Component {
     }
     componentDidMount () {
         console.log('component did mount Component 666 model', this.props)
-        diagramLayout = d3.select('#diagramLayout1')
-        .attr('id', 'diagramLayout') // set id
-        .attr('width', width) // set width
-        .attr('height', height) // set height
-        .call(d3.zoom().on('zoom', zoomed))
-        .attr('display', 'block')
-        .append('g')
-        .attr('transform', 'translate(' + 20 + ',' + 20 + ')')
-
-        function zoomed () {
-            console.log('zooming action')
-            diagramLayout.attr('transform', d3.event.transform)
-        }
-        // d3Select = d3.select('#diagramLayout1')
     }
     componentWillReceiveProps (nextProps) {
       console.log('Component Model ---------->>', nextProps)
