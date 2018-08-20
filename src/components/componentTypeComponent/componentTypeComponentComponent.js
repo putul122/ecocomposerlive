@@ -66,16 +66,17 @@ export default function ComponentTypeComponent (props) {
     let newRelationshipArray = props.addNewConnectionSettings.newConnectionArray
     // Action for first select
     let handleFirstSelect = function (event) {
+      console.log('on first select', event.target.value)
       if (event.target.value !== '-1' && event.target.value !== '') {
         let index = event.target.value
         // let constraintObject = props.componentTypeComponentConstraints.resources[index]
         let constraintObject = _.find(props.componentTypeComponentConstraints.resources, function (obj) {
                                     return parseInt(obj.id) === parseInt(index)
                                 })
-        console.log('handel first constraint object', constraintObject)
-        console.log('handel first constraint index', index)
-        console.log('handel first constraint object full', props.componentTypeComponentConstraints.resources)
-        console.log('selected options', optionItems)
+        // console.log('handel first constraint object', constraintObject)
+        // console.log('handel first constraint index', index)
+        // console.log('handel first constraint object full', props.componentTypeComponentConstraints.resources)
+        // console.log('selected options', optionItems)
         let displayText
         if (constraintObject.constraint_type === 'Parent') {
           displayText = constraintObject.target_component_type.name + ' is ' + constraintObject.connection_type.name + ' of ' + props.componentTypeComponentData.resources[0].name
@@ -154,7 +155,8 @@ export default function ComponentTypeComponent (props) {
         if (newValue !== null) {
           let componentObject = {}
           componentObject.name = newValue.value // props.componentTypeComponents.resources[index]
-          let payload = {...props.addNewConnectionSettings, 'secondSelectboxSelected': true, 'isNewComponent': true, 'selectedComponentObject': componentObject, 'componentText': componentObject.name, 'newComponentName': componentObject.name}
+          let showAddRelationshipButton = newValue.value.length >= 1
+          let payload = {...props.addNewConnectionSettings, 'secondSelectboxSelected': true, 'isNewComponent': true, 'selectedComponentObject': componentObject, 'componentText': componentObject.name, 'newComponentName': componentObject.name, 'showAddRelationshipButton': showAddRelationshipButton}
           props.setAddConnectionSettings(payload)
         } else {
           let payload = {...props.addNewConnectionSettings, 'secondSelectboxSelected': false, 'selectedComponentObject': {}, 'componentText': ''}

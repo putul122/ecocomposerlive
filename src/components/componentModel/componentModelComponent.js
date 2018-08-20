@@ -6,8 +6,10 @@ let width = 600
 let height = 500
 let diagramLayout
 let simulation
+// let d3Select = d3.select('#diagramLayout1')
 
 function forceInitialize (graphData) {
+    // d3.selectAll('svg > *').remove()
     // diagramLayout = d3.select('#diagramLayout1')
     //   .attr('id', 'diagramLayout') // set id
     //   .attr('width', width) // set width
@@ -304,6 +306,7 @@ class ComponentModelComponent extends React.Component {
             console.log('zooming action')
             diagramLayout.attr('transform', d3.event.transform)
         }
+        // d3Select = d3.select('#diagramLayout1')
     }
     componentWillReceiveProps (nextProps) {
       console.log('Component Model ---------->>', nextProps)
