@@ -12,12 +12,16 @@ export function mapStateToProps (state, props) {
     authenticateUser: state.basicReducer.authenticateUser,
     componentTypeComponentData: state.componentTypeComponentReducer.componentTypeComponentData,
     componentTypeComponentProperties: state.componentTypeComponentReducer.componentTypeComponentProperties,
+    copiedComponentProperties: state.componentTypeComponentReducer.copiedComponentProperties,
+    componentPropertiesPayload: state.componentTypeComponentReducer.componentPropertiesPayload,
     componentDetail: state.applicationDetailReducer.componentDetail,
     componentTypeComponentRelationships: state.componentTypeComponentReducer.componentTypeComponentRelationships,
     componentTypeComponents: state.componentTypeComponentReducer.componentTypeComponents,
     componentTypeComponentConstraints: state.componentTypeComponentReducer.componentTypeComponentConstraints,
     showTabs: state.componentTypeComponentReducer.showTabs,
+    isEditComponent: state.componentTypeComponentReducer.isEditComponent,
     addNewConnectionSettings: state.componentTypeComponentReducer.addNewConnectionSettings,
+    isDropDownOpen: state.basicReducer.isDropDownOpen,
     modalIsOpen: state.basicReducer.modalIsOpen
   }
 }
@@ -29,12 +33,20 @@ export const propsMapping: Callbacks = {
   fetchComponentTypeComponent: sagaActions.componentTypeComponentActions.fetchComponentTypeComponent,
   fetchcomponentTypeComponentProperties: sagaActions.componentTypeComponentActions.fetchcomponentTypeComponentProperties,
   fetchcomponentTypeComponentRelationships: sagaActions.componentTypeComponentActions.fetchcomponentTypeComponentRelationships,
+  updateComponentTypeComponentRelationships: sagaActions.componentTypeComponentActions.updateComponentTypeComponentRelationships,
+  updateComponentTypeComponentProperties: sagaActions.componentTypeComponentActions.updateComponentTypeComponentProperties,
   fetchComponentConstraints: sagaActions.componentTypeComponentActions.fetchComponentConstraints,
   fetchComponentTypeComponents: sagaActions.componentTypeComponentActions.fetchComponentTypeComponents,
   setModalOpenStatus: basicActionCreators.setModalOpenStatus,
   setCurrentTab: componentTypeComponentActionCreators.setCurrentTab,
+  setEditComponentFlag: componentTypeComponentActionCreators.setEditComponentFlag,
+  copyComponentProperties: componentTypeComponentActionCreators.copyComponentProperties,
+  restoreComponentProperties: componentTypeComponentActionCreators.restoreComponentProperties,
+  editComponentProperties: componentTypeComponentActionCreators.editComponentProperties,
+  pushComponentPropertyPayload: componentTypeComponentActionCreators.pushComponentPropertyPayload,
   setRelationshipsValue: componentTypeComponentActionCreators.setRelationshipsValue,
-  setAddConnectionSettings: componentTypeComponentActionCreators.setAddConnectionSettings
+  setAddConnectionSettings: componentTypeComponentActionCreators.setAddConnectionSettings,
+  setDropdownFlag: basicActionCreators.setDropdownFlag
 }
 
 // If you want to use the function mapping

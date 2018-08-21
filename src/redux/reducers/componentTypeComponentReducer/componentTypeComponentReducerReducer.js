@@ -3,7 +3,8 @@ import { FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENT_PROPERTIES_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
   FETCH_COMPONENT_CONSTRAINTS_SUCCESS,
-  FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS
+  FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
+  UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS
  } from '../../sagas/componentTypeComponent/componentTypeComponentSaga'
 // Name Spaced Action Types
 const SET_DATA_LOADING = 'ComponentTypeComponentReducer/SET_DATA_LOADING'
@@ -11,6 +12,11 @@ const SET_CURRENT_PAGE = 'ComponentTypeComponentReducer/SET_CURRENT_PAGE'
 const SET_CURRENT_TAB = 'ComponentTypeComponentReducer/SET_CURRENT_TAB'
 const SET_ADD_CONNECTION_SETTINGS = 'ComponentTypeComponentReducer/SET_ADD_CONNECTION_SETTINGS'
 const SET_RELATIONSHIPS_VALUE = 'ComponentTypeComponentReducer/SET_RELATIONSHIPS_VALUE'
+const SET_EDIT_COMPONENT_FLAG = 'ComponentTypeComponentReducer/SET_EDIT_COMPONENT_FLAG'
+const COPY_COMPONENT_PROPERTIES = 'ComponentTypeComponentReducer/COPY_COMPONENT_PROPERTIES'
+const RESTORE_COMPONENT_PROPERTIES = 'ComponentTypeComponentReducer/RESTORE_COMPONENT_PROPERTIES'
+const EDIT_COMPONENT_PROPERTIES = 'ComponentTypeComponentReducer/EDIT_COMPONENT_PROPERTIES'
+const PUSH_COMPONENT_PROPERTY_PAYLOAD = 'ComponentTypeComponentReducer/PUSH_COMPONENT_PROPERTY_PAYLOAD'
 
 export const actions = {
   FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS,
@@ -18,11 +24,17 @@ export const actions = {
   FETCH_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
   FETCH_COMPONENT_CONSTRAINTS_SUCCESS,
+  UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
   SET_DATA_LOADING,
   SET_CURRENT_PAGE,
   SET_CURRENT_TAB,
   SET_ADD_CONNECTION_SETTINGS,
-  SET_RELATIONSHIPS_VALUE
+  SET_RELATIONSHIPS_VALUE,
+  SET_EDIT_COMPONENT_FLAG,
+  COPY_COMPONENT_PROPERTIES,
+  RESTORE_COMPONENT_PROPERTIES,
+  EDIT_COMPONENT_PROPERTIES,
+  PUSH_COMPONENT_PROPERTY_PAYLOAD
 }
 
 export const actionCreators = {
@@ -30,12 +42,19 @@ export const actionCreators = {
     setCurrentPage: createAction(SET_CURRENT_PAGE),
     setCurrentTab: createAction(SET_CURRENT_TAB),
     setAddConnectionSettings: createAction(SET_ADD_CONNECTION_SETTINGS),
-    setRelationshipsValue: createAction(SET_RELATIONSHIPS_VALUE)
+    setRelationshipsValue: createAction(SET_RELATIONSHIPS_VALUE),
+    setEditComponentFlag: createAction(SET_EDIT_COMPONENT_FLAG),
+    copyComponentProperties: createAction(COPY_COMPONENT_PROPERTIES),
+    restoreComponentProperties: createAction(RESTORE_COMPONENT_PROPERTIES),
+    editComponentProperties: createAction(EDIT_COMPONENT_PROPERTIES),
+    pushComponentPropertyPayload: createAction(PUSH_COMPONENT_PROPERTY_PAYLOAD)
 }
 
 export const initialState = {
     componentTypeComponentData: '',
     componentTypeComponentProperties: '',
+    copiedComponentProperties: '',
+    componentPropertiesPayload: [],
     componentTypeComponentRelationships: '',
     componentTypeComponentConstraints: '',
     componentTypeComponents: '',
@@ -49,6 +68,7 @@ export const initialState = {
       secondSelectboxIndex: '',
       isNewComponent: false,
       newComponentName: '',
+      isEditComponent: false,
       showAddRelationshipButton: false,
       showCreateConnectionButton: false,
       slectedConstraintObject: {},
@@ -97,6 +117,31 @@ export default handleActions(
     [SET_RELATIONSHIPS_VALUE]: (state, action) => ({
       ...state,
       componentTypeComponentRelationships: action.payload
+    }),
+    [UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS]: (state, action) => ({
+      ...state,
+      componentTypeComponentRelationships: action.payload
+    }),
+    [SET_EDIT_COMPONENT_FLAG]: (state, action) => ({
+      ...state,
+      isEditComponent: action.payload
+    }),
+    [COPY_COMPONENT_PROPERTIES]: (state, action) => ({
+      ...state,
+      copiedComponentProperties: action.payload.copiedComponentProperties,
+      isEditComponent: action.payload.isEditComponent
+    }),
+    [RESTORE_COMPONENT_PROPERTIES]: (state, action) => ({
+      ...state,
+      componentTypeComponentProperties: action.payload
+    }),
+    [EDIT_COMPONENT_PROPERTIES]: (state, action) => ({
+      ...state,
+      componentTypeComponentProperties: action.payload
+    }),
+    [PUSH_COMPONENT_PROPERTY_PAYLOAD]: (state, action) => ({
+      ...state,
+      componentPropertiesPayload: action.payload
     })
   },
   initialState

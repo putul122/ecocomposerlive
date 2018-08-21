@@ -31,6 +31,12 @@ const api = {
     },
     getComponentConstraints: function (payload) {
         return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentTypeComponentId + '/constraints'
+    },
+    updateComponentRelationships: function (payload) {
+        return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_relationships'
+    },
+    updateComponentProperties: function (payload) {
+        return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_properties'
     }
   }
 

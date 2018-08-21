@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 // import ComponentTypeConstraintsData from './mockGetComponentTypeConstraints'
 import _ from 'lodash'
 import ComponentModelComponent from '../componentModel/componentModelComponent'
-// import Select from 'react-select'
+import Select from 'react-select'
 import CreatableSelect from 'react-select/lib/Creatable'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
@@ -26,6 +26,8 @@ export default function ComponentTypeComponent (props) {
     let componentTypeComponentName
     let componentTypeComponentDescription
     let componentTypeComponentProperties = props.componentTypeComponentProperties.resources
+    let copiedComponentProperties = props.copiedComponentProperties
+    let componentPropertiesPayload = props.componentPropertiesPayload
     let componentTypeComponentPropertiesList
     let componentTypeComponentRelationships = props.componentTypeComponentRelationships // relationshipData.resources // props.componentTypeComponentRelationships.data
     let modelRelationshipData = ''
@@ -43,6 +45,79 @@ export default function ComponentTypeComponent (props) {
     let showRelationship = function (event) {
       let payload = {'showProperty': '', 'showRelationship': ' active show'}
       props.setCurrentTab(payload)
+    }
+    let dropDownClass = ''
+    if (props.isDropDownOpen) { dropDownClass = 'm-dropdown--open' } else { dropDownClass = '' }
+    let openDropDown = function (event) {
+      event.preventDefault()
+      props.setDropdownFlag(true)
+    }
+    let closeDropDown = function (event) {
+      event.preventDefault()
+      props.setDropdownFlag(false)
+    }
+    let editComponent = function (event) {
+      event.preventDefault()
+      // props.setEditComponentFlag(true)
+      let payload = {}
+      payload.isEditComponent = true
+      payload.copiedComponentProperties = props.componentTypeComponentProperties
+      props.copyComponentProperties(payload)
+      console.log('component properties', props.componentTypeComponentProperties)
+    }
+    let cancelEditComponent = function (event) {
+      event.preventDefault()
+      console.log('copy component properties', copiedComponentProperties)
+      console.log('original component properties', componentTypeComponentProperties)
+      props.restoreComponentProperties(props.copiedComponentProperties)
+      props.setEditComponentFlag(false)
+      props.setDropdownFlag(false)
+    }
+    let saveComponentProperty = function (event) {
+      props.setEditComponentFlag(false)
+      props.setDropdownFlag(false)
+      let payload = {}
+      payload.componentId = props.componentTypeComponentData.resources[0].id
+      payload.data = componentPropertiesPayload
+      props.updateComponentTypeComponentProperties(payload)
+    }
+    let editTextProperty = function (index, childIndex, value) {
+      console.group('Input Changed')
+      console.log(index)
+      console.log(componentTypeComponentProperties[index].properties[childIndex])
+      let payload
+      let typeProperty = componentTypeComponentProperties[index].properties[childIndex].type_property
+      if (componentTypeComponentProperties[index].properties[childIndex].property_type.key === 'Integer') {
+        componentTypeComponentProperties[index].properties[childIndex].int_value = value
+        payload = { 'op': 'replace', 'path': `/${typeProperty}/int_value`, 'value': value }
+      } else if (componentTypeComponentProperties[index].properties[childIndex].property_type.key === 'Decimal') {
+        componentTypeComponentProperties[index].properties[childIndex].float_value = value
+        payload = { 'op': 'replace', 'path': `/${typeProperty}/float_value`, 'value': value }
+      } else if (componentTypeComponentProperties[index].properties[childIndex].property_type.key === 'DateTime') {
+        componentTypeComponentProperties[index].properties[childIndex].date_time_value = value
+        payload = { 'op': 'replace', 'path': `/${typeProperty}/date_time_value`, 'value': value }
+      } else if (componentTypeComponentProperties[index].properties[childIndex].property_type.key === 'Text') {
+        componentTypeComponentProperties[index].properties[childIndex].text_value = value
+        payload = { 'op': 'replace', 'path': `/${typeProperty}/text_value`, 'value': value }
+      } else {
+        componentTypeComponentProperties[index].properties[childIndex].other_value = value
+        payload = { 'op': 'replace', 'path': `/${typeProperty}/other_value`, 'value': value }
+      }
+      console.log(childIndex)
+      console.log(value)
+      console.log(componentTypeComponentProperties[index].properties[childIndex])
+      console.groupEnd()
+      if (componentPropertiesPayload.length === 0) {
+        componentPropertiesPayload.push(payload)
+      } else {
+        if (payload.path === componentPropertiesPayload[componentPropertiesPayload.length - 1].path) {
+          componentPropertiesPayload[componentPropertiesPayload.length - 1] = payload
+        } else {
+          componentPropertiesPayload.push(payload)
+        }
+      }
+      props.editComponentProperties({resources: componentTypeComponentProperties})
+      props.pushComponentPropertyPayload(componentPropertiesPayload)
     }
     // Model ADD new Connections Code
     // let firstSelectboxSelected = props.addNewConnectionSettings.firstSelectboxSelected
@@ -129,6 +204,10 @@ export default function ComponentTypeComponent (props) {
     }
     let addConnections = function () {
       props.setRelationshipsValue({'resources': newRelationshipArray})
+      let payload = {}
+      payload.componentId = props.componentTypeComponentData.resources[0].id
+      payload.data = newRelationshipArray
+      props.updateComponentTypeComponentRelationships(payload)
       showToaster()
       closeModal()
     }
@@ -268,27 +347,66 @@ export default function ComponentTypeComponent (props) {
     }
 
     if (typeof componentTypeComponentProperties !== 'undefined') {
+      console.log('original', componentTypeComponentProperties)
       componentTypeComponentPropertiesList = componentTypeComponentProperties.map(function (property, index) {
         let propertyProperties = property.properties
-        let childProperties = propertyProperties.map(function (childProperty, index) {
+        let childProperties = propertyProperties.map(function (childProperty, childIndex) {
           let value
+          let htmlElement
           if (childProperty.property_type.key === 'Integer') {
             value = childProperty.int_value
+            htmlElement = function () {
+              return (<input type='text' className='col-8 input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />)
+            }
           } else if (childProperty.property_type.key === 'Decimal') {
             value = childProperty.float_value
+            htmlElement = function () {
+              return (<input type='text' className='col-8 input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />)
+            }
           } else if (childProperty.property_type.key === 'DateTime') {
             value = childProperty.date_time_value
+            htmlElement = function () {
+              return (<input type='text' className='col-8 input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />)
+            }
           } else if (childProperty.property_type.key === 'Text') {
             value = childProperty.text_value
+            htmlElement = function () {
+              return (<input type='text' className='col-8 input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />)
+            }
           } else if (childProperty.property_type.key === 'List') {
-            value = childProperty.value_set_value
+            let childPropertyOption = childProperty.value_set.values.map((option, opIndex) => {
+              option.label = option.name
+              option.value = option.id
+              return option
+            })
+            // value = childProperty.value_set_value
+            htmlElement = function () {
+              return (<Select
+                className='col-4 input-sm form-control m-input'
+                placeholder='Select Options'
+                isClearable
+                // defaultValue={childPropertyOption[0]}
+                // isDisabled={false}
+                // isLoading={false}
+                // isClearable={true}
+                isSearchable={false}
+                name='selectProperty'
+                options={childPropertyOption}
+              />)
+            }
           } else {
             value = childProperty.other_value
+            htmlElement = function () {
+              return (<input type='text' className='col-3 input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />)
+            }
           }
           return (
-            <tr key={'child' + index}>
+            <tr key={'child' + childIndex}>
               <td><p className={styles.labelbold}>{childProperty.name}</p></td>
-              <td><p>{value}</p></td>
+              <td>
+                {!props.isEditComponent && (<p>{value}</p>)}
+                {props.isEditComponent && htmlElement()}
+              </td>
             </tr>
           )
         })
@@ -302,6 +420,8 @@ export default function ComponentTypeComponent (props) {
           </tbody>
         )
       })
+    } else {
+      console.log('check properties else', props)
     }
 
     if (componentTypeComponentRelationships !== '') {
@@ -447,10 +567,51 @@ export default function ComponentTypeComponent (props) {
     return (
       <div className={styles.borderline}>
         <div className={'row' + styles.description}>
-          <i className={styles.iconcenter + ' fa fa-share'} />
-          <div className='col-md-12'>
-            <h2 className='col-md-6'>{componentTypeComponentName}</h2>
-            <p className='col-md-12'>{componentTypeComponentDescription}</p>
+          <div className='col-md-12 row'>
+            <i className={' fa fa-share'} />
+            {!props.isEditComponent && (<h2 className='col-3'>{componentTypeComponentName}</h2>)}
+            {props.isEditComponent && (<input type='text' className='col-2 form-control m-input' value={componentTypeComponentName} placeholder='Component Name' aria-describedby='basic-addon2' />)}
+            {!props.isEditComponent && (<div className={'col-3 pull-rig m-dropdown m-dropdown--inline m-dropdown--arrow m-dropdown--align-left m-dropdown--align-push ' + dropDownClass}>
+              <a href='javascript:void(0);' className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' onClick={openDropDown}>
+                <i className='la la-ellipsis-h' />
+              </a>
+              <div className='m-dropdown__wrapper' style={{zIndex: 101}}>
+                <span className='m-dropdown__arrow m-dropdown__arrow--left m-dropdown__arrow--adjust' style={{right: 'auto', left: '29.5px'}} />
+                <div className='m-dropdown__inner'>
+                  <div className='m-dropdown__body'>
+                    <div className='m-dropdown__content'>
+                      <ul className='m-nav'>
+                        <li className='m-nav__section m-nav__section--first'>
+                          <span className='m-nav__section-text'>Quick Actions</span>
+                        </li>
+                        <li className='m-nav__item'>
+                          <a href='javascript:void(0);' onClick={editComponent} className='m-nav__link'>
+                            <i className='m-nav__link-icon flaticon-edit-1' />
+                            <span className='m-nav__link-text'>Update Properties</span>
+                          </a>
+                        </li>
+                        {/* <li className='m-nav__item'>
+                          <a href='' className='m-nav__link' onClick={openDeleteModal}>
+                            <i className='m-nav__link-icon flaticon-delete-1' />
+                            <span className='m-nav__link-text'>Delete</span>
+                          </a>
+                        </li> */}
+                        <li className='m-nav__separator m-nav__separator--fit' />
+                        <li className='m-nav__item'>
+                          <a href='javascript:void(0);' className='btn btn-outline-danger m-btn m-btn--pill m-btn--wide btn-sm' onClick={closeDropDown}>Cancel</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>)}
+            {props.isEditComponent && (<div className='col-3 clearfix'>
+              <button onClick={cancelEditComponent} className='btn btn-outline-info btn-sm'>Cancel</button>
+              <button onClick={saveComponentProperty} className='btn btn-outline-info btn-sm'>Save</button>
+            </div>)}
+            {!props.isEditComponent && (<p className='col-12'>{componentTypeComponentDescription}</p>)}
+            {props.isEditComponent && (<input type='text' className='col-8 form-control m-input' value={componentTypeComponentDescription} placeholder='Component Description' aria-describedby='basic-addon2' />)}
           </div>
         </div>
         <div className='row'>
@@ -593,14 +754,25 @@ export default function ComponentTypeComponent (props) {
 ComponentTypeComponent.propTypes = {
   // setAddConnectionSettings: PropTypes.func,
   // setRelationshipsValue: PropTypes.func,
+  // updateComponentTypeComponentRelationships: PropTypes.func,
+  // copyComponentProperties: PropTypes.func,
+  // restoreComponentProperties: PropTypes.func,
+  // editComponentProperties: PropTypes.func,
+  // pushComponentPropertyPayload: PropTypes.func,
+  // updateComponentTypeComponentProperties: PropTypes.func,
+  componentPropertiesPayload: PropTypes.any,
+  copiedComponentProperties: PropTypes.any,
   addNewConnectionSettings: PropTypes.any,
   componentTypeComponentData: PropTypes.any,
   componentTypeComponentProperties: PropTypes.any,
   componentTypeComponents: PropTypes.any,
   componentTypeComponentConstraints: PropTypes.any,
   showTabs: PropTypes.any,
+  isEditComponent: PropTypes.any,
   // setCurrentTab: PropTypes.func,
+  // setEditComponentFlag: PropTypes.func,
   modalIsOpen: PropTypes.any,
   // setModalOpenStatus: PropTypes.func
-  componentTypeComponentRelationships: PropTypes.any
+  componentTypeComponentRelationships: PropTypes.any,
+  isDropDownOpen: PropTypes.any
 }

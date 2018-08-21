@@ -11,6 +11,7 @@ const SET_LOGINSLIDE_FLAG = 'BasicReducer/SET_LOGINSLIDE_FLAG'
 const SET_BREADCRUMB = 'BasicReducer/SET_BREADCRUMB'
 const SET_API_CALLING_STATUS = 'BasicReducer/SET_API_CALLING_STATUS'
 const SET_TOASTER_SUCCESS_STATUS = 'BasicReducer/SET_TOASTER_SUCCESS_STATUS'
+const SET_DROPDOWN_FLAG = 'BasicReducer/SET_DROPDOWN_FLAG'
 
 export const actions = {
   INCREMENT,
@@ -23,7 +24,8 @@ export const actions = {
   SET_LOGINSLIDE_FLAG,
   SET_BREADCRUMB,
   SET_API_CALLING_STATUS,
-  SET_TOASTER_SUCCESS_STATUS
+  SET_TOASTER_SUCCESS_STATUS,
+  SET_DROPDOWN_FLAG
 }
 
 export const actionCreators = {
@@ -36,7 +38,8 @@ export const actionCreators = {
   setLoginslideFlag: createAction(SET_LOGINSLIDE_FLAG),
   setBreadcrumb: createAction(SET_BREADCRUMB),
   setApiCallingStatus: createAction(SET_API_CALLING_STATUS),
-  setToasterSuccessStatus: createAction(SET_TOASTER_SUCCESS_STATUS)
+  setToasterSuccessStatus: createAction(SET_TOASTER_SUCCESS_STATUS),
+  setDropdownFlag: createAction(SET_DROPDOWN_FLAG)
 }
 
 export const initialState = {
@@ -53,7 +56,8 @@ export const initialState = {
   clientAccessToken: '',
   client_id: 'eco_conductor_web_ui',
   client_secret: 'Pm41WXE9WU4nVCVdTDlVdUh5PE4iS1dbO1VFNi1ZTnGMzX0pBVDdSciszMkhfI3M4SEVbLQ',
-  authenticateUser: ''
+  authenticateUser: '',
+  isDropDownOpen: false
 }
 
 export default handleActions(
@@ -105,6 +109,9 @@ export default handleActions(
     [FETCH_USER_AUTHENTICATION_SUCCESS]: (state, action) => ({
       ...state,
       authenticateUser: action.payload
+    }),
+    [SET_DROPDOWN_FLAG]: (state, action) => ({ ...state,
+      isDropDownOpen: action.payload
     })
   },
   initialState
