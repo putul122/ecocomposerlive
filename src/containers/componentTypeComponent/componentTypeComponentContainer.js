@@ -22,7 +22,8 @@ export function mapStateToProps (state, props) {
     isEditComponent: state.componentTypeComponentReducer.isEditComponent,
     addNewConnectionSettings: state.componentTypeComponentReducer.addNewConnectionSettings,
     isDropDownOpen: state.basicReducer.isDropDownOpen,
-    modalIsOpen: state.basicReducer.modalIsOpen
+    modalIsOpen: state.basicReducer.modalIsOpen,
+    successmodalIsOpen: state.basicReducer.successmodalIsOpen
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -35,6 +36,7 @@ export const propsMapping: Callbacks = {
   fetchcomponentTypeComponentRelationships: sagaActions.componentTypeComponentActions.fetchcomponentTypeComponentRelationships,
   updateComponentTypeComponentRelationships: sagaActions.componentTypeComponentActions.updateComponentTypeComponentRelationships,
   updateComponentTypeComponentProperties: sagaActions.componentTypeComponentActions.updateComponentTypeComponentProperties,
+  updateComponentTypeComponent: sagaActions.componentTypeComponentActions.updateComponentTypeComponent,
   fetchComponentConstraints: sagaActions.componentTypeComponentActions.fetchComponentConstraints,
   fetchComponentTypeComponents: sagaActions.componentTypeComponentActions.fetchComponentTypeComponents,
   setModalOpenStatus: basicActionCreators.setModalOpenStatus,
@@ -46,7 +48,8 @@ export const propsMapping: Callbacks = {
   pushComponentPropertyPayload: componentTypeComponentActionCreators.pushComponentPropertyPayload,
   setRelationshipsValue: componentTypeComponentActionCreators.setRelationshipsValue,
   setAddConnectionSettings: componentTypeComponentActionCreators.setAddConnectionSettings,
-  setDropdownFlag: basicActionCreators.setDropdownFlag
+  setDropdownFlag: basicActionCreators.setDropdownFlag,
+  setConfirmationModalOpenStatus: basicActionCreators.setConfirmationModalOpenStatus
 }
 
 // If you want to use the function mapping
@@ -83,7 +86,7 @@ export default compose(
           this.props.history.push('/')
         }
       }
-      if (nextProps.componentDetail && nextProps.componentTypeComponentData && (nextProps.componentTypeComponentData !== '')) {
+      if (nextProps.componentDetail && nextProps.componentTypeComponentData && (nextProps.componentTypeComponentData !== '') && nextProps.componentTypeComponentData.resources) {
         console.log('inside com Xxxxxxxxxxxxxxxxxxxxx', this.props, nextProps)
         let breadcrumb = {
           title: nextProps.componentTypeComponentData.resources[0].name,

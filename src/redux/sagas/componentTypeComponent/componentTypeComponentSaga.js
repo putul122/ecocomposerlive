@@ -25,6 +25,9 @@ export const UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_FAILURE = 'saga/compo
 export const UPDATE_COMPONENT_TYPE_COMPONENT_PROPERTIES = 'saga/componentTypeComponent/UPDATE_COMPONENT_TYPE_COMPONENT_PROPERTIES'
 export const UPDATE_COMPONENT_TYPE_COMPONENT_PROPERTIES_SUCCESS = 'saga/componentTypeComponent/UPDATE_COMPONENT_TYPE_COMPONENT_PROPERTIES_SUCCESS'
 export const UPDATE_COMPONENT_TYPE_COMPONENT_PROPERTIES_FAILURE = 'saga/componentTypeComponent/UPDATE_COMPONENT_TYPE_COMPONENT_PROPERTIES_FAILURE'
+export const UPDATE_COMPONENT_TYPE_COMPONENT = 'saga/componentTypeComponent/UPDATE_COMPONENT_TYPE_COMPONENT'
+export const UPDATE_COMPONENT_TYPE_COMPONENT_SUCCESS = 'saga/componentTypeComponent/UPDATE_COMPONENT_TYPE_COMPONENT_SUCCESS'
+export const UPDATE_COMPONENT_TYPE_COMPONENT_FAILURE = 'saga/componentTypeComponent/UPDATE_COMPONENT_TYPE_COMPONENT_FAILURE'
 
 export const actionCreators = {
   fetchComponentTypeComponent: createAction(FETCH_COMPONENT_TYPE_COMPONENT),
@@ -47,7 +50,10 @@ export const actionCreators = {
   updateComponentTypeComponentRelationshipsFailure: createAction(UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_FAILURE),
   updateComponentTypeComponentProperties: createAction(UPDATE_COMPONENT_TYPE_COMPONENT_PROPERTIES),
   updateComponentTypeComponentPropertiesSuccess: createAction(UPDATE_COMPONENT_TYPE_COMPONENT_PROPERTIES_SUCCESS),
-  updateComponentTypeComponentPropertiesFailure: createAction(UPDATE_COMPONENT_TYPE_COMPONENT_PROPERTIES_FAILURE)
+  updateComponentTypeComponentPropertiesFailure: createAction(UPDATE_COMPONENT_TYPE_COMPONENT_PROPERTIES_FAILURE),
+  updateComponentTypeComponent: createAction(UPDATE_COMPONENT_TYPE_COMPONENT),
+  updateComponentTypeComponentSuccess: createAction(UPDATE_COMPONENT_TYPE_COMPONENT_SUCCESS),
+  updateComponentTypeComponentFailure: createAction(UPDATE_COMPONENT_TYPE_COMPONENT_FAILURE)
 }
 
 export default function * watchComponentTypeComponent () {
@@ -58,7 +64,8 @@ export default function * watchComponentTypeComponent () {
     takeLatest(FETCH_COMPONENT_CONSTRAINTS, getComponentConstraints),
     takeLatest(FETCH_COMPONENT_TYPE_COMPONENTS, getComponentTypeComponents),
     takeLatest(UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS, updateComponentTypeComponentRelationships),
-    takeLatest(UPDATE_COMPONENT_TYPE_COMPONENT_PROPERTIES, updateComponentTypeComponentProperties)
+    takeLatest(UPDATE_COMPONENT_TYPE_COMPONENT_PROPERTIES, updateComponentTypeComponentProperties),
+    takeLatest(UPDATE_COMPONENT_TYPE_COMPONENT, updateComponentTypeComponentData)
   ]
 }
 
@@ -148,12 +155,12 @@ export function * getComponentTypeComponents (action) {
 
 export function * updateComponentTypeComponentRelationships (action) {
   try {
-    console.log('saga action', action)
+    console.log('relation saga action', action)
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const componentTypes = yield call(
       axios.patch,
       api.updateComponentRelationships(action.payload),
-      action.payload.data
+      action.payload.relationship
       // {params: action.payload}
     )
     yield put(actionCreators.updateComponentTypeComponentRelationshipsSuccess(componentTypes.data))
@@ -164,16 +171,30 @@ export function * updateComponentTypeComponentRelationships (action) {
 
 export function * updateComponentTypeComponentProperties (action) {
   try {
-    console.log('saga action', action)
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const componentTypes = yield call(
       axios.patch,
       api.updateComponentProperties(action.payload),
-      action.payload.data
+      action.payload.property
       // {params: action.payload}
     )
-    yield put(actionCreators.updateComponentTypeComponentRelationshipsSuccess(componentTypes.data))
+    yield put(actionCreators.updateComponentTypeComponentPropertiesSuccess(componentTypes.data))
   } catch (error) {
-    yield put(actionCreators.updateComponentTypeComponentRelationshipsFailure(error))
+    yield put(actionCreators.updateComponentTypeComponentPropertiesFailure(error))
+  }
+}
+
+export function * updateComponentTypeComponentData (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const componentTypes = yield call(
+      axios.patch,
+      api.updateComponent(action.payload),
+      action.payload.component
+      // {params: action.payload}
+    )
+    yield put(actionCreators.updateComponentTypeComponentSuccess(componentTypes.data))
+  } catch (error) {
+    yield put(actionCreators.updateComponentTypeComponentFailure(error))
   }
 }

@@ -37,6 +37,9 @@ const api = {
     },
     updateComponentProperties: function (payload) {
         return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_properties'
+    },
+    updateComponent: function (payload) {
+        return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId
     }
   }
 

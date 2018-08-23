@@ -53,8 +53,8 @@ export const actionCreators = {
 export const initialState = {
     componentTypeComponentData: '',
     componentTypeComponentProperties: '',
-    copiedComponentProperties: '',
-    componentPropertiesPayload: [],
+    copiedComponentProperties: {property: '', component: ''},
+    componentPropertiesPayload: {property: [], component: [], relationship: []},
     componentTypeComponentRelationships: '',
     componentTypeComponentConstraints: '',
     componentTypeComponents: '',
@@ -63,9 +63,10 @@ export const initialState = {
     showTabs: {'showProperty': ' active show', 'showRelationship': ''},
     addNewConnectionSettings: {
       firstSelectboxSelected: false,
-      firstSelectboxIndex: '-1',
+      firstSelectboxIndex: null,
       secondSelectboxSelected: false,
       secondSelectboxIndex: '',
+      isParentSelected: false,
       isNewComponent: false,
       newComponentName: '',
       isEditComponent: false,
@@ -133,11 +134,13 @@ export default handleActions(
     }),
     [RESTORE_COMPONENT_PROPERTIES]: (state, action) => ({
       ...state,
-      componentTypeComponentProperties: action.payload
+      componentTypeComponentProperties: action.payload.property,
+      componentTypeComponentData: action.payload.component
     }),
     [EDIT_COMPONENT_PROPERTIES]: (state, action) => ({
       ...state,
-      componentTypeComponentProperties: action.payload
+      componentTypeComponentProperties: action.payload.property,
+      componentTypeComponentData: action.payload.component
     }),
     [PUSH_COMPONENT_PROPERTY_PAYLOAD]: (state, action) => ({
       ...state,
