@@ -12,8 +12,8 @@ import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
 
 var divStyle = {
-  width: '95%',
-  height: '30%',
+  width: '900',
+  height: '700',
   'overflow-y': 'scroll',
   'overflow-x': 'scroll',
   'border': '1px solid #000000'
@@ -137,6 +137,16 @@ export default function ComponentTypeComponent (props) {
       }
       // eslint-disable-next-line
       toastr.success('The ' + componentTypeComponentName + ' was successfully updated', 'Good Stuff!')
+    }
+    let handlePropertySelect = function (newValue: any, actionMeta: any) {
+      console.group('property Changed first select')
+      console.log(newValue)
+      console.log(`action: ${actionMeta.action}`)
+      console.groupEnd()
+      if (actionMeta.action === 'select-option') {
+        if (newValue !== null) {
+        }
+      }
     }
     let editTextProperty = function (index, childIndex, value) {
       console.group('Input Changed')
@@ -577,6 +587,7 @@ export default function ComponentTypeComponent (props) {
                 // isDisabled={false}
                 // isLoading={false}
                 // isClearable={true}
+                onChange={handlePropertySelect}
                 isSearchable={false}
                 name='selectProperty'
                 options={childPropertyOption}
@@ -754,59 +765,60 @@ export default function ComponentTypeComponent (props) {
 
     return (
       <div className={styles.borderline}>
-        <div className={'row' + styles.description}>
-          <div className='col-md-12 row'>
-            <i className={' fa fa-share'} />
-            {!props.isEditComponent && (<h2 className='col-3'>{componentTypeComponentName}</h2>)}
-            {props.isEditComponent && (<div className='form-group m-form__group has-danger'>
-              <input type='text' className='col-8 form-control m-input' onChange={editComponentName} value={componentTypeComponentName} placeholder='Component Name' aria-describedby='basic-addon2' />
-              {componentNameMessage && (<div className='form-control-feedback'>Component name required</div>)}
-            </div>)}
-            {!props.isEditComponent && (<div className={'col-3 pull-rig m-dropdown m-dropdown--inline m-dropdown--arrow m-dropdown--align-left m-dropdown--align-push ' + dropDownClass}>
-              <a href='javascript:void(0);' className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' onClick={openDropDown}>
-                <i className='la la-ellipsis-h' />
-              </a>
-              <div className='m-dropdown__wrapper' style={{zIndex: 101}}>
-                <span className='m-dropdown__arrow m-dropdown__arrow--left m-dropdown__arrow--adjust' style={{right: 'auto', left: '29.5px'}} />
-                <div className='m-dropdown__inner'>
-                  <div className='m-dropdown__body'>
-                    <div className='m-dropdown__content'>
-                      <ul className='m-nav'>
-                        <li className='m-nav__section m-nav__section--first'>
-                          <span className='m-nav__section-text'>Quick Actions</span>
-                        </li>
-                        <li className='m-nav__item'>
-                          <a href='javascript:void(0);' onClick={editComponent} className='m-nav__link'>
-                            <i className='m-nav__link-icon flaticon-edit-1' />
-                            <span className='m-nav__link-text'>Update Properties</span>
-                          </a>
-                        </li>
-                        {/* <li className='m-nav__item'>
-                          <a href='' className='m-nav__link' onClick={openDeleteModal}>
-                            <i className='m-nav__link-icon flaticon-delete-1' />
-                            <span className='m-nav__link-text'>Delete</span>
-                          </a>
-                        </li> */}
-                        <li className='m-nav__separator m-nav__separator--fit' />
-                        <li className='m-nav__item'>
-                          <a href='javascript:void(0);' className='btn btn-outline-danger m-btn m-btn--pill m-btn--wide btn-sm' onClick={closeDropDown}>Cancel</a>
-                        </li>
-                      </ul>
+        <div className={'row'}>
+          <div className='col-md-12 row' />
+        </div>
+        <div className='row'>
+          <div className='col-sm-12 col-md-6' >
+            <div className={'row'}>
+              <i className={' fa fa-share'} />
+              {!props.isEditComponent && (<h2 className='col-8'>{componentTypeComponentName}</h2>)}
+              {props.isEditComponent && (<div className='col-6 form-group m-form__group has-danger'>
+                <input type='text' className='form-control m-input' onChange={editComponentName} value={componentTypeComponentName} placeholder='Component Name' aria-describedby='basic-addon2' />
+                {componentNameMessage && (<div className='form-control-feedback'>Component name required</div>)}
+              </div>)}
+              {!props.isEditComponent && (<div className={'col-3 pull-rig m-dropdown m-dropdown--inline m-dropdown--arrow m-dropdown--align-left m-dropdown--align-push ' + dropDownClass}>
+                <a href='javascript:void(0);' className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' onClick={openDropDown}>
+                  <i className='la la-ellipsis-h' />
+                </a>
+                <div className='m-dropdown__wrapper' style={{zIndex: 101}}>
+                  <span className='m-dropdown__arrow m-dropdown__arrow--left m-dropdown__arrow--adjust' style={{right: 'auto', left: '29.5px'}} />
+                  <div className='m-dropdown__inner'>
+                    <div className='m-dropdown__body'>
+                      <div className='m-dropdown__content'>
+                        <ul className='m-nav'>
+                          <li className='m-nav__section m-nav__section--first'>
+                            <span className='m-nav__section-text'>Quick Actions</span>
+                          </li>
+                          <li className='m-nav__item'>
+                            <a href='javascript:void(0);' onClick={editComponent} className='m-nav__link'>
+                              <i className='m-nav__link-icon flaticon-edit-1' />
+                              <span className='m-nav__link-text'>Update Properties</span>
+                            </a>
+                          </li>
+                          {/* <li className='m-nav__item'>
+                            <a href='' className='m-nav__link' onClick={openDeleteModal}>
+                              <i className='m-nav__link-icon flaticon-delete-1' />
+                              <span className='m-nav__link-text'>Delete</span>
+                            </a>
+                          </li> */}
+                          <li className='m-nav__separator m-nav__separator--fit' />
+                          <li className='m-nav__item'>
+                            <a href='javascript:void(0);' className='btn btn-outline-danger m-btn m-btn--pill m-btn--wide btn-sm' onClick={closeDropDown}>Cancel</a>
+                          </li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>)}
-            {props.isEditComponent && (<div className='col-4 clearfix'>
-              <button onClick={cancelEditComponent} className='btn btn-outline-info btn-sm'>Cancel</button>
-              <button onClick={saveComponentProperty} className='btn btn-outline-info btn-sm'>Save</button>
-            </div>)}
-            {!props.isEditComponent && (<p className='col-12'>{componentTypeComponentDescription}</p>)}
-            {props.isEditComponent && (<input type='text' className='col-6 form-control m-input' onChange={editComponentDescription} value={componentTypeComponentDescription} placeholder='Component Description' aria-describedby='basic-addon2' />)}
-          </div>
-        </div>
-        <div className='row'>
-          <div className='col-sm-6 col-md-6' >
+              </div>)}
+              {props.isEditComponent && (<div className='col-4 clearfix'>
+                <button onClick={cancelEditComponent} className='btn btn-outline-info btn-sm'>Cancel</button>
+                <button onClick={saveComponentProperty} className='btn btn-outline-info btn-sm'>Save</button>
+              </div>)}
+              {!props.isEditComponent && (<p className='col-8'>{componentTypeComponentDescription}</p>)}
+              {props.isEditComponent && (<input type='text' className='col-8 form-control m-input' onChange={editComponentDescription} value={componentTypeComponentDescription} placeholder='Component Description' aria-describedby='basic-addon2' />)}
+            </div>
             <div className={styles.tabsprops}>
               <ul className='nav nav-tabs' role='tablist'>
                 <li className='nav-item'>
@@ -836,8 +848,9 @@ export default function ComponentTypeComponent (props) {
               </div>
             </div>
           </div>
-          <div className='col-sm-6 col-md-6'>
-            <div className={styles.modelsection}>
+          <div className='col-sm-12 col-md-6'>
+            <div className='m--space-10' />
+            <div className={''}>
               <h2>{componentTypeComponentName} Model Diagram</h2><br />
               <div className='row'>
                 <div id='divPaperWrapper' style={divStyle}>

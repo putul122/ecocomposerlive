@@ -3,7 +3,7 @@ import * as d3 from 'd3'
 import './applicationModelComponent.scss'
 
 // let colors = d3.scaleOrdinal(d3.schemeCategory10)
-let width = 1200
+let width = 1000
 let height = 700
 let diagramLayout
 let simulation
