@@ -5,8 +5,8 @@ import _ from 'lodash'
 import Modal from 'react-modal'
 // import ApplicationModelComponent for graph Model Visualization
 import ApplicationModelComponent from '../applicationModel/applicationModelComponent'
-import { Link, Route } from 'react-router-dom'
-import componentTypeComponentPageRoute from '../../routes/componentTypeComponentPage/componentTypeComponentPageRoute'
+import { Link } from 'react-router-dom'
+// import componentTypeComponentPageRoute from '../../routes/componentTypeComponentPage/componentTypeComponentPageRoute'
 var divStyle = {
   width: '95%',
   height: '30%',
@@ -209,6 +209,7 @@ export default function ApplicationDetail (props) {
   }
 
   let handleInputChange = function (event) {
+    console.log('search text', searchTextBox.value)
     let payload = {
       'id': props.componentDetail.resources[0].id,
       'ComponentTypeComponent': {
@@ -218,13 +219,13 @@ export default function ApplicationDetail (props) {
         'recommended': searchTextBox.value === ''
       }
     }
-    // if (searchTextBox.value.length > 0) {
+    if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
       // if (searchTextBox.value.length % 2 === 0) {
         // props.fetchComponentComponent(payload)
         props.searchComponentComponent(payload)
         // props.setComponentTypeLoading(true)
       // }
-    // }
+    }
     listPage = _.filter(pageArray, function (group) {
       let found = _.filter(group, {'number': currentPage})
       if (found.length > 0) { return group }
@@ -350,10 +351,7 @@ export default function ApplicationDetail (props) {
         <div className='row clearfix'>
           <div className='col-sm-12 col-md-4'>
             <div className='row'>
-              <div className='col-sm-6 col-md-4'>
-                <h4>{ ComponentName }</h4>
-              </div>
-              <div className='col-sm-6 col-md-7 m--align-right'>
+              <div className='col-sm-12 col-md-11 m--align-right'>
                 <div className='m-input-icon m-input-icon--left'>
                   <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onChange={handleInputChange} />
                   <span className='m-input-icon__icon m-input-icon__icon--left'>
@@ -431,7 +429,7 @@ export default function ApplicationDetail (props) {
           </div>
         </div>
       </div>
-      <Route exact path={`/components/:componentTypeId/:componentTypeComponentId`} component={componentTypeComponentPageRoute} />
+      {/* <Route exact path={`/components/:componentTypeId/:componentTypeComponentId`} component={componentTypeComponentPageRoute} /> */}
     </div>
   )
 }

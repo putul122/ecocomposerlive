@@ -98,7 +98,7 @@ export function * searchComponentComponent (action) {
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const componentComponents = yield call(
       axios.get,
-      api.getComponentComponent(action.payload.id),
+      api.getComponentTypeComponents(action.payload.id),
       {params: action.payload.ComponentTypeComponent}
     )
     yield put(actionCreators.searchComponentComponentSuccess(componentComponents.data))
