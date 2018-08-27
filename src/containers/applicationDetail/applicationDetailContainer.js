@@ -28,6 +28,8 @@ export const propsMapping: Callbacks = {
   selectedComponentType: applicationDetailActionCreators.selectedComponentType,
   setCurrentPage: applicationDetailActionCreators.setCurrentPage,
   addComponentComponent: sagaActions.applicationDetailActions.addComponentComponent,
+  setAddRedirectFlag: basicActionCreators.setAddRedirectFlag,
+  setRedirectFlag: basicActionCreators.setRedirectFlag,
   setBreadcrumb: basicActionCreators.setBreadcrumb,
   setModalOpenStatus: basicActionCreators.setModalOpenStatus,
   setConfirmationModalOpenStatus: basicActionCreators.setConfirmationModalOpenStatus
@@ -71,6 +73,20 @@ export default compose(
         if (!nextProps.authenticateUser.resources[0].result) {
           this.props.history.push('/')
         }
+      }
+      if (nextProps.addComponent && nextProps.componentDetail) {
+        console.log('deleting deleteComponent component', nextProps.addComponent)
+    //         setTimeout(() => {
+    //   let componentId = props.addComponent.resources[0].id
+    //   props.history.push('/components/' + ComponentTypeId + '/' + componentId)
+    // }, 1000)
+        let deletecomponentid = nextProps.componentDetail.resources[0].id
+        let componentId = nextProps.addComponent.resources[0].id
+        let ComponentTypeId = nextProps.componentDetail.resources[0].id
+        nextProps.history.push('/components/' + ComponentTypeId + '/' + componentId)
+        console.log('id', deletecomponentid)
+        nextProps.setAddRedirectFlag(true)
+        console.log('After redirection of deleting the state', nextProps.deleteComponent)
       }
       if (nextProps.componentDetail && (nextProps.componentDetail !== this.props.componentDetail)) {
         console.log('inside receive props detail props', nextProps)

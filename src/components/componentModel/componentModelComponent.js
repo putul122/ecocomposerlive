@@ -296,7 +296,7 @@ class ComponentModelComponent extends React.Component {
     componentWillReceiveProps (nextProps) {
       console.log('Component Model ---------->>', nextProps)
         if (Object.keys(nextProps.startNode).length > 0 && nextProps.startNode.constructor === Object) {
-            if (nextProps.relationships && nextProps.relationships) {
+            if (nextProps.relationships && nextProps.relationships !== this.props.relationships) {
                 console.log('inside if component model')
                 let nodeData = nextProps.relationships
                 let leftCordinates = []

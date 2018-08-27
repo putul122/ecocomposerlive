@@ -12,10 +12,10 @@ import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
 
 var divStyle = {
-  width: '900',
-  height: '700',
-  'overflow-y': 'scroll',
-  'overflow-x': 'scroll',
+  width: '900px',
+  height: '700px',
+  'overflowY': 'scroll',
+  'overflowX': 'scroll',
   'border': '1px solid #000000'
 }
 
@@ -34,15 +34,14 @@ const customStyles = {
 
 export default function ComponentTypeComponent (props) {
     console.log('component type component properties', props)
-    console.log('Component Constraints ------', props.componentTypeComponentConstraints)
-    console.log('Component Components ------>', props.componentTypeComponents)
+    let isParentSelected = props.addNewConnectionSettings.isParentSelected
     let componentTypeComponentName
     let componentNameMessage
     let componentTypeComponentDescription
-    let componentTypeComponentProperties = props.componentTypeComponentProperties.resources
+    let componentTypeComponentProperties = props.componentTypeComponentProperties.resources ? [...props.componentTypeComponentProperties.resources] : ''
     let componentTypeComponentData = props.componentTypeComponentData
     let copiedComponentProperties = props.copiedComponentProperties
-    let componentPropertiesPayload = props.componentPropertiesPayload
+    let componentPropertiesPayload = {...props.componentPropertiesPayload}
     let componentTypeComponentPropertiesList
     let componentTypeComponentRelationships = props.componentTypeComponentRelationships // relationshipData.resources // props.componentTypeComponentRelationships.data
     let modelRelationshipData = ''
@@ -53,6 +52,54 @@ export default function ComponentTypeComponent (props) {
     let startNode = {}
     let showProperties = props.showTabs.showProperty
     let showRelationships = props.showTabs.showRelationship
+    let childrenList
+    let parentList
+    let connecttoList
+    let connectfromList
+    // Code for Delete Modal begins
+    let showToasterfordelete = function () {
+      // eslint-disable-next-line
+      toastr.options = {
+        'closeButton': false,
+        'debug': false,
+        'newestOnTop': false,
+        'progressBar': false,
+        'positionClass': 'toast-bottom-full-width',
+        'preventDuplicates': false,
+        'onclick': null,
+        'showDuration': '300',
+        'hideDuration': '1000',
+        'timeOut': '4000',
+        'extendedTimeOut': '1000',
+        'showEasing': 'swing',
+        'hideEasing': 'linear',
+        'showMethod': 'fadeIn',
+        'hideMethod': 'fadeOut'
+      }
+      // eslint-disable-next-line
+      toastr.success('The' + '' + componentTypeComponentName + '' + 'Application was successfully deleted', 'Zapped!')
+    }
+    let removeComponent = function (event) {
+      event.preventDefault()
+      let payload = {
+         'id': props.componentTypeComponentData.resources[0].id
+        }
+        console.log('payloaddelete', payload, props)
+        props.deletecomponentTypeComponent(payload)
+        // props.setdeleteComponent(true)
+        props.setRedirectFlag(false)
+        props.setAddRedirectFlag(true)
+        showToasterfordelete()
+      }
+    let openDeleteModal = function (event) {
+      event.preventDefault()
+      props.setDeleteModalOpenStatus(true)
+      props.setDropdownFlag(false)
+      }
+    let closeDeleteModal = function (event) {
+      props.setDeleteModalOpenStatus(false)
+    }
+    // Code for Delete Modal ends
     let showProperty = function (event) {
       let payload = {'showProperty': ' active show', 'showRelationship': ''}
       props.setCurrentTab(payload)
@@ -75,18 +122,28 @@ export default function ComponentTypeComponent (props) {
       event.preventDefault()
       // props.setEditComponentFlag(true)
       let payload = {}
-      payload.isEditComponent = true
-      payload.copiedComponentProperties = {}
-      payload.copiedComponentProperties.property = props.componentTypeComponentProperties
-      payload.copiedComponentProperties.component = props.componentTypeComponentData
-      props.copyComponentProperties(payload)
-      console.log('component properties', props.componentTypeComponentProperties)
+      // payload.isEditComponent = true
+      // payload.copiedComponentProperties = {}
+      // payload.copiedComponentProperties.property = {'resources': componentTypeComponentProperties}
+      // payload.copiedComponentProperties.component = componentTypeComponentData
+      let payloadComponentData = {...props.componentTypeComponentData.resources[0]}
+      props.copyComponentProperties({'resources': JSON.parse(JSON.stringify(componentTypeComponentProperties))})
+      props.copyComponentData(payloadComponentData)
+      props.setEditComponentFlag(true)
+      console.log('component properties', payload)
+      console.log('copied property value', props.copiedComponentProperties)
     }
     let cancelEditComponent = function (event) {
       event.preventDefault()
       console.log('copy component properties', copiedComponentProperties)
       console.log('original component properties', componentTypeComponentProperties)
-      props.restoreComponentProperties(props.copiedComponentProperties)
+      let copiedComponentData = {...props.copiedComponentData}
+      let payload = {}
+      payload.property = copiedComponentProperties
+      payload.component = {}
+      payload.component.resources = []
+      payload.component.resources = [...payload.component.resources, copiedComponentData]
+      props.restoreComponentProperties(payload)
       props.setEditComponentFlag(false)
       props.setDropdownFlag(false)
     }
@@ -138,13 +195,36 @@ export default function ComponentTypeComponent (props) {
       // eslint-disable-next-line
       toastr.success('The ' + componentTypeComponentName + ' was successfully updated', 'Good Stuff!')
     }
-    let handlePropertySelect = function (newValue: any, actionMeta: any) {
-      console.group('property Changed first select')
-      console.log(newValue)
-      console.log(`action: ${actionMeta.action}`)
-      console.groupEnd()
-      if (actionMeta.action === 'select-option') {
-        if (newValue !== null) {
+    let handlePropertySelect = function (index, childIndex) {
+      return function (newValue: any, actionMeta: any) {
+        console.group('property Changed first select')
+        console.log(newValue)
+        console.log(index)
+        console.log(childIndex)
+        console.log(`action: ${actionMeta.action}`)
+        console.groupEnd()
+        if (actionMeta.action === 'select-option') {
+          if (newValue !== null) {
+            let payload
+            let typeProperty = componentTypeComponentProperties[index].properties[childIndex].type_property
+            componentTypeComponentProperties[index].properties[childIndex].value_set_value = newValue.value
+            payload = { 'op': 'replace', 'path': `/${typeProperty}/value_set_value`, 'value': newValue.value }
+
+            if (componentPropertiesPayload.property.length === 0) {
+              componentPropertiesPayload.property.push(payload)
+            } else {
+              if (payload.path === componentPropertiesPayload.property[componentPropertiesPayload.property.length - 1].path) {
+                componentPropertiesPayload.property[componentPropertiesPayload.property.length - 1] = payload
+              } else {
+                componentPropertiesPayload.property.push(payload)
+              }
+            }
+            let editPayload = {}
+            editPayload.component = componentTypeComponentData
+            editPayload.property = {resources: componentTypeComponentProperties}
+            props.editComponentProperties(editPayload)
+            props.pushComponentPropertyPayload(componentPropertiesPayload)
+          }
         }
       }
     }
@@ -216,25 +296,25 @@ export default function ComponentTypeComponent (props) {
         componentTypeComponentData.resources[0].nameMessage = true
       } else {
         componentTypeComponentData.resources[0].nameMessage = false
-      }
-      if (componentPropertiesPayload.component.length === 0) {
-        componentPropertiesPayload.component.push(payload)
-      } else if (componentPropertiesPayload.component.length === 1) {
-        if (componentPropertiesPayload.component[0].path === '/name') {
-          componentPropertiesPayload.component[0].value = value
-        } else {
+        if (componentPropertiesPayload.component.length === 0) {
           componentPropertiesPayload.component.push(payload)
-        }
-      } else {
-        componentPayload = componentPropertiesPayload.component.map((payload, index) => {
-          if (payload.path === '/name') {
-            payload.value = value
-            return payload
+        } else if (componentPropertiesPayload.component.length === 1) {
+          if (componentPropertiesPayload.component[0].path === '/name') {
+            componentPropertiesPayload.component[0].value = value
           } else {
-            return payload
+            componentPropertiesPayload.component.push(payload)
           }
-        })
-        componentPropertiesPayload.component = componentPayload
+        } else {
+          componentPayload = componentPropertiesPayload.component.map((payload, index) => {
+            if (payload.path === '/name') {
+              payload.value = value
+              return payload
+            } else {
+              return payload
+            }
+          })
+          componentPropertiesPayload.component = componentPayload
+        }
       }
       componentTypeComponentData.resources[0].name = value
       let editPayload = {}
@@ -277,13 +357,15 @@ export default function ComponentTypeComponent (props) {
     let openModal = function (event) {
       // event.preventDefault()
       props.setModalOpenStatus(true)
+      let payload = {...props.addNewConnectionSettings, 'firstSelectboxSelected': false, 'isParentSelected': false, 'secondSelectboxSelected': false, 'slectedConstraintObject': {}, 'relationshipText': '', 'newConnectionArray': []}
+      props.setAddConnectionSettings(payload)
     }
     let closeModal = function (event) {
       // event.preventDefault()
       props.setModalOpenStatus(false)
-      let payload = {...props.addNewConnectionSettings, 'firstSelectboxSelected': false, 'secondSelectboxSelected': false, 'slectedConstraintObject': {}, 'relationshipText': ''}
+      let payload = {...props.addNewConnectionSettings, 'firstSelectboxSelected': false, 'secondSelectboxSelected': false, 'slectedConstraintObject': {}, 'relationshipText': '', 'newConnectionArray': []}
       props.setAddConnectionSettings(payload)
-      props.setRelationshipsValue({'resources': newRelationshipArray})
+      // props.setRelationshipsValue({'resources': newRelationshipArray})
     }
     let addConnectionClass = props.addNewConnectionSettings.showCreateConnectionButton ? '' : 'disabled ' + styles.pointerDisabled
     let addRelationshipClass = props.addNewConnectionSettings.showAddRelationshipButton ? '' : 'disabled ' + styles.pointerDisabled
@@ -291,7 +373,7 @@ export default function ComponentTypeComponent (props) {
     let selectComponentOptions = ''
     let selectComponentOptions1 = ''
     let optionItems = ''
-    let newRelationshipArray = props.addNewConnectionSettings.newConnectionArray
+    let newRelationshipArray = [...props.addNewConnectionSettings.newConnectionArray]
     // Action for first select
     let handleFirstSelect = function (newValue: any, actionMeta: any) {
       console.group('Value Changed first select')
@@ -362,6 +444,7 @@ export default function ComponentTypeComponent (props) {
       newConnection.display_name = displayName
       newConnection.relationship_type = props.addNewConnectionSettings.slectedConstraintObject.constraint_type
       newConnection.component = component
+      newConnection.payload = payload
       // eslint-disable-next-line
       newConnection.target_component = targetComponent
       newConnection.connection = props.addNewConnectionSettings.slectedConstraintObject.connection_type
@@ -371,6 +454,8 @@ export default function ComponentTypeComponent (props) {
       let settingPayload = {...props.addNewConnectionSettings, 'firstSelectboxSelected': false, 'firstSelectboxIndex': null, 'secondSelectboxSelected': false, 'isParentSelected': isParentSelected, 'newConnectionArray': newRelationshipArray, 'showCreateConnectionButton': true, 'slectedConstraintObject': {}, 'selectedComponentObject': {}}
       props.setAddConnectionSettings(settingPayload)
       componentPropertiesPayload.relationship.push(payload)
+      console.log('componentPropertiesPayload relation Ships', componentPropertiesPayload)
+      // let componentUpdatePayload
       props.pushComponentPropertyPayload(componentPropertiesPayload)
       // let updatePayload = {}
       // let arry = []
@@ -382,13 +467,61 @@ export default function ComponentTypeComponent (props) {
     }
     let addConnections = function () {
       console.log(componentPropertiesPayload.relationship)
-      props.setRelationshipsValue({'resources': newRelationshipArray})
+      // comment this below line when actual api work in correct response
+      // props.setRelationshipsValue({'resources': newRelationshipArray})
       let payload = {}
       payload.componentId = props.componentTypeComponentData.resources[0].id
       payload.relationship = componentPropertiesPayload.relationship
       props.updateComponentTypeComponentRelationships(payload)
-      showToaster()
+      // showToaster()
       closeModal()
+    }
+    if (props.updateRelationshipResponse !== '') {
+      console.log('update response', props.updateRelationshipResponse)
+      if (props.updateRelationshipResponse.result_code !== -1) {
+        // eslint-disable-next-line
+        toastr.options = {
+          'closeButton': false,
+          'debug': false,
+          'newestOnTop': false,
+          'progressBar': false,
+          'positionClass': 'toast-bottom-full-width',
+          'preventDuplicates': false,
+          'onclick': null,
+          'showDuration': '300',
+          'hideDuration': '1000',
+          'timeOut': '5000',
+          'extendedTimeOut': '1000',
+          'showEasing': 'swing',
+          'hideEasing': 'linear',
+          'showMethod': 'fadeIn',
+          'hideMethod': 'fadeOut'
+        }
+        // eslint-disable-next-line
+        toastr.success('We\'ve added the new relationships to the ' + componentTypeComponentName + '', 'Connecting the dots!')
+      } else {
+        // eslint-disable-next-line
+        toastr.options = {
+          'closeButton': false,
+          'debug': false,
+          'newestOnTop': false,
+          'progressBar': false,
+          'positionClass': 'toast-bottom-full-width',
+          'preventDuplicates': false,
+          'onclick': null,
+          'showDuration': '300',
+          'hideDuration': '1000',
+          'timeOut': '5000',
+          'extendedTimeOut': '1000',
+          'showEasing': 'swing',
+          'hideEasing': 'linear',
+          'showMethod': 'fadeIn',
+          'hideMethod': 'fadeOut'
+        }
+        // eslint-disable-next-line
+        toastr.error(props.updateRelationshipResponse.error_message, props.updateRelationshipResponse.error_code)
+      }
+      props.resetUpdateRelationshipResponse()
     }
     let handleSecondSelect = function (newValue: any, actionMeta: any) {
       console.group('Value Changed')
@@ -429,45 +562,55 @@ export default function ComponentTypeComponent (props) {
       console.log(`action: ${actionMeta.action}`)
       console.groupEnd()
     }
-    let showToaster = function () {
-      // eslint-disable-next-line
-      toastr.options = {
-        'closeButton': false,
-        'debug': false,
-        'newestOnTop': false,
-        'progressBar': false,
-        'positionClass': 'toast-bottom-full-width',
-        'preventDuplicates': false,
-        'onclick': null,
-        'showDuration': '300',
-        'hideDuration': '1000',
-        'timeOut': '5000',
-        'extendedTimeOut': '1000',
-        'showEasing': 'swing',
-        'hideEasing': 'linear',
-        'showMethod': 'fadeIn',
-        'hideMethod': 'fadeOut'
-      }
-      // eslint-disable-next-line
-      toastr.success('We\'ve added the new relationships to the ' + componentTypeComponentName + '', 'Connecting the dots!')
-    }
+    // let showToaster = function () {
+    //   // eslint-disable-next-line
+    //   toastr.options = {
+    //     'closeButton': false,
+    //     'debug': false,
+    //     'newestOnTop': false,
+    //     'progressBar': false,
+    //     'positionClass': 'toast-bottom-full-width',
+    //     'preventDuplicates': false,
+    //     'onclick': null,
+    //     'showDuration': '300',
+    //     'hideDuration': '1000',
+    //     'timeOut': '5000',
+    //     'extendedTimeOut': '1000',
+    //     'showEasing': 'swing',
+    //     'hideEasing': 'linear',
+    //     'showMethod': 'fadeIn',
+    //     'hideMethod': 'fadeOut'
+    //   }
+    //   // eslint-disable-next-line
+    //   toastr.success('We\'ve added the new relationships to the ' + componentTypeComponentName + '', 'Connecting the dots!')
+    // }
     let removeRelationship = function (index) {
-      let newConnection = props.addNewConnectionSettings.newConnectionArray
+      let newConnection = [...props.addNewConnectionSettings.newConnectionArray]
       newConnection.splice(index, 1)
       let showCreateConnectionButton = newConnection.length > 0 || false
       let payload = {...props.addNewConnectionSettings, 'newConnectionArray': newConnection, 'showCreateConnectionButton': showCreateConnectionButton}
       props.setAddConnectionSettings(payload)
-      props.setRelationshipsValue({'resources': newConnection})
+      // props.setRelationshipsValue({'resources': newConnection})
       console.log(JSON.stringify(newConnection))
-      modelRelationshipData = newConnection
+      // modelRelationshipData = newConnection
+      if (newConnection.length > 0) {
+        let payload = []
+        newConnection.forEach(function (data, index) {
+          payload.push(data.payload)
+        })
+        componentPropertiesPayload.relationship = payload
+        props.pushComponentPropertyPayload(componentPropertiesPayload)
+      } else {
+        componentPropertiesPayload.relationship = []
+        props.pushComponentPropertyPayload(componentPropertiesPayload)
+      }
+      console.log('componentPropertiesPayload relation Ships', componentPropertiesPayload)
     }
     let handleNewComponent = function (event) {
-      console.log(event.target.value)
       let newComponent = event.target.value
       let componentObject = {}
       componentObject.name = newComponent
       let showAddRelationshipButton = newComponent.length >= 1
-      console.log(newComponent.length >= 1)
       let payload = {...props.addNewConnectionSettings, 'secondSelectboxSelected': true, 'isNewComponent': true, 'selectedComponentObject': componentObject, 'componentText': newComponent, 'newComponentName': newComponent, 'showAddRelationshipButton': showAddRelationshipButton}
       props.setAddConnectionSettings(payload)
     }
@@ -480,7 +623,6 @@ export default function ComponentTypeComponent (props) {
         }).map(function (constraint, index) {
         if (constraint.target_component_type !== null && constraint.connection_type !== null) {
           let data = {}
-          console.log('inside component constraints', constraint)
           if (constraint.constraint_type === 'Parent') {
             data.display_name = constraint.target_component_type.name + ' is ' + constraint.connection_type.name + ' of ' + props.componentTypeComponentData.resources[0].name
             data.isParent = true
@@ -531,7 +673,7 @@ export default function ComponentTypeComponent (props) {
       startNode.title = props.componentTypeComponentData.resources[0].name
     }
 
-    if (typeof componentTypeComponentProperties !== 'undefined') {
+    if (componentTypeComponentProperties !== '') {
       console.log('original', componentTypeComponentProperties)
       componentTypeComponentPropertiesList = componentTypeComponentProperties.map(function (property, index) {
         let propertyProperties = property.properties
@@ -542,33 +684,33 @@ export default function ComponentTypeComponent (props) {
           if (childProperty.property_type.key === 'Integer') {
             value = childProperty.int_value
             htmlElement = function () {
-              return (<div className='form-group m-form__group has-danger'>
-                <input type='number' className='col-8 input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
-                {childProperty.showMessage && (<div className='form-control-feedback'>should be Number</div>)}
+              return (<div className='col-6 form-group m-form__group has-info'>
+                <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
+                {true && (<div className='form-control-feedback'>should be Number</div>)}
               </div>)
             }
           } else if (childProperty.property_type.key === 'Decimal') {
             value = childProperty.float_value
             htmlElement = function () {
-              return (<div className='form-group m-form__group has-danger'>
-                <input type='number' className='col-8 input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
-                {childProperty.showMessage && (<div className='form-control-feedback'>should be Number</div>)}
+              return (<div className='col-6 form-group m-form__group has-info'>
+                <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
+                {true && (<div className='form-control-feedback'>should be Number</div>)}
               </div>)
             }
           } else if (childProperty.property_type.key === 'DateTime') {
             value = childProperty.date_time_value
             htmlElement = function () {
-              return (<div className='form-group m-form__group has-danger'>
-                <input type='text' className='col-8 input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
-                {childProperty.showMessage && (<div className='form-control-feedback'>should be Text</div>)}
+              return (<div className='col-6 form-group m-form__group has-info'>
+                <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
+                {true && (<div className='form-control-feedback'>should be Text</div>)}
               </div>)
             }
           } else if (childProperty.property_type.key === 'Text') {
             value = childProperty.text_value
             htmlElement = function () {
-              return (<div className='form-group m-form__group has-danger'>
-                <input type='text' className='col-8 input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
-                {childProperty.showMessage && (<div className='form-control-feedback'>should be Text</div>)}
+              return (<div className='col-6 form-group m-form__group has-danger'>
+                <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
+                {true && (<div className='form-control-feedback'>should be Text</div>)}
               </div>)
             }
           } else if (childProperty.property_type.key === 'List') {
@@ -580,14 +722,14 @@ export default function ComponentTypeComponent (props) {
             // value = childProperty.value_set_value
             htmlElement = function () {
               return (<Select
-                className='col-4 input-sm form-control m-input'
+                className='col-5 input-sm form-control m-input'
                 placeholder='Select Options'
                 isClearable
                 // defaultValue={childPropertyOption[0]}
                 // isDisabled={false}
                 // isLoading={false}
                 // isClearable={true}
-                onChange={handlePropertySelect}
+                onChange={handlePropertySelect(index, childIndex)}
                 isSearchable={false}
                 name='selectProperty'
                 options={childPropertyOption}
@@ -596,7 +738,7 @@ export default function ComponentTypeComponent (props) {
           } else {
             value = childProperty.other_value
             htmlElement = function () {
-              return (<input type='text' className='col-3 input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />)
+              return (<input type='text' className='col-6 input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />)
             }
           }
           return (
@@ -610,8 +752,8 @@ export default function ComponentTypeComponent (props) {
           )
         })
         return (
-          <tbody>
-            <tr key={index}>
+          <tbody key={index} className={'col-6'}>
+            <tr>
               <td><p className={styles.labelbold}>Type</p></td>
               <td><p>{property.name}</p></td>
             </tr>
@@ -796,6 +938,12 @@ export default function ComponentTypeComponent (props) {
                               <span className='m-nav__link-text'>Update Properties</span>
                             </a>
                           </li>
+                          <li className='m-nav__item'>
+                            <a href='' className='m-nav__link' onClick={openDeleteModal}>
+                              <i className='m-nav__link-icon flaticon-delete-1' />
+                              <span className='m-nav__link-text'>Delete</span>
+                            </a>
+                          </li>
                           {/* <li className='m-nav__item'>
                             <a href='' className='m-nav__link' onClick={openDeleteModal}>
                               <i className='m-nav__link-icon flaticon-delete-1' />
@@ -838,11 +986,14 @@ export default function ComponentTypeComponent (props) {
                   <div className='pull-right'>
                     <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Connections</button>
                   </div>
-                  <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' role='tablist' aria-multiselectable='true'>
-                    {parentComponentRelationshipList}
-                    {outgoingComponentRelationshipList}
-                    {incomingComponentRelationshipList}
-                    {childComponentRelationshipList}
+                  <div className={'row'}>
+                    <div className='m--space-10' />
+                    <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' role='tablist' aria-multiselectable='true'>
+                      {parentComponentRelationshipList}
+                      {outgoingComponentRelationshipList}
+                      {incomingComponentRelationshipList}
+                      {childComponentRelationshipList}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -865,7 +1016,7 @@ export default function ComponentTypeComponent (props) {
             onRequestClose={closeModal}
             shouldCloseOnOverlayClick={false}
             // className={''}
-            style={''} >
+            >
             {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
             <div className={styles.modalStyle}>
               <div className='modal-dialog modal-lg'>
@@ -884,7 +1035,7 @@ export default function ComponentTypeComponent (props) {
                           className='input-sm form-control m-input'
                           placeholder='Choose Relationships Type'
                           isClearable
-                          isOptionDisabled={(option) => { return (option.isParent && props.addNewConnectionSettings.isParentSelected) }}
+                          isOptionDisabled={(option) => { return (isParentSelected && option.isParent) }}
                           // defaultValue={childPropertyOption[0]}
                           // isDisabled={false}
                           // isLoading={false}
@@ -982,6 +1133,42 @@ export default function ComponentTypeComponent (props) {
               </div>
             </div>
           </ReactModal>
+          <ReactModal isOpen={props.deletemodalIsOpen}
+            onRequestClose={closeModal}
+            style={customStyles} >
+            <div className={styles.modalwidth}>
+              <div className='modal-dialog'>
+                <div className='modal-content'>
+                  <div className='modal-header'>
+                    <h6 className='modal-title' id='exampleModalLabel'>Deleting the {componentTypeComponentName} Application, are you sure?</h6>
+                    <button type='button' onClick={closeDeleteModal} className='close' data-dismiss='modal' aria-label='Close'>
+                      <span aria-hidden='true'>×</span>
+                    </button>
+                    <h6>Deleting the {componentTypeComponentName} Application will also delete the following:</h6>
+                    <div />
+                    <div className='modal-body'>
+                      <h5>Children Components</h5>
+                      {childrenList}
+                      {parentList}
+                      {connecttoList}
+                      {connectfromList}
+                    </div>
+                    <div>
+                      <h5>Relationships</h5>
+                      {parentComponentRelationshipList}
+                      {outgoingComponentRelationshipList}
+                      {incomingComponentRelationshipList}
+                      {childComponentRelationshipList}
+                    </div>
+                  </div>
+                  <div className='modal-footer'>
+                    <button type='button' onClick={closeDeleteModal} id='m_login_signup' className={styles.buttonbg}>Back</button>
+                    <button type='button' id='m_login_signup' className={styles.buttonbg} onClick={removeComponent}>Delete</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ReactModal>
         </div>
       </div>
     )
@@ -992,15 +1179,19 @@ ComponentTypeComponent.propTypes = {
   // setRelationshipsValue: PropTypes.func,
   // updateComponentTypeComponentRelationships: PropTypes.func,
   // copyComponentProperties: PropTypes.func,
+  // copyComponentData: PropTypes.func,
   // restoreComponentProperties: PropTypes.func,
   // editComponentProperties: PropTypes.func,
   // pushComponentPropertyPayload: PropTypes.func,
   // updateComponentTypeComponentProperties: PropTypes.func,
   // updateComponentTypeComponent: PropTypes.func,
   // setConfirmationModalOpenStatus: PropTypes.func,
+  resetUpdateRelationshipResponse: PropTypes.func,
+  updateRelationshipResponse: PropTypes.any,
   successmodalIsOpen: PropTypes.any,
   componentPropertiesPayload: PropTypes.any,
   copiedComponentProperties: PropTypes.any,
+  // copiedComponentData: PropTypes.any,
   addNewConnectionSettings: PropTypes.any,
   componentTypeComponentData: PropTypes.any,
   componentTypeComponentProperties: PropTypes.any,
@@ -1013,5 +1204,10 @@ ComponentTypeComponent.propTypes = {
   modalIsOpen: PropTypes.any,
   // setModalOpenStatus: PropTypes.func
   componentTypeComponentRelationships: PropTypes.any,
-  isDropDownOpen: PropTypes.any
+  isDropDownOpen: PropTypes.any,
+  // deleteComponent: PropTypes.any,
+  // setDeleteModalOpenStatus: PropTypes.func,
+  // history: PropTypes.any,
+  deletemodalIsOpen: PropTypes.any
+  // deletecomponentTypeComponent: PropTypes.func
 }

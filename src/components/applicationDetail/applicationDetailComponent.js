@@ -63,6 +63,7 @@ export default function ApplicationDetail (props) {
   // console.log('propsforredirect ', props.addComponent)
   console.log('props', props.setConfirmationModalOpenStatus)
   console.log('componentdata', props.addComponent)
+  console.log('creating state for redirection', props.setAddRedirectFlag)
   // console.log('props', props.showToasterSuccess)
   // let paginationList
   if (props.componentDetail !== '') {
@@ -73,6 +74,7 @@ export default function ApplicationDetail (props) {
   }
   if (props.addComponent) {
     console.log('add Component --->', props.addComponent)
+    let toaster = props.addComponent.resources[0].name
     // eslint-disable-next-line
     toastr.options = {
       'closeButton': false,
@@ -92,20 +94,20 @@ export default function ApplicationDetail (props) {
       'hideMethod': 'fadeOut'
     }
     // eslint-disable-next-line
-    toastr.success('We\'ve added the Application Sales Force to your model', 'Nice!')
+    toastr.success('We\'ve added the ' +  toaster  +  ' to your model' , 'Nice!')
     // setTimeout(() => {
     //   let componentId = props.addComponent.resources[0].id
     //   props.history.push('/components/' + ComponentTypeId + '/' + componentId)
     // }, 1000)
-    let componentId = props.addComponent.resources[0].id
-    props.history.push('/components/' + ComponentTypeId + '/' + componentId)
+    // let componentId = props.addComponent.resources[0].id
+    // props.history.push('/components/' + ComponentTypeId + '/' + componentId)
   }
   if (typeof componentComponents !== 'undefined') {
     componentComponentsList = componentComponents.map(function (componentComponent, index) {
       return (
         <tr className='m-datatable__row m-datatable__row--even' key={index} style={{ 'left': '0px' }} >
           <td className='m-datatable__cell--sorted m-datatable__cell' >
-            <span><Link to={'/components/' + ComponentTypeId + '/' + componentComponent.id}>{ componentComponent.name }</Link></span>
+            <span className='m-card-user m-card-user__details'><Link to={'/components/' + ComponentTypeId + '/' + componentComponent.id}>{ componentComponent.name }</Link></span>
           </td>
           <td className='m-datatable__cell--sorted m-datatable__cell'><span>{ componentComponent.description }</span></td>
         </tr>
@@ -269,6 +271,7 @@ export default function ApplicationDetail (props) {
     console.log('demopayload', payload)
     console.log('newcomponent', payload.name)
     props.addComponentComponent(payload)
+    props.setAddRedirectFlag(false)
     props.setConfirmationModalOpenStatus(false)
     props.setModalOpenStatus(false)
     // messageBlock = loggedInMessageResponse('')
@@ -284,7 +287,7 @@ export default function ApplicationDetail (props) {
             <img className={styles.iconcenter} src={ComponentTypeIcon.href} alt={ComponentName} />
             <span className='row col-sm-12 col-md-6'>
               <h2>{ ComponentName }</h2>
-              <div className=''><button type='button' onClick={openModal} id='m_login_signup' className={styles.buttonbg}>Add Application</button></div>
+              <div className=''><button type='button' onClick={openModal} id='m_login_signup' className={styles.buttonbg}>Add { ComponentName }</button></div>
               <div>
                 <Modal isOpen={props.modalIsOpen}
                   onRequestClose={closeModal}
@@ -294,7 +297,7 @@ export default function ApplicationDetail (props) {
                     <div className='modal-dialog'>
                       <div className='modal-content'>
                         <div className='modal-header'>
-                          <h4 className='modal-title' id='exampleModalLabel'>New Application</h4>
+                          <h4 className='modal-title' id='exampleModalLabel'>New { ComponentName }</h4>
                           <button type='button' onClick={closeModal} className='close' data-dismiss='modal' aria-label='Close'>
                             <span aria-hidden='true'>×</span>
                           </button>
@@ -314,7 +317,7 @@ export default function ApplicationDetail (props) {
                         </div>
                         <div className='modal-footer'>
                           {/* <button type='button' className='btn btn-primary'>Save changes</button> */}
-                          <button type='button' onClick={createComponent} id='m_login_signup' className={styles.buttonbg}>Add Component</button>
+                          <button type='button' onClick={createComponent} id='m_login_signup' className={styles.buttonbg}>Add { ComponentName }</button>
                         </div>
                       </div>
                     </div>
@@ -446,7 +449,8 @@ ApplicationDetail.propTypes = {
   // showToasterSuccess: PropTypes.func,
   currentPage: PropTypes.any,
   addComponent: PropTypes.any,
-  history: PropTypes.any
+  // history: PropTypes.any,
+  setAddRedirectFlag: PropTypes.func
   // setCurrentPage: PropTypes.func,
   // fetchComponentComponent: PropTypes.func
 }

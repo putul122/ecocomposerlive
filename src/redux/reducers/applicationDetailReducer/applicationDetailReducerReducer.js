@@ -16,7 +16,8 @@ export const actions = {
 
 export const actionCreators = {
   selectedComponentType: createAction(SELECTED_COMPONENT_TYPE),
-  setCurrentPage: createAction(SET_CURRENT_PAGE)
+  setCurrentPage: createAction(SET_CURRENT_PAGE),
+  setAddRedirectFlag: createAction(ADD_COMPONENT_COMPONENT_SUCCESS)
 }
 
 export const initialState = {

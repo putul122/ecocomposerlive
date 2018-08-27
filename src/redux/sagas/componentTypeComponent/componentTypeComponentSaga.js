@@ -28,6 +28,9 @@ export const UPDATE_COMPONENT_TYPE_COMPONENT_PROPERTIES_FAILURE = 'saga/componen
 export const UPDATE_COMPONENT_TYPE_COMPONENT = 'saga/componentTypeComponent/UPDATE_COMPONENT_TYPE_COMPONENT'
 export const UPDATE_COMPONENT_TYPE_COMPONENT_SUCCESS = 'saga/componentTypeComponent/UPDATE_COMPONENT_TYPE_COMPONENT_SUCCESS'
 export const UPDATE_COMPONENT_TYPE_COMPONENT_FAILURE = 'saga/componentTypeComponent/UPDATE_COMPONENT_TYPE_COMPONENT_FAILURE'
+export const DELETE_COMPONENT_TYPE_COMPONENT = 'saga/componentTypeComponent/DELETE_COMPONENT_TYPE_COMPONENT'
+export const DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS = 'saga/componentTypeComponent/DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS'
+export const DELETE_COMPONENT_TYPE_COMPONENT_FAILURE = 'saga/componentTypeComponent/DELETE_COMPONENT_TYPE_COMPONENT_FAILURE'
 
 export const actionCreators = {
   fetchComponentTypeComponent: createAction(FETCH_COMPONENT_TYPE_COMPONENT),
@@ -53,7 +56,10 @@ export const actionCreators = {
   updateComponentTypeComponentPropertiesFailure: createAction(UPDATE_COMPONENT_TYPE_COMPONENT_PROPERTIES_FAILURE),
   updateComponentTypeComponent: createAction(UPDATE_COMPONENT_TYPE_COMPONENT),
   updateComponentTypeComponentSuccess: createAction(UPDATE_COMPONENT_TYPE_COMPONENT_SUCCESS),
-  updateComponentTypeComponentFailure: createAction(UPDATE_COMPONENT_TYPE_COMPONENT_FAILURE)
+  updateComponentTypeComponentFailure: createAction(UPDATE_COMPONENT_TYPE_COMPONENT_FAILURE),
+  deletecomponentTypeComponent: createAction(DELETE_COMPONENT_TYPE_COMPONENT),
+  deletecomponentTypeComponentSuccess: createAction(DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS),
+  deletecomponentTypeComponentFailure: createAction(DELETE_COMPONENT_TYPE_COMPONENT_FAILURE)
 }
 
 export default function * watchComponentTypeComponent () {
@@ -65,7 +71,8 @@ export default function * watchComponentTypeComponent () {
     takeLatest(FETCH_COMPONENT_TYPE_COMPONENTS, getComponentTypeComponents),
     takeLatest(UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS, updateComponentTypeComponentRelationships),
     takeLatest(UPDATE_COMPONENT_TYPE_COMPONENT_PROPERTIES, updateComponentTypeComponentProperties),
-    takeLatest(UPDATE_COMPONENT_TYPE_COMPONENT, updateComponentTypeComponentData)
+    takeLatest(UPDATE_COMPONENT_TYPE_COMPONENT, updateComponentTypeComponentData),
+    takeLatest(DELETE_COMPONENT_TYPE_COMPONENT, deleteComponentTypeComponent)
   ]
 }
 
@@ -197,4 +204,19 @@ export function * updateComponentTypeComponentData (action) {
   } catch (error) {
     yield put(actionCreators.updateComponentTypeComponentFailure(error))
   }
+}
+
+export function * deleteComponentTypeComponent (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const deleteComponent = yield call(
+      axios.delete,
+      api.deleteComponent(action.payload.id)
+      // action.payload
+     )
+    yield put(actionCreators.deletecomponentTypeComponentSuccess(deleteComponent.data))
+  } catch (error) {
+    yield put(actionCreators.deletecomponentTypeComponentFailure(error))
+  }
+  console.log(action.payload)
 }

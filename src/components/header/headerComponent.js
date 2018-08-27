@@ -61,7 +61,7 @@ export default function HeaderComponent (props) {
               <div className='m-stack m-stack--ver m-stack--general'>
                 <div className='m-stack__item m-stack__item--middle m-brand__logo'>
                   <a href='index.html' className=''>
-                    <img alt='' src='/assets/ECO Conductor.png' width='60px' height='60px' />
+                    <img alt='' src='/assets/Telkom.png' width='60px' />
                   </a>
                 </div>
                 <div className='m-stack__item m-stack__item--middle m-brand__tools'>

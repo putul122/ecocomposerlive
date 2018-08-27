@@ -40,6 +40,9 @@ const api = {
     },
     updateComponent: function (payload) {
         return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId
+    },
+    deleteComponent: function (componentTypeId) {
+        return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + componentTypeId
     }
   }
 

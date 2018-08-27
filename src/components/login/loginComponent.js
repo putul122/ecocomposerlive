@@ -72,7 +72,8 @@ export default function Login (props) {
     <div className='m-login__wrapper-2 m-portlet-full-height'>
       <div className='m-login__contanier'>
         <div className='m-login__head'>
-          <h3 className='m-login__title'>Login To Your Account</h3>
+          {/* <h3 className='m-login__title'>Login To Your Account</h3> */}
+          <h2 className='m-login__title'>Login</h2>
         </div>
         <div className='m-login__form m-form'>
           {/* <div className='form-group'>
@@ -93,11 +94,11 @@ export default function Login (props) {
               </label> */}
             </div>
             <div className='col m--align-right'>
-              <a href='' id='m_login_forget_password' className='m-link'>Forget Password ?</a>
+              <a href='' id='m_login_forget_password' className='m-link'>Forgot Password ?</a>
             </div>
           </div>
           <div className='m-login__form-action'>
-            <button onClick={handleSubmit} className={styles.buttonbg + ' ' + loadingClass} >Sign In</button>
+            <button onClick={handleSubmit} className={styles.buttonbg + ' ' + loadingClass} >Login</button>
           </div>
         </div>
       </div>

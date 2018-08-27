@@ -4,7 +4,8 @@ import { FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
   FETCH_COMPONENT_CONSTRAINTS_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
-  UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS
+  UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
+  DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS
  } from '../../sagas/componentTypeComponent/componentTypeComponentSaga'
 // Name Spaced Action Types
 const SET_DATA_LOADING = 'ComponentTypeComponentReducer/SET_DATA_LOADING'
@@ -14,9 +15,12 @@ const SET_ADD_CONNECTION_SETTINGS = 'ComponentTypeComponentReducer/SET_ADD_CONNE
 const SET_RELATIONSHIPS_VALUE = 'ComponentTypeComponentReducer/SET_RELATIONSHIPS_VALUE'
 const SET_EDIT_COMPONENT_FLAG = 'ComponentTypeComponentReducer/SET_EDIT_COMPONENT_FLAG'
 const COPY_COMPONENT_PROPERTIES = 'ComponentTypeComponentReducer/COPY_COMPONENT_PROPERTIES'
+const COPY_COMPONENT_DATA = 'ComponentTypeComponentReducer/COPY_COMPONENT_DATA'
 const RESTORE_COMPONENT_PROPERTIES = 'ComponentTypeComponentReducer/RESTORE_COMPONENT_PROPERTIES'
 const EDIT_COMPONENT_PROPERTIES = 'ComponentTypeComponentReducer/EDIT_COMPONENT_PROPERTIES'
 const PUSH_COMPONENT_PROPERTY_PAYLOAD = 'ComponentTypeComponentReducer/PUSH_COMPONENT_PROPERTY_PAYLOAD'
+const RESET_UPDATE_RELATIONSHIP_RESPONSE = 'ComponentTypeComponentReducer/RESET_UPDATE_RELATIONSHIP_RESPONSE'
+const SET_DELETE_FLAG = 'ComponentTypeComponentReducer/SET_DELETE_FLAG'
 
 export const actions = {
   FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS,
@@ -32,9 +36,12 @@ export const actions = {
   SET_RELATIONSHIPS_VALUE,
   SET_EDIT_COMPONENT_FLAG,
   COPY_COMPONENT_PROPERTIES,
+  COPY_COMPONENT_DATA,
   RESTORE_COMPONENT_PROPERTIES,
   EDIT_COMPONENT_PROPERTIES,
-  PUSH_COMPONENT_PROPERTY_PAYLOAD
+  PUSH_COMPONENT_PROPERTY_PAYLOAD,
+  RESET_UPDATE_RELATIONSHIP_RESPONSE,
+  DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS
 }
 
 export const actionCreators = {
@@ -45,39 +52,47 @@ export const actionCreators = {
     setRelationshipsValue: createAction(SET_RELATIONSHIPS_VALUE),
     setEditComponentFlag: createAction(SET_EDIT_COMPONENT_FLAG),
     copyComponentProperties: createAction(COPY_COMPONENT_PROPERTIES),
+    copyComponentData: createAction(COPY_COMPONENT_DATA),
     restoreComponentProperties: createAction(RESTORE_COMPONENT_PROPERTIES),
     editComponentProperties: createAction(EDIT_COMPONENT_PROPERTIES),
-    pushComponentPropertyPayload: createAction(PUSH_COMPONENT_PROPERTY_PAYLOAD)
+    pushComponentPropertyPayload: createAction(PUSH_COMPONENT_PROPERTY_PAYLOAD),
+    resetUpdateRelationshipResponse: createAction(RESET_UPDATE_RELATIONSHIP_RESPONSE),
+    setDeleteFlag: createAction(SET_DELETE_FLAG),
+    setRedirectFlag: createAction(DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS)
 }
 
 export const initialState = {
-    componentTypeComponentData: '',
-    componentTypeComponentProperties: '',
-    copiedComponentProperties: {property: '', component: ''},
-    componentPropertiesPayload: {property: [], component: [], relationship: []},
-    componentTypeComponentRelationships: '',
-    componentTypeComponentConstraints: '',
-    componentTypeComponents: '',
-    isComponentTypeLoading: false,
-    currentPage: 1,
-    showTabs: {'showProperty': ' active show', 'showRelationship': ''},
-    addNewConnectionSettings: {
-      firstSelectboxSelected: false,
-      firstSelectboxIndex: null,
-      secondSelectboxSelected: false,
-      secondSelectboxIndex: '',
-      isParentSelected: false,
-      isNewComponent: false,
-      newComponentName: '',
-      isEditComponent: false,
-      showAddRelationshipButton: false,
-      showCreateConnectionButton: false,
-      slectedConstraintObject: {},
-      selectedComponentObject: {},
-      relationshipText: '',
-      componentText: '',
-      newConnectionArray: []
-    }
+  componentTypeComponentData: '',
+  componentTypeComponentProperties: '',
+  // copiedComponentProperties: {property: '', component: ''},
+  copiedComponentProperties: '',
+  copiedComponentData: '',
+  componentPropertiesPayload: {property: [], component: [], relationship: []},
+  componentTypeComponentRelationships: '',
+  componentTypeComponentConstraints: '',
+  componentTypeComponents: '',
+  updateRelationshipResponse: '',
+  isComponentTypeLoading: false,
+  currentPage: 1,
+  showTabs: {'showProperty': ' active show', 'showRelationship': ''},
+  addNewConnectionSettings: {
+    firstSelectboxSelected: false,
+    firstSelectboxIndex: null,
+    secondSelectboxSelected: false,
+    secondSelectboxIndex: '',
+    isParentSelected: false,
+    isNewComponent: false,
+    newComponentName: '',
+    isEditComponent: false,
+    showAddRelationshipButton: false,
+    showCreateConnectionButton: false,
+    slectedConstraintObject: {},
+    selectedComponentObject: {},
+    relationshipText: '',
+    componentText: '',
+    newConnectionArray: []
+  },
+  deleteComponent: false
 }
 
 export default handleActions(
@@ -121,7 +136,7 @@ export default handleActions(
     }),
     [UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS]: (state, action) => ({
       ...state,
-      componentTypeComponentRelationships: action.payload
+      updateRelationshipResponse: action.payload
     }),
     [SET_EDIT_COMPONENT_FLAG]: (state, action) => ({
       ...state,
@@ -129,8 +144,11 @@ export default handleActions(
     }),
     [COPY_COMPONENT_PROPERTIES]: (state, action) => ({
       ...state,
-      copiedComponentProperties: action.payload.copiedComponentProperties,
-      isEditComponent: action.payload.isEditComponent
+      copiedComponentProperties: action.payload
+    }),
+    [COPY_COMPONENT_DATA]: (state, action) => ({
+      ...state,
+      copiedComponentData: action.payload
     }),
     [RESTORE_COMPONENT_PROPERTIES]: (state, action) => ({
       ...state,
@@ -145,6 +163,14 @@ export default handleActions(
     [PUSH_COMPONENT_PROPERTY_PAYLOAD]: (state, action) => ({
       ...state,
       componentPropertiesPayload: action.payload
+    }),
+    [RESET_UPDATE_RELATIONSHIP_RESPONSE]: (state, action) => ({
+      ...state,
+      updateRelationshipResponse: ''
+    }),
+    [DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS]: (state, action) => ({
+      ...state,
+      deleteComponent: action.payload
     })
   },
   initialState

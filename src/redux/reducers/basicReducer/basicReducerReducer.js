@@ -11,7 +11,10 @@ const SET_LOGINSLIDE_FLAG = 'BasicReducer/SET_LOGINSLIDE_FLAG'
 const SET_BREADCRUMB = 'BasicReducer/SET_BREADCRUMB'
 const SET_API_CALLING_STATUS = 'BasicReducer/SET_API_CALLING_STATUS'
 const SET_TOASTER_SUCCESS_STATUS = 'BasicReducer/SET_TOASTER_SUCCESS_STATUS'
+const SET_DELETE_MODAL_OPEN_STATUS = 'BasicReducer/SET_DELETE_MODAL_OPEN_STATUS'
 const SET_DROPDOWN_FLAG = 'BasicReducer/SET_DROPDOWN_FLAG'
+const SET_REDIRECT_FLAG = 'BasicReducer/SET_REDIRECT_FLAG'
+const SET_ADD_REDIRECT_FLAG = 'BasicReducer/SET_ADD_REDIRECT_FLAG'
 
 export const actions = {
   INCREMENT,
@@ -25,8 +28,11 @@ export const actions = {
   SET_BREADCRUMB,
   SET_API_CALLING_STATUS,
   SET_TOASTER_SUCCESS_STATUS,
-  SET_DROPDOWN_FLAG
-}
+  SET_DROPDOWN_FLAG,
+  SET_REDIRECT_FLAG,
+  SET_ADD_REDIRECT_FLAG,
+  SET_DELETE_MODAL_OPEN_STATUS
+  }
 
 export const actionCreators = {
   increment: createAction(INCREMENT),
@@ -34,12 +40,15 @@ export const actionCreators = {
   setModalOpenStatus: createAction(SET_MODAL_OPEN_STATUS),
   setConfirmationModalOpenStatus: createAction(SET_CONFIRMATION_MODAL_OPEN_STATUS),
   setCurrentPage: createAction(SET_CURRENT_PAGE),
+  setDeleteModalOpenStatus: createAction(SET_DELETE_MODAL_OPEN_STATUS),
   setQuickslideFlag: createAction(SET_QUICKSLIDE_FLAG),
   setLoginslideFlag: createAction(SET_LOGINSLIDE_FLAG),
   setBreadcrumb: createAction(SET_BREADCRUMB),
   setApiCallingStatus: createAction(SET_API_CALLING_STATUS),
   setToasterSuccessStatus: createAction(SET_TOASTER_SUCCESS_STATUS),
-  setDropdownFlag: createAction(SET_DROPDOWN_FLAG)
+  setDropdownFlag: createAction(SET_DROPDOWN_FLAG),
+  setRedirectFlag: createAction(SET_REDIRECT_FLAG),
+  setAddRedirectFlag: createAction(SET_ADD_REDIRECT_FLAG)
 }
 
 export const initialState = {
@@ -49,13 +58,17 @@ export const initialState = {
   successmodalIsOpen: false,
   currentPage: 1,
   isQuickSlideOpen: false,
+  deletemodalIsOpen: false,
   isLoginSlideOpen: false,
   isApiCalling: false,
+  isRedirect: false,
   showToasterSuccess: localStorage.getItem('showToasterSuccess') || false,
   breadcrumb: '',
   clientAccessToken: '',
-  client_id: 'eco_conductor_web_ui',
-  client_secret: 'Pm41WXE9WU4nVCVdTDlVdUh5PE4iS1dbO1VFNi1ZTnGMzX0pBVDdSciszMkhfI3M4SEVbLQ',
+  // client_id: 'eco_conductor_web_ui',
+  client_id: 'telkom_eco_web_ui',
+  // client_secret: 'Pm41WXE9WU4nVCVdTDlVdUh5PE4iS1dbO1VFNi1ZTnGMzX0pBVDdSciszMkhfI3M4SEVbLQ',
+  client_secret: 'SysHZjmhytHtZwQA4DRctXKU4TTvQajTu2zVANUU9PKmAUnC2gnMUfRxNpbXHJdu',
   authenticateUser: '',
   isDropDownOpen: false
 }
@@ -98,6 +111,10 @@ export default handleActions(
       ...state,
       breadcrumb: action.payload
     }),
+    [SET_REDIRECT_FLAG]: (state, action) => ({
+      ...state,
+      isRedirect: action.payload
+    }),
     [SET_API_CALLING_STATUS]: (state, action) => ({
       ...state,
       isApiCalling: action.payload
@@ -105,6 +122,10 @@ export default handleActions(
     [SET_TOASTER_SUCCESS_STATUS]: (state, action) => ({
       ...state,
       showToasterSuccess: action.payload
+    }),
+    [SET_DELETE_MODAL_OPEN_STATUS]: (state, action) => ({
+      ...state,
+      deletemodalIsOpen: action.payload
     }),
     [FETCH_USER_AUTHENTICATION_SUCCESS]: (state, action) => ({
       ...state,

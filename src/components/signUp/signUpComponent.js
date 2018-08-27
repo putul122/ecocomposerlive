@@ -69,11 +69,14 @@ export default function SignUp (props) {
             <div className='m-login__content'>
               <div className='m-login__logo'>
                 <a href=''>
-                  <img alt='' src='/assets/ECO Conductor.png' width='150px' height='150px' />
+                  {/* <img alt='' src='/assets/ECO Conductor.png' width='150px' height='150px' /> */}
+                  <img alt='' src='/assets/Telkom.png' width='170px' />
                 </a>
               </div>
               <div className={styles.logintitle}>
-                <h3>JOIN OUR ECOCONDUCTOR COMMUNITY GET FREE ACCOUNT</h3>
+                {/* <h3>JOIN OUR ECOCONDUCTOR COMMUNITY GET FREE ACCOUNT</h3> */}
+                <h2>Welcome to TelkomECO Core</h2>
+                <p>Please complete details to register</p>
               </div>
               <div className='m-login__form m-form'>
                 {messageBlock}
@@ -88,7 +91,7 @@ export default function SignUp (props) {
                 </div>
               </div>
               <div className='m-login__form-action'>
-                <button type='button' onClick={handleInput} id='m_login_signup' className={styles.buttonbg + ' ' + loadingClass}>Get An Account</button>
+                <button type='button' onClick={handleInput} id='m_login_signup' className={styles.buttonbg + ' ' + loadingClass}>Register</button>
               </div>
             </div>
           </div>

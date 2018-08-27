@@ -4,18 +4,18 @@ import componentTypeComponent from '../../components/componentTypeComponent/comp
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators as basicActionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
 import { actionCreators as componentTypeComponentActionCreators } from '../../redux/reducers/componentTypeComponentReducer/componentTypeComponentReducerReducer'
-console.log('saga', sagaActions)
 // Global State
 export function mapStateToProps (state, props) {
-  console.log('com type com detail state', state)
   return {
     authenticateUser: state.basicReducer.authenticateUser,
     componentTypeComponentData: state.componentTypeComponentReducer.componentTypeComponentData,
     componentTypeComponentProperties: state.componentTypeComponentReducer.componentTypeComponentProperties,
     copiedComponentProperties: state.componentTypeComponentReducer.copiedComponentProperties,
+    copiedComponentData: state.componentTypeComponentReducer.copiedComponentData,
     componentPropertiesPayload: state.componentTypeComponentReducer.componentPropertiesPayload,
     componentDetail: state.applicationDetailReducer.componentDetail,
     componentTypeComponentRelationships: state.componentTypeComponentReducer.componentTypeComponentRelationships,
+    updateRelationshipResponse: state.componentTypeComponentReducer.updateRelationshipResponse,
     componentTypeComponents: state.componentTypeComponentReducer.componentTypeComponents,
     componentTypeComponentConstraints: state.componentTypeComponentReducer.componentTypeComponentConstraints,
     showTabs: state.componentTypeComponentReducer.showTabs,
@@ -23,7 +23,8 @@ export function mapStateToProps (state, props) {
     addNewConnectionSettings: state.componentTypeComponentReducer.addNewConnectionSettings,
     isDropDownOpen: state.basicReducer.isDropDownOpen,
     modalIsOpen: state.basicReducer.modalIsOpen,
-    successmodalIsOpen: state.basicReducer.successmodalIsOpen
+    successmodalIsOpen: state.basicReducer.successmodalIsOpen,
+    deletemodalIsOpen: state.basicReducer.deletemodalIsOpen
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -43,13 +44,19 @@ export const propsMapping: Callbacks = {
   setCurrentTab: componentTypeComponentActionCreators.setCurrentTab,
   setEditComponentFlag: componentTypeComponentActionCreators.setEditComponentFlag,
   copyComponentProperties: componentTypeComponentActionCreators.copyComponentProperties,
+  resetUpdateRelationshipResponse: componentTypeComponentActionCreators.resetUpdateRelationshipResponse,
+  copyComponentData: componentTypeComponentActionCreators.copyComponentData,
   restoreComponentProperties: componentTypeComponentActionCreators.restoreComponentProperties,
   editComponentProperties: componentTypeComponentActionCreators.editComponentProperties,
   pushComponentPropertyPayload: componentTypeComponentActionCreators.pushComponentPropertyPayload,
   setRelationshipsValue: componentTypeComponentActionCreators.setRelationshipsValue,
   setAddConnectionSettings: componentTypeComponentActionCreators.setAddConnectionSettings,
   setDropdownFlag: basicActionCreators.setDropdownFlag,
-  setConfirmationModalOpenStatus: basicActionCreators.setConfirmationModalOpenStatus
+  setConfirmationModalOpenStatus: basicActionCreators.setConfirmationModalOpenStatus,
+  deletecomponentTypeComponent: sagaActions.componentTypeComponentActions.deletecomponentTypeComponent,
+  setDeleteModalOpenStatus: basicActionCreators.setDeleteModalOpenStatus,
+  setRedirectFlag: basicActionCreators.setRedirectFlag,
+  setAddRedirectFlag: basicActionCreators.setAddRedirectFlag
 }
 
 // If you want to use the function mapping
@@ -63,7 +70,6 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      console.log('com typecom cont', this.props)
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       const componentTypeComponentId = this.props.match.params.componentId
       const componentTypeId = this.props.match.params.componentTypeId
@@ -81,9 +87,29 @@ export default compose(
     },
     componentWillReceiveProps: function (nextProps) {
       console.log('will receive props mmmmmmmmmmmmm', nextProps)
+      const componentTypeComponentId = this.props.match.params.componentId
+      const componentTypeId = this.props.match.params.componentTypeId
+      let payload = {
+        'componentTypeId': componentTypeId,
+        'componentTypeComponentId': componentTypeComponentId,
+        'id': componentTypeComponentId
+      }
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
           this.props.history.push('/')
+        }
+      }
+      if (nextProps.deleteComponent && nextProps.componentDetail) {
+        let deletecomponentid = nextProps.componentDetail.resources[0].id
+        this.props.history.push('/components/' + deletecomponentid)
+        this.props.history.go('/components/' + deletecomponentid)
+        nextProps.setRedirectFlag(false)
+        nextProps.setAddRedirectFlag(false)
+        nextProps.setDeleteModalOpenStatus(false)
+      }
+      if (nextProps.updateRelationshipResponse && nextProps.updateRelationshipResponse !== '') {
+        if (!nextProps.updateRelationshipResponse.error_code) {
+          this.props.fetchcomponentTypeComponentRelationships && this.props.fetchcomponentTypeComponentRelationships(payload)
         }
       }
       if (nextProps.componentDetail && nextProps.componentTypeComponentData && (nextProps.componentTypeComponentData !== '') && nextProps.componentTypeComponentData.resources) {

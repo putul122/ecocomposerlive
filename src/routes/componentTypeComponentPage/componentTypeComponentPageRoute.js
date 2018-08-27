@@ -7,7 +7,6 @@ import Breadcrumb from '../../containers/breadcrumb/breadcrumbContainer'
 
 class componentTypeDetailPageRoute extends React.Component {
 	render () {
-    console.log('com type comp details param main', this.props)
 		return (
   <div>
     <Header {...this.props} />
