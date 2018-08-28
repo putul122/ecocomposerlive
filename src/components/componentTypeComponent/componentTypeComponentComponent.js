@@ -498,7 +498,7 @@ export default function ComponentTypeComponent (props) {
           'hideMethod': 'fadeOut'
         }
         // eslint-disable-next-line
-        toastr.success('We\'ve added the new relationships to the ' + componentTypeComponentName + '', 'Connecting the dots!')
+        toastr.success('We\'ve added the new relationships to the ' + props.componentTypeComponentData.resources[0].name + '', 'Connecting the dots!')
       } else {
         // eslint-disable-next-line
         toastr.options = {
