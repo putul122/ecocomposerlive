@@ -79,3 +79,17 @@
     .pointerDisabled { pointer-events: none; }
     .menuStyle1 { z-index: 101; }
     .menuStyle2 { right: auto; left: 29.5px; }
+    .buttonbg { // back-grcolor:#22b9ff; 
+        background-color:#22b9ff; 
+        border-radius: 60px; 
+        color: #ffffff; 
+        text-align: center; 
+        padding: 0.5rem 1.3rem; 
+        border: 1px solid #22b9ff; 
+        cursor: pointer; margin-left: 165px; 
+    } 
+    .buttonbg:hover { 
+        background-color: #33ccff 
+    } 
+    .modalwidth{ width:1200px; } 
+    .modal-dialog{ max-width: 750px !important; }

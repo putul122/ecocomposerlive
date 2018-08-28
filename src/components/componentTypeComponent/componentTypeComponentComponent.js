@@ -100,6 +100,30 @@ export default function ComponentTypeComponent (props) {
       props.setDeleteModalOpenStatus(false)
     }
     // Code for Delete Modal ends
+    // Code for listing in Delete Modal begins
+    if (componentTypeComponentRelationships !== '') {
+      let child = _.filter(componentTypeComponentRelationships.resources, {'relationship_type': 'Child'})
+         console.log('childrenlist', child)
+         childrenList = child.map(function (element, index) {
+           return (<span><a>{element.target_component.name}</a><br /></span>)
+         })
+      let parent = _.filter(componentTypeComponentRelationships.resources, {'relationship_type': 'Parent'})
+       console.log('parentlist', parent)
+       parentList = parent.map(function (element, index) {
+         return (<span><a>{element.target_component.name}</a><br /></span>)
+       })
+      let connectfrom = _.filter(componentTypeComponentRelationships.resources, {'relationship_type': 'ConnectFrom'})
+       // console.log('connecttolist', connectto)
+       connectfromList = connectfrom.map(function (element, index) {
+         return (<span><a>{element.target_component.name}</a><br /></span>)
+       })
+      let connectto = _.filter(componentTypeComponentRelationships.resources, {'relationship_type': 'ConnectTo'})
+       console.log('connecttolist', connectto)
+       connecttoList = connectto.map(function (element, index) {
+         return (<span><a>{element.target_component.name}</a><br /></span>)
+       })
+      }
+     // Code for listing in Delete Modal ends
     let showProperty = function (event) {
       let payload = {'showProperty': ' active show', 'showRelationship': ''}
       props.setCurrentTab(payload)
@@ -1133,42 +1157,44 @@ export default function ComponentTypeComponent (props) {
               </div>
             </div>
           </ReactModal>
-          <ReactModal isOpen={props.deletemodalIsOpen}
-            onRequestClose={closeModal}
-            style={customStyles} >
-            <div className={styles.modalwidth}>
-              <div className='modal-dialog'>
-                <div className='modal-content'>
-                  <div className='modal-header'>
-                    <h6 className='modal-title' id='exampleModalLabel'>Deleting the {componentTypeComponentName} Application, are you sure?</h6>
-                    <button type='button' onClick={closeDeleteModal} className='close' data-dismiss='modal' aria-label='Close'>
-                      <span aria-hidden='true'>×</span>
-                    </button>
-                    <h6>Deleting the {componentTypeComponentName} Application will also delete the following:</h6>
-                    <div />
-                    <div className='modal-body'>
-                      <h5>Children Components</h5>
-                      {childrenList}
-                      {parentList}
-                      {connecttoList}
-                      {connectfromList}
+          <div>
+            <ReactModal isOpen={props.deletemodalIsOpen}
+              onRequestClose={closeModal}
+              style={customStyles} >
+              <div className={styles.modalwidth}>
+                <div className='modal-dialog'>
+                  <div className='modal-content'>
+                    <div className='modal-header'>
+                      <h6 className='modal-title' id='exampleModalLabel'>Deleting the {componentTypeComponentName} Application, are you sure?</h6>
+                      <button type='button' onClick={closeDeleteModal} className='close' data-dismiss='modal' aria-label='Close'>
+                        <span aria-hidden='true'>×</span>
+                      </button>
+                      <h6>Deleting the {componentTypeComponentName} Application will also delete the following:</h6>
+                      <div />
+                      <div className='modal-body'>
+                        <h5>Children Components</h5>
+                        {childrenList}
+                        {parentList}
+                        {connecttoList}
+                        {connectfromList}
+                      </div>
+                      <div>
+                        <h5>Relationships</h5>
+                        {parentComponentRelationshipList}
+                        {outgoingComponentRelationshipList}
+                        {incomingComponentRelationshipList}
+                        {childComponentRelationshipList}
+                      </div>
                     </div>
-                    <div>
-                      <h5>Relationships</h5>
-                      {parentComponentRelationshipList}
-                      {outgoingComponentRelationshipList}
-                      {incomingComponentRelationshipList}
-                      {childComponentRelationshipList}
+                    <div className='modal-footer'>
+                      <button type='button' onClick={closeDeleteModal} id='m_login_signup' className={styles.buttonbg}>Back</button>
+                      <button type='button' id='m_login_signup' className={styles.buttonbg} onClick={removeComponent}>Delete</button>
                     </div>
-                  </div>
-                  <div className='modal-footer'>
-                    <button type='button' onClick={closeDeleteModal} id='m_login_signup' className={styles.buttonbg}>Back</button>
-                    <button type='button' id='m_login_signup' className={styles.buttonbg} onClick={removeComponent}>Delete</button>
                   </div>
                 </div>
               </div>
-            </div>
-          </ReactModal>
+            </ReactModal>
+          </div>
         </div>
       </div>
     )

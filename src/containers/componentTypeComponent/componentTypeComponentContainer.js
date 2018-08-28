@@ -24,7 +24,8 @@ export function mapStateToProps (state, props) {
     isDropDownOpen: state.basicReducer.isDropDownOpen,
     modalIsOpen: state.basicReducer.modalIsOpen,
     successmodalIsOpen: state.basicReducer.successmodalIsOpen,
-    deletemodalIsOpen: state.basicReducer.deletemodalIsOpen
+    deletemodalIsOpen: state.basicReducer.deletemodalIsOpen,
+    deleteComponent: state.componentTypeComponentReducer.deleteComponent
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
