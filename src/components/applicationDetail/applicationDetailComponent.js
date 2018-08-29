@@ -114,7 +114,7 @@ export default function ApplicationDetail (props) {
       )
     })
 
-    totalComponentTypeComponent = props.componentComponents.count
+    totalComponentTypeComponent = props.componentComponents.total_count
     totalNoPages = Math.ceil(totalComponentTypeComponent / perPage)
 
     if (currentPage === 1) {
@@ -155,6 +155,8 @@ export default function ApplicationDetail (props) {
         }
       }
       props.fetchComponentComponent(payload)
+      // eslint-disable-next-line
+      mApp.block('#style-1', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       props.setCurrentPage(currentPage - 1)
     }
     listPage = _.filter(pageArray, function (group) {
@@ -178,7 +180,9 @@ export default function ApplicationDetail (props) {
       }
     }
     props.fetchComponentComponent(payload)
-      props.setCurrentPage(currentPage + 1)
+    // eslint-disable-next-line
+    mApp.block('#style-1', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    props.setCurrentPage(currentPage + 1)
     }
     listPage = _.filter(pageArray, function (group) {
       let found = _.filter(group, {'number': currentPage + 1})
@@ -202,6 +206,8 @@ export default function ApplicationDetail (props) {
       }
     }
     props.fetchComponentComponent(payload)
+    // eslint-disable-next-line
+    mApp.block('#style-1', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     props.setCurrentPage(page)
 
     listPage = _.filter(pageArray, function (group) {
@@ -225,6 +231,8 @@ export default function ApplicationDetail (props) {
       // if (searchTextBox.value.length % 2 === 0) {
         // props.fetchComponentComponent(payload)
         props.searchComponentComponent(payload)
+        // eslint-disable-next-line
+        mApp.block('#style-1', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
         // props.setComponentTypeLoading(true)
       // }
     }

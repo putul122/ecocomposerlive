@@ -74,6 +74,10 @@ export default compose(
           this.props.history.push('/')
         }
       }
+      if (nextProps.componentComponents && nextProps.componentComponents !== this.props.componentComponents) {
+        // eslint-disable-next-line
+        mApp && mApp.unblock('#style-1')
+      }
       if (nextProps.addComponent && nextProps.componentDetail) {
         console.log('deleting deleteComponent component', nextProps.addComponent)
     //         setTimeout(() => {

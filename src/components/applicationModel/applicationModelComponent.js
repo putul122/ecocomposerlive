@@ -437,23 +437,26 @@ class ApplicationModelComponent extends React.Component {
                     nodeArray.push(node)
 
                     var link = {}
-                    link.type = data.name
                     link.direction = 'output'
                     link.strokeWidth = 1.2
                     link.fontFamily = 'sans-serif'
                     link.fontSize = 12
                     if (data.constraint_type === 'Parent') {  // down
+                        link.type = 'Is Child Of'
                         link.source = 0
                         link.target = index
                         link.direction = 'output'
                     } else if (data.constraint_type === 'Child') {  // up
+                        link.type = 'Is Parent Of'
                         link.source = 0
                         link.target = index
                         link.direction = 'output'
                     } else if (data.constraint_type === 'ConnectFrom') {  // Left
+                        link.type = data.connection_type.name
                         link.source = index
                         link.target = 0
                     } else if (data.constraint_type === 'ConnectTo') {  // Right
+                        link.type = data.connection_type.name
                         link.source = 0
                         link.target = index
                     }
