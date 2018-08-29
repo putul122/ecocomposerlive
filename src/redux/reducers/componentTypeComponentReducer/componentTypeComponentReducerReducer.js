@@ -79,6 +79,7 @@ export const initialState = {
     firstSelectboxSelected: false,
     firstSelectboxIndex: null,
     targetComponentTypeId: '',
+    isWaitingForApiResponse: false,
     secondSelectboxSelected: false,
     secondSelectboxIndex: '',
     isParentSelected: false,

@@ -50,23 +50,6 @@
         border: none;
     }
 
-    .modal{
-        position: absolute;
-        top: 18%;
-        // left: 40px;
-        // right: 40px;
-        background-color: papayawhip;
-    }
-
-    .modalwidth{
-        width:1200px;
-        }
-
-    .modalStyle {
-        display: block; 
-        padding-right: 15px;    
-    }
-
     .search1style {
         width: 270.984px;
     }
@@ -90,6 +73,5 @@
     } 
     .buttonbg:hover { 
         background-color: #33ccff 
-    } 
-    .modalwidth{ width:1200px; } 
-    // .modal-dialog{ max-width: 750px !important; }
+    }
+    

@@ -415,12 +415,14 @@ export default function ComponentTypeComponent (props) {
                                   })
           console.log('select constraint object', constraintObject.target_component_type.id, props)
           let targetComponentTypeId = parseInt(constraintObject.target_component_type.id)
+          let isWaitingForApiResponse = props.addNewConnectionSettings.isWaitingForApiResponse
           if (props.addNewConnectionSettings.targetComponentTypeId !== targetComponentTypeId) {
             // call api
             let apiPayload = {
               'componentTypeId': targetComponentTypeId
             }
             props.fetchComponentTypeComponents && props.fetchComponentTypeComponents(apiPayload)
+            isWaitingForApiResponse = true
           }
           let displayText
           if (constraintObject.constraint_type === 'Parent') {
@@ -432,7 +434,7 @@ export default function ComponentTypeComponent (props) {
           } else if (constraintObject.constraint_type === 'ConnectFrom') {
             displayText = props.componentTypeComponentData.resources[0].name + ' ' + constraintObject.connection_type.name + ' ' + constraintObject.target_component_type.name
           }
-          let payload = {...props.addNewConnectionSettings, 'firstSelectboxSelected': true, 'firstSelectboxIndex': newValue, 'targetComponentTypeId': targetComponentTypeId, 'secondSelectboxSelected': false, 'slectedConstraintObject': constraintObject, 'relationshipText': displayText, 'selectedComponentObject': {}}
+          let payload = {...props.addNewConnectionSettings, 'firstSelectboxSelected': true, 'firstSelectboxIndex': newValue, 'targetComponentTypeId': targetComponentTypeId, 'isWaitingForApiResponse': isWaitingForApiResponse, 'secondSelectboxSelected': false, 'slectedConstraintObject': constraintObject, 'relationshipText': displayText, 'selectedComponentObject': {}}
           props.setAddConnectionSettings(payload)
         } else {
           let payload = {...props.addNewConnectionSettings, 'firstSelectboxSelected': false, 'firstSelectboxIndex': newValue, 'secondSelectboxSelected': false, 'slectedConstraintObject': {}, 'relationshipText': '', 'selectedComponentObject': {}}
@@ -998,9 +1000,6 @@ export default function ComponentTypeComponent (props) {
 
     return (
       <div className={styles.borderline}>
-        <div className={'row'}>
-          <div className='col-md-12 row' />
-        </div>
         <div className='row'>
           <div className='col-sm-12 col-md-6' >
             <div className={'row'}>
@@ -1103,6 +1102,43 @@ export default function ComponentTypeComponent (props) {
           </div>
         </div>
         <div>
+          <ReactModal isOpen={props.deletemodalIsOpen}
+            onRequestClose={closeModal}
+            style={customStyles} >
+            <div className={styles.modalwidth}>
+              <div className='modal-dialog'>
+                <div className='modal-content'>
+                  <div className='modal-header'>
+                    <h6 className='modal-title' id='exampleModalLabel'>Deleting the {componentTypeComponentName} Application, are you sure?</h6>
+                    <button type='button' onClick={closeDeleteModal} className='close' data-dismiss='modal' aria-label='Close'>
+                      <span aria-hidden='true'>×</span>
+                    </button>
+                  </div>
+                  <div className='modal-body'>
+                    <h6>Deleting the {componentTypeComponentName} Application will also delete the following:</h6>
+                    <div>
+                      <h5>Children Components</h5>
+                      {childrenList}
+                      {parentList}
+                      {connecttoList}
+                      {connectfromList}
+                    </div>
+                    <div>
+                      <h5>Relationships</h5>
+                      {parentComponentRelationshipList}
+                      {outgoingComponentRelationshipList}
+                      {incomingComponentRelationshipList}
+                      {childComponentRelationshipList}
+                    </div>
+                  </div>
+                  <div className='modal-footer'>
+                    <button type='button' onClick={closeDeleteModal} id='m_login_signup' className={styles.buttonbg}>Back</button>
+                    <button type='button' id='m_login_signup' className={styles.buttonbg} onClick={removeComponent}>Delete</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ReactModal>
           <ReactModal isOpen={props.modalIsOpen}
             onRequestClose={closeModal}
             shouldCloseOnOverlayClick={false}
@@ -1140,7 +1176,7 @@ export default function ComponentTypeComponent (props) {
                         />
                       </div>
                     </div>
-                    {props.addNewConnectionSettings.firstSelectboxSelected === true && (
+                    {props.addNewConnectionSettings.firstSelectboxSelected === true && !props.addNewConnectionSettings.isWaitingForApiResponse && (
                       <div className='form-group m-form__group row'>
                         <label htmlFor='SelectRelatedComponent' className='col-5 col-form-label'>Choose Select Related Component</label>
                         <div className='col-7'>
@@ -1219,42 +1255,6 @@ export default function ComponentTypeComponent (props) {
                   <div className='modal-footer'>
                     <button onClick={closeConfirmationModal} className='btn btn-sm btn-outline-info'>Back</button>
                     <button onClick={submitUpdates} id='m_login_signup' className='btn btn-sm btn-info'>Submit Updates</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </ReactModal>
-          <ReactModal isOpen={props.deletemodalIsOpen}
-            onRequestClose={closeModal}
-            style={customStyles} >
-            <div className={styles.modalwidth}>
-              <div className='modal-dialog'>
-                <div className='modal-content'>
-                  <div className='modal-header'>
-                    <h6 className='modal-title' id='exampleModalLabel'>Deleting the {componentTypeComponentName} Application, are you sure?</h6>
-                    <button type='button' onClick={closeDeleteModal} className='close' data-dismiss='modal' aria-label='Close'>
-                      <span aria-hidden='true'>×</span>
-                    </button>
-                    <h6>Deleting the {componentTypeComponentName} Application will also delete the following:</h6>
-                    <div />
-                    <div className='modal-body'>
-                      <h5>Children Components</h5>
-                      {childrenList}
-                      {parentList}
-                      {connecttoList}
-                      {connectfromList}
-                    </div>
-                    <div>
-                      <h5>Relationships</h5>
-                      {parentComponentRelationshipList}
-                      {outgoingComponentRelationshipList}
-                      {incomingComponentRelationshipList}
-                      {childComponentRelationshipList}
-                    </div>
-                  </div>
-                  <div className='modal-footer'>
-                    <button type='button' onClick={closeDeleteModal} id='m_login_signup' className={styles.buttonbg}>Back</button>
-                    <button type='button' id='m_login_signup' className={styles.buttonbg} onClick={removeComponent}>Delete</button>
                   </div>
                 </div>
               </div>

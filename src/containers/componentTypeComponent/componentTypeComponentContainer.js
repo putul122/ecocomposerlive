@@ -100,6 +100,10 @@ export default compose(
           this.props.history.push('/')
         }
       }
+      if (nextProps.componentTypeComponents && nextProps.componentTypeComponents !== this.props.componentTypeComponents) {
+        let settingPayload = {...this.props.addNewConnectionSettings, 'isWaitingForApiResponse': false}
+        this.props.setAddConnectionSettings(settingPayload)
+      }
       if (nextProps.deleteComponent && nextProps.componentDetail) {
         let deletecomponentid = nextProps.componentDetail.resources[0].id
         this.props.history.push('/components/' + deletecomponentid)
