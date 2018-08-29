@@ -383,6 +383,8 @@ export default function ComponentTypeComponent (props) {
       props.setModalOpenStatus(true)
       let payload = {...props.addNewConnectionSettings, 'firstSelectboxSelected': false, 'isParentSelected': false, 'secondSelectboxSelected': false, 'slectedConstraintObject': {}, 'relationshipText': '', 'newConnectionArray': []}
       props.setAddConnectionSettings(payload)
+      componentPropertiesPayload.relationship = []
+      props.pushComponentPropertyPayload(componentPropertiesPayload)
     }
     let closeModal = function (event) {
       // event.preventDefault()
@@ -411,6 +413,15 @@ export default function ComponentTypeComponent (props) {
           let constraintObject = _.find(props.componentTypeComponentConstraints.resources, function (obj) {
                                       return parseInt(obj.id) === parseInt(index)
                                   })
+          console.log('select constraint object', constraintObject.target_component_type.id, props)
+          let targetComponentTypeId = parseInt(constraintObject.target_component_type.id)
+          if (props.addNewConnectionSettings.targetComponentTypeId !== targetComponentTypeId) {
+            // call api
+            let apiPayload = {
+              'componentTypeId': targetComponentTypeId
+            }
+            props.fetchComponentTypeComponents && props.fetchComponentTypeComponents(apiPayload)
+          }
           let displayText
           if (constraintObject.constraint_type === 'Parent') {
             displayText = constraintObject.target_component_type.name + ' is ' + constraintObject.connection_type.name + ' of ' + props.componentTypeComponentData.resources[0].name
@@ -421,7 +432,7 @@ export default function ComponentTypeComponent (props) {
           } else if (constraintObject.constraint_type === 'ConnectFrom') {
             displayText = props.componentTypeComponentData.resources[0].name + ' ' + constraintObject.connection_type.name + ' ' + constraintObject.target_component_type.name
           }
-          let payload = {...props.addNewConnectionSettings, 'firstSelectboxSelected': true, 'firstSelectboxIndex': newValue, 'secondSelectboxSelected': false, 'slectedConstraintObject': constraintObject, 'relationshipText': displayText, 'selectedComponentObject': {}}
+          let payload = {...props.addNewConnectionSettings, 'firstSelectboxSelected': true, 'firstSelectboxIndex': newValue, 'targetComponentTypeId': targetComponentTypeId, 'secondSelectboxSelected': false, 'slectedConstraintObject': constraintObject, 'relationshipText': displayText, 'selectedComponentObject': {}}
           props.setAddConnectionSettings(payload)
         } else {
           let payload = {...props.addNewConnectionSettings, 'firstSelectboxSelected': false, 'firstSelectboxIndex': newValue, 'secondSelectboxSelected': false, 'slectedConstraintObject': {}, 'relationshipText': '', 'selectedComponentObject': {}}
@@ -801,10 +812,21 @@ export default function ComponentTypeComponent (props) {
       let parentComponentRelationshipListFn = function () {
         if (parent.length > 0) {
           let childElementList = parent.map(function (element, i) {
-          return (<span><a>{element.target_component.name}</a><br /></span>)
+          return (<span>
+            <a href='javascript:void(0);'>{element.target_component.name}</a>
+            {/* <div className='dropdown'>
+              <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
+              <div className='dropdown-menu' aria-labelledby='dropdownMenuButton' x-placement='bottom-start' style={{position: 'absolute', 'will-change': 'transform', 'top': '0px', 'left': '0px', 'transform': "translate3d('0px', '40px', '0px')"}}>
+                <a className='dropdown-item' href='javascript:void(0);' data-toggle='m-tooltip' title='' data-placement='right' data-skin='dark' data-container='body' data-original-title='Tooltip title'>Action</a>
+                <a className='dropdown-item' href='javascript:void(0);'>Another action</a>
+                <a className='dropdown-item' href='javascript:void(0);' data-toggle='m-tooltip' title='' data-placement='left' data-original-title='Tooltip title'>Something else here</a>
+              </div>
+            </div> */}
+            <br />
+          </span>)
         })
         return (
-          <div className='m-accordion__item'>
+          <div className='m-accordion__item' style={{'overflow': 'visible'}}>
             <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + parent[0].relationship_type} aria-expanded='true'>
               <span className='m-accordion__item-title'>{parent[0].component.name} {parent[0].relationship_type} {'Components'}</span>
               <span className='m-accordion__item-mode' />
@@ -824,10 +846,21 @@ export default function ComponentTypeComponent (props) {
       let childComponentRelationshipListFn = function () {
         if (child.length > 0) {
           let childElementList = child.map(function (element, i) {
-          return (<span><a>{element.target_component.name}</a><br /></span>)
+          return (<span>
+            <a href='javascript:void(0);'>{element.target_component.name}</a>
+            {/* <div className='dropdown'>
+              <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
+              <div className='dropdown-menu' aria-labelledby='dropdownMenuButton' x-placement='bottom-start' style={{position: 'absolute', 'will-change': 'transform', 'top': '0px', 'left': '0px', 'transform': "translate3d('0px', '40px', '0px')"}}>
+                <a className='dropdown-item' href='javascript:void(0);' data-toggle='m-tooltip' title='' data-placement='right' data-skin='dark' data-container='body' data-original-title='Tooltip title'>Action</a>
+                <a className='dropdown-item' href='javascript:void(0);'>Another action</a>
+                <a className='dropdown-item' href='javascript:void(0);' data-toggle='m-tooltip' title='' data-placement='left' data-original-title='Tooltip title'>Something else here</a>
+              </div>
+            </div> */}
+            <br />
+          </span>)
         })
         return (
-          <div className='m-accordion__item'>
+          <div className='m-accordion__item' style={{'overflow': 'visible'}}>
             <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + child[0].relationship_type} aria-expanded='true'>
               <span className='m-accordion__item-title'>{child[0].component.name} {child[0].relationship_type} {'Components'}</span>
               <span className='m-accordion__item-mode' />
@@ -851,22 +884,36 @@ export default function ComponentTypeComponent (props) {
           .groupBy('connection.name')
           .mapValues(connectionTypeGroup => _.groupBy(connectionTypeGroup, targetComponentTypeGroup => targetComponentTypeGroup.target_component.component_type.name))
           .value()
+          let outerKey = 0
           for (let connectionKey in outgoingGroup) {
             if (outgoingGroup.hasOwnProperty(connectionKey)) {
               // console.log(connectionKey, '-->>', outgoingGroup[connectionKey])
+              outerKey++
+              let innerKey = 0
               for (let targetComponentTypeKey in outgoingGroup[connectionKey]) {
                 if (outgoingGroup[connectionKey].hasOwnProperty(targetComponentTypeKey)) {
                   // console.log(targetComponentTypeKey, '-->>', outgoingGroup[connectionKey][targetComponentTypeKey])
+                  innerKey++
                   let childElementList = outgoingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
-                    return (<span><a>{element.target_component.name}</a><br /></span>)
+                    return (<span>
+                      <a href='javascript:void(0);'>{element.target_component.name}</a>
+                      {/* <div className='dropdown'>
+                        <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
+                        <div className='dropdown-menu' aria-labelledby='dropdownMenuButton' x-placement='bottom-start' style={{position: 'absolute', 'will-change': 'transform', 'top': '0px', 'left': '0px', 'transform': "translate3d('0px', '40px', '0px')"}}>
+                          <a className='dropdown-item' href='javascript:void(0);' data-toggle='m-tooltip' title='' data-placement='right' data-skin='dark' data-container='body' data-original-title='Tooltip title'>Relationships Action</a>
+                        </div>
+                      </div> */}
+                      <br />
+                    </span>)
                   })
+                  // let cleanKey = targetComponentTypeKey.replace(/ /g, '')
                   outgoingElements.push(
-                    <div className='m-accordion__item'>
-                      <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + targetComponentTypeKey} aria-expanded='false'>
+                    <div className='m-accordion__item' style={{'overflow': 'visible'}}>
+                      <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#outgoing_accordion_body' + outerKey + '-' + innerKey} aria-expanded='false'>
                         <span className='m-accordion__item-title'>{outgoingGroup[connectionKey][targetComponentTypeKey][0].component.name} {connectionKey} {targetComponentTypeKey}</span>
                         <span className='m-accordion__item-mode' />
                       </div>
-                      <div className='m-accordion__item-body collapse' id={'m_accordion_2_item_1_body' + targetComponentTypeKey} role='tabpanel' aria-labelledby='m_accordion_2_item_1_head' data-parent='#m_accordion_2'>
+                      <div className='m-accordion__item-body collapse' id={'outgoing_accordion_body' + outerKey + '-' + innerKey} role='tabpanel' aria-labelledby='m_accordion_2_item_1_head' data-parent='#m_accordion_2'>
                         <div className='m-accordion__item-content'>
                           {childElementList}
                         </div>
@@ -890,22 +937,42 @@ export default function ComponentTypeComponent (props) {
           .mapValues(connectionTypeGroup => _.groupBy(connectionTypeGroup, targetComponentTypeGroup => targetComponentTypeGroup.target_component.component_type.name))
           .value()
           let incomingElements = []
+          let outerKey = 0
           for (let connectionKey in incomingGroup) {
             if (incomingGroup.hasOwnProperty(connectionKey)) {
               // console.log(connectionKey, '-->>', incomingGroup[connectionKey])
+              outerKey++
+              let innerKey = 0
               for (let targetComponentTypeKey in incomingGroup[connectionKey]) {
                 if (incomingGroup[connectionKey].hasOwnProperty(targetComponentTypeKey)) {
                   // console.log(targetComponentTypeKey, '-->>', incomingGroup[connectionKey][targetComponentTypeKey])
+                  innerKey++
+                  // let relationshipActionSettings = {...props.relationshipActionSettings}
                   let childElementList = incomingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
-                    return (<span><a>{element.target_component.name}</a><br /></span>)
+                    return (<span>
+                      <a href='javascript:void(0);'>{element.target_component.name}</a>
+                      {/* <div className='dropdown pull-right' style={{'z-index': 9999}}>
+                        <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
+                        <div className={styles.dropmenu}>
+                          <ul className='dropdown-menu'>
+                            <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
+                            <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; props.setRelationshipActionSettings(relationshipActionSettings) }}>View</a></li>
+                            <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; props.setRelationshipActionSettings(relationshipActionSettings) }}>Edit</a></li>
+                            <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
+                          </ul>
+                        </div>
+                      </div> */}
+                      <br />
+                    </span>)
                   })
+                  // let cleanKey = targetComponentTypeKey.replace(/ /g, '')
                   incomingElements.push(
-                    <div className='m-accordion__item'>
-                      <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + targetComponentTypeKey} aria-expanded='true'>
+                    <div className='m-accordion__item' style={{'overflow': 'visible'}}>
+                      <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#incoming_accordion_body' + outerKey + '-' + innerKey} aria-expanded='true'>
                         <span className='m-accordion__item-title'>{targetComponentTypeKey} {connectionKey} {incomingGroup[connectionKey][targetComponentTypeKey][0].component.name}</span>
                         <span className='m-accordion__item-mode' />
                       </div>
-                      <div className='m-accordion__item-body collapse' id={'m_accordion_2_item_1_body' + targetComponentTypeKey} role='tabpanel' aria-labelledby='m_accordion_2_item_1_head' data-parent='#m_accordion_2'>
+                      <div className='m-accordion__item-body collapse' id={'incoming_accordion_body' + outerKey + '-' + innerKey} role='tabpanel' aria-labelledby='m_accordion_2_item_1_head' data-parent='#m_accordion_2'>
                         <div className='m-accordion__item-content'>
                           {childElementList}
                         </div>
@@ -1157,44 +1224,42 @@ export default function ComponentTypeComponent (props) {
               </div>
             </div>
           </ReactModal>
-          <div>
-            <ReactModal isOpen={props.deletemodalIsOpen}
-              onRequestClose={closeModal}
-              style={customStyles} >
-              <div className={styles.modalwidth}>
-                <div className='modal-dialog'>
-                  <div className='modal-content'>
-                    <div className='modal-header'>
-                      <h6 className='modal-title' id='exampleModalLabel'>Deleting the {componentTypeComponentName} Application, are you sure?</h6>
-                      <button type='button' onClick={closeDeleteModal} className='close' data-dismiss='modal' aria-label='Close'>
-                        <span aria-hidden='true'>×</span>
-                      </button>
-                      <h6>Deleting the {componentTypeComponentName} Application will also delete the following:</h6>
-                      <div />
-                      <div className='modal-body'>
-                        <h5>Children Components</h5>
-                        {childrenList}
-                        {parentList}
-                        {connecttoList}
-                        {connectfromList}
-                      </div>
-                      <div>
-                        <h5>Relationships</h5>
-                        {parentComponentRelationshipList}
-                        {outgoingComponentRelationshipList}
-                        {incomingComponentRelationshipList}
-                        {childComponentRelationshipList}
-                      </div>
+          <ReactModal isOpen={props.deletemodalIsOpen}
+            onRequestClose={closeModal}
+            style={customStyles} >
+            <div className={styles.modalwidth}>
+              <div className='modal-dialog'>
+                <div className='modal-content'>
+                  <div className='modal-header'>
+                    <h6 className='modal-title' id='exampleModalLabel'>Deleting the {componentTypeComponentName} Application, are you sure?</h6>
+                    <button type='button' onClick={closeDeleteModal} className='close' data-dismiss='modal' aria-label='Close'>
+                      <span aria-hidden='true'>×</span>
+                    </button>
+                    <h6>Deleting the {componentTypeComponentName} Application will also delete the following:</h6>
+                    <div />
+                    <div className='modal-body'>
+                      <h5>Children Components</h5>
+                      {childrenList}
+                      {parentList}
+                      {connecttoList}
+                      {connectfromList}
                     </div>
-                    <div className='modal-footer'>
-                      <button type='button' onClick={closeDeleteModal} id='m_login_signup' className={styles.buttonbg}>Back</button>
-                      <button type='button' id='m_login_signup' className={styles.buttonbg} onClick={removeComponent}>Delete</button>
+                    <div>
+                      <h5>Relationships</h5>
+                      {parentComponentRelationshipList}
+                      {outgoingComponentRelationshipList}
+                      {incomingComponentRelationshipList}
+                      {childComponentRelationshipList}
                     </div>
+                  </div>
+                  <div className='modal-footer'>
+                    <button type='button' onClick={closeDeleteModal} id='m_login_signup' className={styles.buttonbg}>Back</button>
+                    <button type='button' id='m_login_signup' className={styles.buttonbg} onClick={removeComponent}>Delete</button>
                   </div>
                 </div>
               </div>
-            </ReactModal>
-          </div>
+            </div>
+          </ReactModal>
         </div>
       </div>
     )

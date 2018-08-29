@@ -106,7 +106,7 @@ export default function ApplicationDetail (props) {
     componentComponentsList = componentComponents.map(function (componentComponent, index) {
       return (
         <tr className='m-datatable__row m-datatable__row--even' key={index} style={{ 'left': '0px' }} >
-          <td className='m-datatable__cell--sorted m-datatable__cell' >
+          <td className='m-datatable__cell--sorted m-datatable__cell' style={{ 'width': '142px' }} >
             <span className='m-card-user m-card-user__details'><Link to={'/components/' + ComponentTypeId + '/' + componentComponent.id}>{ componentComponent.name }</Link></span>
           </td>
           <td className='m-datatable__cell--sorted m-datatable__cell'><span>{ componentComponent.description }</span></td>

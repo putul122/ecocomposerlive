@@ -78,6 +78,7 @@ export const initialState = {
   addNewConnectionSettings: {
     firstSelectboxSelected: false,
     firstSelectboxIndex: null,
+    targetComponentTypeId: '',
     secondSelectboxSelected: false,
     secondSelectboxIndex: '',
     isParentSelected: false,
