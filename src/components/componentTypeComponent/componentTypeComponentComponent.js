@@ -226,6 +226,7 @@ export default function ComponentTypeComponent (props) {
             let payload
             let typeProperty = componentTypeComponentProperties[index].properties[childIndex].type_property
             componentTypeComponentProperties[index].properties[childIndex].value_set_value = newValue
+            console.log('select value', newValue)
             payload = { 'op': 'replace', 'path': `/${typeProperty}/value_set_value`, 'value': {id: newValue.value} }
 
             if (componentPropertiesPayload.property.length === 0) {
@@ -712,7 +713,7 @@ export default function ComponentTypeComponent (props) {
           if (childProperty.property_type.key === 'Integer') {
             value = childProperty.int_value
             htmlElement = function () {
-              return (<div className='col-6 form-group m-form__group has-info'>
+              return (<div className='col-8 form-group m-form__group has-info'>
                 <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
                 {true && (<div className='form-control-feedback'>should be Number</div>)}
               </div>)
@@ -720,7 +721,7 @@ export default function ComponentTypeComponent (props) {
           } else if (childProperty.property_type.key === 'Decimal') {
             value = childProperty.float_value
             htmlElement = function () {
-              return (<div className='col-6 form-group m-form__group has-info'>
+              return (<div className='col-8 form-group m-form__group has-info'>
                 <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
                 {true && (<div className='form-control-feedback'>should be Number</div>)}
               </div>)
@@ -728,7 +729,7 @@ export default function ComponentTypeComponent (props) {
           } else if (childProperty.property_type.key === 'DateTime') {
             value = childProperty.date_time_value
             htmlElement = function () {
-              return (<div className='col-6 form-group m-form__group has-info'>
+              return (<div className='col-8 form-group m-form__group has-info'>
                 <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
                 {true && (<div className='form-control-feedback'>should be Text</div>)}
               </div>)
@@ -736,7 +737,7 @@ export default function ComponentTypeComponent (props) {
           } else if (childProperty.property_type.key === 'Text') {
             value = childProperty.text_value
             htmlElement = function () {
-              return (<div className='col-6 form-group m-form__group has-danger'>
+              return (<div className='col-8 form-group m-form__group has-info'>
                 <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
                 {true && (<div className='form-control-feedback'>should be Text</div>)}
               </div>)
@@ -755,7 +756,7 @@ export default function ComponentTypeComponent (props) {
             value = childProperty.value_set_value ? childProperty.value_set_value.name : null
             htmlElement = function () {
               return (<Select
-                className='col-5 input-sm form-control m-input'
+                className='col-7 input-sm form-control m-input'
                 placeholder='Select Options'
                 isClearable
                 defaultValue={dvalue}
@@ -768,7 +769,10 @@ export default function ComponentTypeComponent (props) {
           } else {
             value = childProperty.other_value
             htmlElement = function () {
-              return (<input type='text' className='col-6 input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />)
+              return (<div className='col-8 form-group m-form__group has-info'>
+                <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
+                {true && (<div className='form-control-feedback'>should be Text</div>)}
+              </div>)
             }
           }
           return (
