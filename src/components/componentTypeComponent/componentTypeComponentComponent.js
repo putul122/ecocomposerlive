@@ -221,18 +221,12 @@ export default function ComponentTypeComponent (props) {
     }
     let handlePropertySelect = function (index, childIndex) {
       return function (newValue: any, actionMeta: any) {
-        console.group('property Changed first select')
-        console.log(newValue)
-        console.log(index)
-        console.log(childIndex)
-        console.log(`action: ${actionMeta.action}`)
-        console.groupEnd()
         if (actionMeta.action === 'select-option') {
           if (newValue !== null) {
             let payload
             let typeProperty = componentTypeComponentProperties[index].properties[childIndex].type_property
-            componentTypeComponentProperties[index].properties[childIndex].value_set_value = newValue.value
-            payload = { 'op': 'replace', 'path': `/${typeProperty}/value_set_value`, 'value': newValue.value }
+            componentTypeComponentProperties[index].properties[childIndex].value_set_value = newValue
+            payload = { 'op': 'replace', 'path': `/${typeProperty}/value_set_value`, 'value': {id: newValue.value} }
 
             if (componentPropertiesPayload.property.length === 0) {
               componentPropertiesPayload.property.push(payload)
@@ -253,9 +247,6 @@ export default function ComponentTypeComponent (props) {
       }
     }
     let editTextProperty = function (index, childIndex, value) {
-      console.group('Input Changed')
-      console.log(index)
-      console.log(componentTypeComponentProperties[index].properties[childIndex])
       let payload
       let typeProperty = componentTypeComponentProperties[index].properties[childIndex].type_property
       if (componentTypeComponentProperties[index].properties[childIndex].property_type.key === 'Integer') {
@@ -756,19 +747,21 @@ export default function ComponentTypeComponent (props) {
               option.value = option.id
               return option
             })
-            // value = childProperty.value_set_value
+            let dvalue = childProperty.value_set_value
+            if (childProperty.value_set_value !== null) {
+              dvalue.label = childProperty.value_set_value.name
+              dvalue.value = childProperty.value_set_value.id
+            }
+            value = childProperty.value_set_value ? childProperty.value_set_value.name : null
             htmlElement = function () {
               return (<Select
                 className='col-5 input-sm form-control m-input'
                 placeholder='Select Options'
                 isClearable
-                // defaultValue={childPropertyOption[0]}
-                // isDisabled={false}
-                // isLoading={false}
-                // isClearable={true}
+                defaultValue={dvalue}
                 onChange={handlePropertySelect(index, childIndex)}
                 isSearchable={false}
-                name='selectProperty'
+                name={'selectProperty'}
                 options={childPropertyOption}
               />)
             }
