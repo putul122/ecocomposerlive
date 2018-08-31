@@ -20,6 +20,7 @@ export default function * watchApplicationActivity () {
 
 export function * activityMessage (action) {
   try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const activityMessage = yield call(
       axios.get,
       api.getActivityMessage()
