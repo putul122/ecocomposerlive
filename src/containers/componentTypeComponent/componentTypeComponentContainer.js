@@ -29,7 +29,8 @@ export function mapStateToProps (state, props) {
     relationshipActionSettings: state.componentTypeComponentReducer.relationshipActionSettings,
     relationshipProperty: state.componentTypeComponentReducer.relationshipProperty,
     relationshipPropertyPayload: state.componentTypeComponentReducer.relationshipPropertyPayload,
-    updateRelationshipPropertyResponse: state.componentTypeComponentReducer.updateRelationshipPropertyResponse
+    updateRelationshipPropertyResponse: state.componentTypeComponentReducer.updateRelationshipPropertyResponse,
+    deleteRelationshipResponse: state.componentTypeComponentReducer.deleteRelationshipResponse
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -67,7 +68,8 @@ export const propsMapping: Callbacks = {
   editComponentRelationshipProperties: componentTypeComponentActionCreators.editComponentRelationshipProperties,
   editComponentRelationshipPropertyPayload: componentTypeComponentActionCreators.editComponentRelationshipPropertyPayload,
   viewRelationshipProperty: sagaActions.componentTypeComponentActions.viewRelationshipProperty,
-  updateRelationshipProperty: sagaActions.componentTypeComponentActions.updateRelationshipProperty
+  updateRelationshipProperty: sagaActions.componentTypeComponentActions.updateRelationshipProperty,
+  deleteComponentRelationship: sagaActions.componentTypeComponentActions.deleteComponentRelationship
 }
 
 // If you want to use the function mapping
@@ -130,7 +132,6 @@ export default compose(
       if (nextProps.relationshipActionSettings && nextProps.relationshipActionSettings !== this.props.relationshipActionSettings) {
         if (nextProps.relationshipActionSettings.isModalOpen) {
           if (nextProps.relationshipActionSettings.actionType === 'view' || nextProps.relationshipActionSettings.actionType === 'edit') {
-            console.log('calling view api ------------------->')
             // eslint-disable-next-line
             mApp && mApp.block('#relationshipPropertyContent .modal-content', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
             let payload = {
@@ -139,6 +140,11 @@ export default compose(
             }
             this.props.viewRelationshipProperty(payload)
           }
+        }
+      }
+      if (nextProps.deleteRelationshipResponse && nextProps.deleteRelationshipResponse !== this.props.deleteRelationshipResponse) {
+        if (nextProps.relationshipActionSettings.actionType === 'delete' && nextProps.deleteRelationshipResponse.result_code === 0) {
+          this.props.fetchcomponentTypeComponentRelationships && this.props.fetchcomponentTypeComponentRelationships(payload)
         }
       }
       if (nextProps.relationshipProperty && nextProps.relationshipProperty !== this.props.relationshipProperty) {

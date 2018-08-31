@@ -46,6 +46,9 @@ const api = {
     },
     viewComponentRelationship: function (payload) {
         return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_relationships/' + payload.relationshipId
+    },
+    deleteRelationship: function (payload) {
+        return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_relationships/' + payload.relationshipId
     }
   }
 

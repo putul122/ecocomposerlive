@@ -370,6 +370,71 @@ export default function ComponentTypeComponent (props) {
       props.editComponentProperties(editPayload)
     }
     // Start Update Connection Code
+    // Code for Delete Relationship begins here
+    let removeComponentRelationship = function (event) {
+      event.preventDefault()
+      let payload = {}
+      payload.componentId = props.relationshipActionSettings.selectedObject.target_component.id
+      payload.relationshipId = props.relationshipActionSettings.selectedObject.connection.id
+      let relationshipType = props.relationshipActionSettings.selectedObject.relationship_type
+      if (relationshipType === 'Parent') {
+        payload.deletePayload = { 'parent': true }
+      } else if (relationshipType === 'Child') {
+        payload.deletePayload = { 'child': true }
+      } else if (relationshipType === 'ConnectFrom' || relationshipType === 'ConnectTo') {
+        payload.deletePayload = {}
+      }
+      props.deleteComponentRelationship(payload)
+    }
+    if (props.deleteRelationshipResponse !== '') {
+      if (props.updateRelationshipPropertyResponse.result_code !== -1) {
+        // eslint-disable-next-line
+        toastr.options = {
+          'closeButton': false,
+          'debug': false,
+          'newestOnTop': false,
+          'progressBar': false,
+          'positionClass': 'toast-bottom-full-width',
+          'preventDuplicates': false,
+          'onclick': null,
+          'showDuration': '300',
+          'hideDuration': '1000',
+          'timeOut': '5000',
+          'extendedTimeOut': '1000',
+          'showEasing': 'swing',
+          'hideEasing': 'linear',
+          'showMethod': 'fadeIn',
+          'hideMethod': 'fadeOut'
+        }
+        // eslint-disable-next-line
+        toastr.success('Successfully deleted relationship ' + props.relationshipActionSettings.relationshipText + ': ' + props.relationshipActionSettings.componentName + '', 'Disconnected')
+      } else {
+        // eslint-disable-next-line
+        toastr.options = {
+          'closeButton': false,
+          'debug': false,
+          'newestOnTop': false,
+          'progressBar': false,
+          'positionClass': 'toast-bottom-full-width',
+          'preventDuplicates': false,
+          'onclick': null,
+          'showDuration': '300',
+          'hideDuration': '1000',
+          'timeOut': '5000',
+          'extendedTimeOut': '1000',
+          'showEasing': 'swing',
+          'hideEasing': 'linear',
+          'showMethod': 'fadeIn',
+          'hideMethod': 'fadeOut'
+        }
+        // eslint-disable-next-line
+        toastr.error(props.updateRelationshipResponse.error_message, props.updateRelationshipResponse.error_code)
+      }
+      props.resetUpdateRelationshipResponse()
+      let settingPayload = {...props.relationshipActionSettings, 'isModalOpen': false}
+      props.setRelationshipActionSettings(settingPayload)
+    }
+    // Code for Delete relationship ends here
     let componentRelationshipPropertiesList = ''
     // let relationshipPropertyPayload = JSON.parse(JSON.stringify(props.relationshipPropertyPayload))
     let relationshipPropertyPayload = props.relationshipPropertyPayload
@@ -1545,7 +1610,12 @@ export default function ComponentTypeComponent (props) {
               <div className='modal-dialog modal-lg'>
                 <div className='modal-content'>
                   <div className='modal-header'>
-                    <h4 className='modal-title' id='exampleModalLabel'>{'Relationship details for ' + props.relationshipActionSettings.relationshipText + ': ' + props.relationshipActionSettings.componentName}</h4>
+                    {(props.relationshipActionSettings.actionType === 'edit' || props.relationshipActionSettings.actionType === 'view') && (
+                      <h4 className='modal-title' id='exampleModalLabel'>{'Relationship details for ' + props.relationshipActionSettings.relationshipText + ': ' + props.relationshipActionSettings.componentName}</h4>
+                    )}
+                    {props.relationshipActionSettings.actionType === 'delete' && (
+                      <h4 className='modal-title' id='exampleModalLabel'>Deleting Relationship, are you sure?</h4>
+                    )}
                     <button type='button' onClick={closeRelationshipActionModal} className='close' data-dismiss='modal' aria-label='Close'>
                       <span aria-hidden='true'>×</span>
                     </button>
@@ -1556,11 +1626,20 @@ export default function ComponentTypeComponent (props) {
                       {componentRelationshipPropertiesList}
                     </table>
                     )}
+                    {props.relationshipActionSettings.actionType === 'delete' && (
+                    <h4>Are you sure you want to remove the following relationship?</h4>
+                    )}
+                    {props.relationshipActionSettings.actionType === 'delete' && (
+                    <h5 style={{'text-align': 'center'}}>{'' + props.relationshipActionSettings.relationshipText + ': ' + props.relationshipActionSettings.componentName}</h5>
+                    )}
                   </div>
                   <div className='modal-footer'>
                     <button onClick={closeRelationshipActionModal} className='btn btn-sm btn-outline-info'>Cancel</button>
                     {props.relationshipActionSettings.actionType === 'edit' && (
                     <button onClick={updateRelationshipProperty} className={'btn btn-sm btn-info '}>Update</button>
+                    )}
+                    {props.relationshipActionSettings.actionType === 'delete' && (
+                    <button onClick={removeComponentRelationship} className={'btn btn-sm btn-info '}>Delete</button>
                     )}
                   </div>
                 </div>
@@ -1586,6 +1665,7 @@ ComponentTypeComponent.propTypes = {
   // setConfirmationModalOpenStatus: PropTypes.func,
   // relationshipProperty: PropTypes.any,
   // viewRelationshipProperty: PropTypes.func,
+  deleteRelationshipResponse: PropTypes.any,
   setRelationshipActionSettings: PropTypes.func,
   updateRelationshipPropertyResponse: PropTypes.any,
   relationshipPropertyPayload: PropTypes.any,

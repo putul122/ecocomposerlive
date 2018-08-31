@@ -7,7 +7,8 @@ import { FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS,
   UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
   DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS,
   VIEW_RELATIONSHIP_PROPERTY_SUCCESS,
-  UPDATE_RELATIONSHIP_PROPERTY_SUCCESS
+  UPDATE_RELATIONSHIP_PROPERTY_SUCCESS,
+  DELETE_COMPONENT_RELATIONSHIP_SUCCESS
  } from '../../sagas/componentTypeComponent/componentTypeComponentSaga'
 // Name Spaced Action Types
 const SET_DATA_LOADING = 'ComponentTypeComponentReducer/SET_DATA_LOADING'
@@ -53,7 +54,8 @@ export const actions = {
   EDIT_COMPONENT_RELATIONSHIP_PROPERTY,
   RESET_COMPONENT_RELATIONSHIP_PROPERTY,
   EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD,
-  UPDATE_RELATIONSHIP_PROPERTY_SUCCESS
+  UPDATE_RELATIONSHIP_PROPERTY_SUCCESS,
+  DELETE_COMPONENT_RELATIONSHIP_SUCCESS
 }
 
 export const actionCreators = {
@@ -121,7 +123,8 @@ export const initialState = {
   deleteComponent: false,
   relationshipProperty: '',
   relationshipPropertyPayload: [],
-  updateRelationshipPropertyResponse: ''
+  updateRelationshipPropertyResponse: '',
+  deleteRelationshipResponse: ''
 }
 
 export default handleActions(
@@ -196,7 +199,8 @@ export default handleActions(
     [RESET_UPDATE_RELATIONSHIP_RESPONSE]: (state, action) => ({
       ...state,
       updateRelationshipResponse: '',
-      updateRelationshipPropertyResponse: ''
+      updateRelationshipPropertyResponse: '',
+      deleteRelationshipResponse: ''
     }),
     [DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS]: (state, action) => ({
       ...state,
@@ -225,6 +229,10 @@ export default handleActions(
     [UPDATE_RELATIONSHIP_PROPERTY_SUCCESS]: (state, action) => ({
       ...state,
       updateRelationshipPropertyResponse: action.payload
+    }),
+    [DELETE_COMPONENT_RELATIONSHIP_SUCCESS]: (state, action) => ({
+      ...state,
+      deleteRelationshipResponse: action.payload
     })
   },
   initialState

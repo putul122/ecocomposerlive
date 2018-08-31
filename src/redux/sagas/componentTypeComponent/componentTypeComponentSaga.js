@@ -37,6 +37,9 @@ export const VIEW_RELATIONSHIP_PROPERTY_FAILURE = 'saga/componentTypeComponent/V
 export const UPDATE_RELATIONSHIP_PROPERTY = 'saga/componentTypeComponent/UPDATE_RELATIONSHIP_PROPERTY'
 export const UPDATE_RELATIONSHIP_PROPERTY_SUCCESS = 'saga/componentTypeComponent/UPDATE_RELATIONSHIP_PROPERTY_SUCCESS'
 export const UPDATE_RELATIONSHIP_PROPERTY_FAILURE = 'saga/componentTypeComponent/UPDATE_RELATIONSHIP_PROPERTY_FAILURE'
+export const DELETE_COMPONENT_RELATIONSHIP = 'saga/componentTypeComponent/DELETE_COMPONENT_RELATIONSHIP'
+export const DELETE_COMPONENT_RELATIONSHIP_SUCCESS = 'saga/componentTypeComponent/DELETE_COMPONENT_RELATIONSHIP_SUCCESS'
+export const DELETE_COMPONENT_RELATIONSHIP_FAILURE = 'saga/componentTypeComponent/DELETE_COMPONENT_RELATIONSHIP_FAILURE'
 
 export const actionCreators = {
   fetchComponentTypeComponent: createAction(FETCH_COMPONENT_TYPE_COMPONENT),
@@ -71,7 +74,10 @@ export const actionCreators = {
   viewRelationshipPropertyFailure: createAction(VIEW_RELATIONSHIP_PROPERTY_FAILURE),
   updateRelationshipProperty: createAction(UPDATE_RELATIONSHIP_PROPERTY),
   updateRelationshipPropertySuccess: createAction(UPDATE_RELATIONSHIP_PROPERTY_SUCCESS),
-  updateRelationshipPropertyFailure: createAction(UPDATE_RELATIONSHIP_PROPERTY_FAILURE)
+  updateRelationshipPropertyFailure: createAction(UPDATE_RELATIONSHIP_PROPERTY_FAILURE),
+  deleteComponentRelationship: createAction(DELETE_COMPONENT_RELATIONSHIP),
+  deleteComponentRelationshipSuccess: createAction(DELETE_COMPONENT_RELATIONSHIP_SUCCESS),
+  deleteComponentRelationshipFailure: createAction(DELETE_COMPONENT_RELATIONSHIP_FAILURE)
 }
 
 export default function * watchComponentTypeComponent () {
@@ -86,7 +92,8 @@ export default function * watchComponentTypeComponent () {
     takeLatest(UPDATE_COMPONENT_TYPE_COMPONENT, updateComponentTypeComponentData),
     takeLatest(DELETE_COMPONENT_TYPE_COMPONENT, deleteComponentTypeComponent),
     takeLatest(VIEW_RELATIONSHIP_PROPERTY, getRelationshipProperty),
-    takeLatest(UPDATE_RELATIONSHIP_PROPERTY, updateRelationshipProperty)
+    takeLatest(UPDATE_RELATIONSHIP_PROPERTY, updateRelationshipProperty),
+    takeLatest(DELETE_COMPONENT_RELATIONSHIP, deleteComponentRelationship)
   ]
 }
 
@@ -247,5 +254,18 @@ export function * updateRelationshipProperty (action) {
   } catch (error) {
     yield put(actionCreators.updateRelationshipPropertyFailure(error))
   }
-  console.log(action.payload)
+}
+
+export function * deleteComponentRelationship (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const deleteRelationship = yield call(
+      axios.delete,
+      api.deleteRelationship(action.payload),
+      {params: action.payload.deletePayload}
+      )
+    yield put(actionCreators.deleteComponentRelationshipSuccess(deleteRelationship.data))
+  } catch (error) {
+    yield put(actionCreators.deleteComponentRelationshipFailure(error))
+  }
 }
