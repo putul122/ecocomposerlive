@@ -102,25 +102,21 @@ export default function ComponentTypeComponent (props) {
     // Code for listing in Delete Modal begins
     if (componentTypeComponentRelationships !== '') {
       let child = _.filter(componentTypeComponentRelationships.resources, {'relationship_type': 'Child'})
-         console.log('childrenlist', child)
-         childrenList = child.map(function (element, index) {
-           return (<span><a>{element.target_component.name}</a><br /></span>)
-         })
+        childrenList = child.map(function (element, index) {
+          return (<span><a>{element.target_component.name}</a><br /></span>)
+        })
       let parent = _.filter(componentTypeComponentRelationships.resources, {'relationship_type': 'Parent'})
-       console.log('parentlist', parent)
-       parentList = parent.map(function (element, index) {
-         return (<span><a>{element.target_component.name}</a><br /></span>)
-       })
+        parentList = parent.map(function (element, index) {
+          return (<span><a>{element.target_component.name}</a><br /></span>)
+        })
       let connectfrom = _.filter(componentTypeComponentRelationships.resources, {'relationship_type': 'ConnectFrom'})
-       // console.log('connecttolist', connectto)
-       connectfromList = connectfrom.map(function (element, index) {
-         return (<span><a>{element.target_component.name}</a><br /></span>)
-       })
+        connectfromList = connectfrom.map(function (element, index) {
+          return (<span><a>{element.target_component.name}</a><br /></span>)
+        })
       let connectto = _.filter(componentTypeComponentRelationships.resources, {'relationship_type': 'ConnectTo'})
-       console.log('connecttolist', connectto)
-       connecttoList = connectto.map(function (element, index) {
-         return (<span><a>{element.target_component.name}</a><br /></span>)
-       })
+        connecttoList = connectto.map(function (element, index) {
+          return (<span><a>{element.target_component.name}</a><br /></span>)
+        })
       }
      // Code for listing in Delete Modal ends
     let showProperty = function (event) {
@@ -144,22 +140,13 @@ export default function ComponentTypeComponent (props) {
     let editComponent = function (event) {
       event.preventDefault()
       // props.setEditComponentFlag(true)
-      let payload = {}
-      // payload.isEditComponent = true
-      // payload.copiedComponentProperties = {}
-      // payload.copiedComponentProperties.property = {'resources': componentTypeComponentProperties}
-      // payload.copiedComponentProperties.component = componentTypeComponentData
       let payloadComponentData = {...props.componentTypeComponentData.resources[0]}
       props.copyComponentProperties({'resources': JSON.parse(JSON.stringify(componentTypeComponentProperties))})
       props.copyComponentData(payloadComponentData)
       props.setEditComponentFlag(true)
-      console.log('component properties', payload)
-      console.log('copied property value', props.copiedComponentProperties)
     }
     let cancelEditComponent = function (event) {
       event.preventDefault()
-      console.log('copy component properties', copiedComponentProperties)
-      console.log('original component properties', componentTypeComponentProperties)
       let copiedComponentData = {...props.copiedComponentData}
       let payload = {}
       payload.property = copiedComponentProperties
@@ -183,7 +170,6 @@ export default function ComponentTypeComponent (props) {
     }
     let closeConfirmationModal = function (event) {
       event.preventDefault()
-      console.log('close confirmation model')
       props.setConfirmationModalOpenStatus(false)
     }
     let submitUpdates = function (event) {
@@ -243,6 +229,27 @@ export default function ComponentTypeComponent (props) {
             props.editComponentProperties(editPayload)
             props.pushComponentPropertyPayload(componentPropertiesPayload)
           }
+        }
+        if (actionMeta.action === 'clear') {
+          let payload
+          let typeProperty = componentTypeComponentProperties[index].properties[childIndex].type_property
+          componentTypeComponentProperties[index].properties[childIndex].value_set_value = newValue
+          payload = { 'op': 'replace', 'path': `/${typeProperty}/value_set_value`, 'value': newValue }
+
+          if (componentPropertiesPayload.property.length === 0) {
+            componentPropertiesPayload.property.push(payload)
+          } else {
+            if (payload.path === componentPropertiesPayload.property[componentPropertiesPayload.property.length - 1].path) {
+              componentPropertiesPayload.property[componentPropertiesPayload.property.length - 1] = payload
+            } else {
+              componentPropertiesPayload.property.push(payload)
+            }
+          }
+          let editPayload = {}
+          editPayload.component = componentTypeComponentData
+          editPayload.property = {resources: componentTypeComponentProperties}
+          props.editComponentProperties(editPayload)
+          props.pushComponentPropertyPayload(componentPropertiesPayload)
         }
       }
     }
@@ -438,7 +445,6 @@ export default function ComponentTypeComponent (props) {
     let componentRelationshipPropertiesList = ''
     // let relationshipPropertyPayload = JSON.parse(JSON.stringify(props.relationshipPropertyPayload))
     let relationshipPropertyPayload = props.relationshipPropertyPayload
-    console.log('property payload', relationshipPropertyPayload)
     let componentRelationshipProperties = props.relationshipProperty.resources ? [...props.relationshipProperty.resources[0].properties] : ''
     let updateRelationshipProperty = function (event) {
       event.preventDefault()
