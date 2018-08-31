@@ -460,6 +460,10 @@ export default function ComponentTypeComponent (props) {
             props.editComponentRelationshipPropertyPayload(relationshipPropertyPayload)
           }
         }
+        if (actionMeta.action === 'clear') {
+          console.log('newValue', newValue)
+          console.log('actionMeta', actionMeta)
+        }
       }
     }
     let editTextRelationshipProperty = function (index, childIndex, value) {
@@ -1050,6 +1054,8 @@ export default function ComponentTypeComponent (props) {
         if (parent.length > 0) {
           let childElementList = parent.map(function (element, i) {
           let relationshipActionSettings = {...props.relationshipActionSettings}
+          relationshipActionSettings.relationshipText = parent[0].component.name + ' ' + parent[0].relationship_type + ' Components'
+          relationshipActionSettings.relationshipId = element.connection.id
           return (<span>
             <a href='javascript:void(0);'>{element.target_component.name}</a>
             <div className='dropdown pull-right'>
@@ -1057,9 +1063,9 @@ export default function ComponentTypeComponent (props) {
               <div className={styles.dropmenu}>
                 <ul className='dropdown-menu'>
                   <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
-                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; props.setRelationshipActionSettings(relationshipActionSettings) }}>View</a></li>
-                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; props.setRelationshipActionSettings(relationshipActionSettings) }}>Edit</a></li>
-                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
+                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.actionType = 'view'; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>View</a></li>
+                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Edit</a></li>
+                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
                 </ul>
               </div>
             </div>
@@ -1088,6 +1094,8 @@ export default function ComponentTypeComponent (props) {
         if (child.length > 0) {
           let childElementList = child.map(function (element, i) {
           let relationshipActionSettings = {...props.relationshipActionSettings}
+          relationshipActionSettings.relationshipText = child[0].component.name + ' ' + child[0].relationship_type + ' Components'
+          relationshipActionSettings.relationshipId = element.connection.id
           return (<span>
             <a href='javascript:void(0);'>{element.target_component.name}</a>
             <div className='dropdown pull-right'>
@@ -1095,9 +1103,9 @@ export default function ComponentTypeComponent (props) {
               <div className={styles.dropmenu}>
                 <ul className='dropdown-menu'>
                   <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
-                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; props.setRelationshipActionSettings(relationshipActionSettings) }}>View</a></li>
-                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; props.setRelationshipActionSettings(relationshipActionSettings) }}>Edit</a></li>
-                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
+                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.actionType = 'view'; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>View</a></li>
+                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Edit</a></li>
+                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
                 </ul>
               </div>
             </div>
