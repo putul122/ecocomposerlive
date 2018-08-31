@@ -439,7 +439,6 @@ export default function ComponentTypeComponent (props) {
             let payload
             let typeProperty = componentRelationshipProperties[index].properties[childIndex].type_property
             componentRelationshipProperties[index].properties[childIndex].value_set_value = newValue
-            console.log('select value', newValue)
             payload = { 'op': 'replace', 'path': `/${typeProperty}/value_set_value`, 'value': {id: newValue.value} }
 
             if (relationshipPropertyPayload.length === 0) {
@@ -461,8 +460,27 @@ export default function ComponentTypeComponent (props) {
           }
         }
         if (actionMeta.action === 'clear') {
-          console.log('newValue', newValue)
-          console.log('actionMeta', actionMeta)
+          let payload
+          let typeProperty = componentRelationshipProperties[index].properties[childIndex].type_property
+          componentRelationshipProperties[index].properties[childIndex].value_set_value = newValue
+          payload = { 'op': 'replace', 'path': `/${typeProperty}/value_set_value`, 'value': newValue }
+
+          if (relationshipPropertyPayload.length === 0) {
+            relationshipPropertyPayload.push(payload)
+          } else {
+            if (payload.path === relationshipPropertyPayload[relationshipPropertyPayload.length - 1].path) {
+              relationshipPropertyPayload[relationshipPropertyPayload.length - 1] = payload
+            } else {
+              relationshipPropertyPayload.push(payload)
+            }
+          }
+          let editPayload = {}
+          editPayload.resources = []
+          let propObject = {}
+          propObject.properties = componentRelationshipProperties
+          editPayload.resources.push(propObject)
+          props.editComponentRelationshipProperties(editPayload)
+          props.editComponentRelationshipPropertyPayload(relationshipPropertyPayload)
         }
       }
     }
@@ -609,8 +627,6 @@ export default function ComponentTypeComponent (props) {
     }
     // End Update Connection Code
     // Model ADD new Connections Code
-    // let firstSelectboxSelected = props.addNewConnectionSettings.firstSelectboxSelected
-    // let secondSelectboxSelected = props.addNewConnectionSettings.secondSelectboxSelected
     let openModal = function (event) {
       // event.preventDefault()
       props.setModalOpenStatus(true)
@@ -685,24 +701,32 @@ export default function ComponentTypeComponent (props) {
       let payload = {}
       payload.op = 'add'
       payload.value = {}
+      payload.value.relationship_type = props.addNewConnectionSettings.slectedConstraintObject.constraint_type
       payload.value.target_component = {}
       if (typeof props.addNewConnectionSettings.selectedComponentObject.id !== 'undefined') {
         payload.value.target_component.id = props.addNewConnectionSettings.selectedComponentObject.id
+      } else {
+        payload.value.target_component.name = props.addNewConnectionSettings.selectedComponentObject.name
+        payload.value.target_component.component_type = {}
+        payload.value.target_component.component_type.id = props.addNewConnectionSettings.slectedConstraintObject.target_component_type.id
       }
-      payload.value.target_component.name = props.addNewConnectionSettings.selectedComponentObject.name
-      payload.value.target_component.component_type = {}
-      payload.value.target_component.component_type.id = props.addNewConnectionSettings.slectedConstraintObject.target_component_type.id
       payload.value.relationship_type = props.addNewConnectionSettings.slectedConstraintObject.constraint_type
       payload.value.connection = {}
       payload.value.connection.connection_type = props.addNewConnectionSettings.slectedConstraintObject.connection_type.id
       if (props.addNewConnectionSettings.slectedConstraintObject.constraint_type === 'Parent') {
-        payload.path = '/parent'
+        payload.path = '/-' // '/parent'
       } else if (props.addNewConnectionSettings.slectedConstraintObject.constraint_type === 'Child') {
-        payload.path = '/children'
+        payload.path = '/-' // '/children'
       } else if (props.addNewConnectionSettings.slectedConstraintObject.constraint_type === 'ConnectTo') {
-        payload.path = '/'
+        payload.path = '/-' // '/'
+        payload.value.connection = {}
+        payload.value.connection.connection_type = {}
+        payload.value.connection.connection_type.id = props.addNewConnectionSettings.slectedConstraintObject.connection_type.id
       } else if (props.addNewConnectionSettings.slectedConstraintObject.constraint_type === 'ConnectFrom') {
-        payload.path = '/'
+        payload.path = '/-' // '/'
+        payload.value.connection = {}
+        payload.value.connection.connection_type = {}
+        payload.value.connection.connection_type.id = props.addNewConnectionSettings.slectedConstraintObject.connection_type.id
       }
       targetComponent.name = props.addNewConnectionSettings.selectedComponentObject.name
       targetComponent.id = props.addNewConnectionSettings.selectedComponentObject.id
@@ -720,20 +744,10 @@ export default function ComponentTypeComponent (props) {
       newConnection.connection = props.addNewConnectionSettings.slectedConstraintObject.connection_type
       newRelationshipArray.push(newConnection)
       let isParentSelected = newConnection.relationship_type === 'Parent'
-      console.log('New relation Ships', newRelationshipArray)
       let settingPayload = {...props.addNewConnectionSettings, 'firstSelectboxSelected': false, 'firstSelectboxIndex': null, 'secondSelectboxSelected': false, 'isParentSelected': isParentSelected, 'newConnectionArray': newRelationshipArray, 'showCreateConnectionButton': true, 'slectedConstraintObject': {}, 'selectedComponentObject': {}}
       props.setAddConnectionSettings(settingPayload)
       componentPropertiesPayload.relationship.push(payload)
-      console.log('componentPropertiesPayload relation Ships', componentPropertiesPayload)
-      // let componentUpdatePayload
       props.pushComponentPropertyPayload(componentPropertiesPayload)
-      // let updatePayload = {}
-      // let arry = []
-      // arry.push(payload)
-      // updatePayload.componentId = props.componentTypeComponentData.resources[0].id
-      // updatePayload.relationship = arry
-      // props.updateComponentTypeComponentRelationships(updatePayload)
-      // console.log('add payload', updatePayload)
     }
     let addConnections = function () {
       console.log(componentPropertiesPayload.relationship)
