@@ -6,8 +6,8 @@ import { actions as sagaActions } from '../../redux/sagas/'
 export function mapStateToProps (state, props) {
   return {
     isLoggedin: state.loginReducer.isLoggedin,
-    activityMessages: state.applicationActivityReducer.activityMessages,
-    selectedComponentType: state.applicationDetailReducer.selectedComponentType
+    activityMessages: state.applicationActivityReducer.activityMessages
+    // selectedComponentType: state.applicationDetailReducer.selectedComponentType
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -25,21 +25,16 @@ export const propsMapping: Callbacks = {
 export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
-    // componentWillMount: function () {
-    //   console.log('component will mount lifecycle activity model', this.props)
-    //   console.log(this.state)
-    // //   let payload = {
-    // //       'componentTypeId': this.props.selectedComponentType
-    // //   }
-    // //   this.props.activityMessage(payload)
-    // },
+    componentWillMount: function () {
+      this.props.activityMessage()
+    },
     componentWillReceiveProps: function (nextProps) {
-      if (nextProps.selectedComponentType && (nextProps.selectedComponentType !== this.props.selectedComponentType)) {
-        let payload = {
-         'componentTypeId': nextProps.selectedComponentType
-        }
-        this.props.activityMessage(payload)
-      }
+      // if (nextProps.selectedComponentType && (nextProps.selectedComponentType !== this.props.selectedComponentType)) {
+      //   let payload = {
+      //    'componentTypeId': nextProps.selectedComponentType
+      //   }
+      //   this.props.activityMessage(payload)
+      // }
     }
   })
 )(ApplicationActivity)

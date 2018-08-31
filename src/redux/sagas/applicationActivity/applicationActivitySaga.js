@@ -22,10 +22,9 @@ export function * activityMessage (action) {
   try {
     const activityMessage = yield call(
       axios.get,
-      api.getActivityMessage(action.payload.componentTypeId)
-      // 'https://ecocomposermockapis.azurewebsites.net/ecocomposer-meta-model/component_types/' + action.payload.componentTypeId + '/messages?page_size=5&page=1&recommended=false'
+      api.getActivityMessage()
     )
-    yield put(actionCreators.activityMessageSuccess(activityMessage.data.data))
+    yield put(actionCreators.activityMessageSuccess(activityMessage.data))
   } catch (error) {
     yield put(actionCreators.activityMessageFailure(error))
   }

@@ -8,7 +8,7 @@ export default function Login (props) {
   let loggedInMessageResponse = function (message) {
     if (message) {
       return (<div className='m-alert m-alert--outline alert alert-danger alert-dismissible animated fadeIn' role='alert'>
-        <button type='button' className='close' data-dismiss='alert' aria-label='Close' />
+        {/* <button type='button' className='close' data-dismiss='alert' aria-label='Close' /> */}
         <span>{message}</span>
       </div>
       )
@@ -93,9 +93,9 @@ export default function Login (props) {
                     <span />
               </label> */}
             </div>
-            <div className='col m--align-right'>
+            {/* <div className='col m--align-right'>
               <a href='' id='m_login_forget_password' className='m-link'>Forgot Password ?</a>
-            </div>
+            </div> */}
           </div>
           <div className='m-login__form-action'>
             <button onClick={handleSubmit} className={styles.buttonbg + ' ' + loadingClass} >Login</button>

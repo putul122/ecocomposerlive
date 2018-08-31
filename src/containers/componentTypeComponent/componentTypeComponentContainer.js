@@ -25,7 +25,11 @@ export function mapStateToProps (state, props) {
     modalIsOpen: state.basicReducer.modalIsOpen,
     successmodalIsOpen: state.basicReducer.successmodalIsOpen,
     deletemodalIsOpen: state.basicReducer.deletemodalIsOpen,
-    deleteComponent: state.componentTypeComponentReducer.deleteComponent
+    deleteComponent: state.componentTypeComponentReducer.deleteComponent,
+    relationshipActionSettings: state.componentTypeComponentReducer.relationshipActionSettings,
+    relationshipProperty: state.componentTypeComponentReducer.relationshipProperty,
+    relationshipPropertyPayload: state.componentTypeComponentReducer.relationshipPropertyPayload,
+    updateRelationshipPropertyResponse: state.componentTypeComponentReducer.updateRelationshipPropertyResponse
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -57,7 +61,13 @@ export const propsMapping: Callbacks = {
   deletecomponentTypeComponent: sagaActions.componentTypeComponentActions.deletecomponentTypeComponent,
   setDeleteModalOpenStatus: basicActionCreators.setDeleteModalOpenStatus,
   setRedirectFlag: basicActionCreators.setRedirectFlag,
-  setAddRedirectFlag: basicActionCreators.setAddRedirectFlag
+  setAddRedirectFlag: basicActionCreators.setAddRedirectFlag,
+  setRelationshipActionSettings: componentTypeComponentActionCreators.setRelationshipActionSettings,
+  resetComponentRelationshipProperties: componentTypeComponentActionCreators.resetComponentRelationshipProperties,
+  editComponentRelationshipProperties: componentTypeComponentActionCreators.editComponentRelationshipProperties,
+  editComponentRelationshipPropertyPayload: componentTypeComponentActionCreators.editComponentRelationshipPropertyPayload,
+  viewRelationshipProperty: sagaActions.componentTypeComponentActions.viewRelationshipProperty,
+  updateRelationshipProperty: sagaActions.componentTypeComponentActions.updateRelationshipProperty
 }
 
 // If you want to use the function mapping
@@ -115,6 +125,26 @@ export default compose(
       if (nextProps.updateRelationshipResponse && nextProps.updateRelationshipResponse !== '') {
         if (!nextProps.updateRelationshipResponse.error_code) {
           this.props.fetchcomponentTypeComponentRelationships && this.props.fetchcomponentTypeComponentRelationships(payload)
+        }
+      }
+      if (nextProps.relationshipActionSettings && nextProps.relationshipActionSettings !== this.props.relationshipActionSettings) {
+        if (nextProps.relationshipActionSettings.isModalOpen) {
+          if (nextProps.relationshipActionSettings.actionType === 'view' || nextProps.relationshipActionSettings.actionType === 'edit') {
+            console.log('calling view api ------------------->')
+            // eslint-disable-next-line
+            mApp && mApp.block('#relationshipPropertyContent .modal-content', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+            let payload = {
+              'componentId': nextProps.relationshipActionSettings.selectedObject.target_component.id,
+              'relationshipId': nextProps.relationshipActionSettings.selectedObject.connection.id
+            }
+            this.props.viewRelationshipProperty(payload)
+          }
+        }
+      }
+      if (nextProps.relationshipProperty && nextProps.relationshipProperty !== this.props.relationshipProperty) {
+        if (nextProps.relationshipProperty !== '') {
+          // eslint-disable-next-line
+          mApp && mApp.unblock('#relationshipPropertyContent .modal-content')
         }
       }
       if (nextProps.componentDetail && nextProps.componentTypeComponentData && (nextProps.componentTypeComponentData !== '') && nextProps.componentTypeComponentData.resources) {

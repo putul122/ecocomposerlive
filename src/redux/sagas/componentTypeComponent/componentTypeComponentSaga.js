@@ -31,6 +31,12 @@ export const UPDATE_COMPONENT_TYPE_COMPONENT_FAILURE = 'saga/componentTypeCompon
 export const DELETE_COMPONENT_TYPE_COMPONENT = 'saga/componentTypeComponent/DELETE_COMPONENT_TYPE_COMPONENT'
 export const DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS = 'saga/componentTypeComponent/DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS'
 export const DELETE_COMPONENT_TYPE_COMPONENT_FAILURE = 'saga/componentTypeComponent/DELETE_COMPONENT_TYPE_COMPONENT_FAILURE'
+export const VIEW_RELATIONSHIP_PROPERTY = 'saga/componentTypeComponent/VIEW_RELATIONSHIP_PROPERTY'
+export const VIEW_RELATIONSHIP_PROPERTY_SUCCESS = 'saga/componentTypeComponent/VIEW_RELATIONSHIP_PROPERTY_SUCCESS'
+export const VIEW_RELATIONSHIP_PROPERTY_FAILURE = 'saga/componentTypeComponent/VIEW_RELATIONSHIP_PROPERTY_FAILURE'
+export const UPDATE_RELATIONSHIP_PROPERTY = 'saga/componentTypeComponent/UPDATE_RELATIONSHIP_PROPERTY'
+export const UPDATE_RELATIONSHIP_PROPERTY_SUCCESS = 'saga/componentTypeComponent/UPDATE_RELATIONSHIP_PROPERTY_SUCCESS'
+export const UPDATE_RELATIONSHIP_PROPERTY_FAILURE = 'saga/componentTypeComponent/UPDATE_RELATIONSHIP_PROPERTY_FAILURE'
 
 export const actionCreators = {
   fetchComponentTypeComponent: createAction(FETCH_COMPONENT_TYPE_COMPONENT),
@@ -59,7 +65,13 @@ export const actionCreators = {
   updateComponentTypeComponentFailure: createAction(UPDATE_COMPONENT_TYPE_COMPONENT_FAILURE),
   deletecomponentTypeComponent: createAction(DELETE_COMPONENT_TYPE_COMPONENT),
   deletecomponentTypeComponentSuccess: createAction(DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS),
-  deletecomponentTypeComponentFailure: createAction(DELETE_COMPONENT_TYPE_COMPONENT_FAILURE)
+  deletecomponentTypeComponentFailure: createAction(DELETE_COMPONENT_TYPE_COMPONENT_FAILURE),
+  viewRelationshipProperty: createAction(VIEW_RELATIONSHIP_PROPERTY),
+  viewRelationshipPropertySuccess: createAction(VIEW_RELATIONSHIP_PROPERTY_SUCCESS),
+  viewRelationshipPropertyFailure: createAction(VIEW_RELATIONSHIP_PROPERTY_FAILURE),
+  updateRelationshipProperty: createAction(UPDATE_RELATIONSHIP_PROPERTY),
+  updateRelationshipPropertySuccess: createAction(UPDATE_RELATIONSHIP_PROPERTY_SUCCESS),
+  updateRelationshipPropertyFailure: createAction(UPDATE_RELATIONSHIP_PROPERTY_FAILURE)
 }
 
 export default function * watchComponentTypeComponent () {
@@ -72,7 +84,9 @@ export default function * watchComponentTypeComponent () {
     takeLatest(UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS, updateComponentTypeComponentRelationships),
     takeLatest(UPDATE_COMPONENT_TYPE_COMPONENT_PROPERTIES, updateComponentTypeComponentProperties),
     takeLatest(UPDATE_COMPONENT_TYPE_COMPONENT, updateComponentTypeComponentData),
-    takeLatest(DELETE_COMPONENT_TYPE_COMPONENT, deleteComponentTypeComponent)
+    takeLatest(DELETE_COMPONENT_TYPE_COMPONENT, deleteComponentTypeComponent),
+    takeLatest(VIEW_RELATIONSHIP_PROPERTY, getRelationshipProperty),
+    takeLatest(UPDATE_RELATIONSHIP_PROPERTY, updateRelationshipProperty)
   ]
 }
 
@@ -117,20 +131,6 @@ export function * getComponentTypeComponentRelationships (action) {
     yield put(actionCreators.fetchcomponentTypeComponentRelationshipsFailure(error))
   }
 }
-
-// export function * getComponentsConstraints (action) {
-//   try {
-//     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
-//     const componentTypes = yield call(
-//       axios.get,
-//       api.getComponentsConstraints(action.payload)
-//       // {params: action.payload}
-//     )
-//     yield put(actionCreators.fetchcomponentTypeComponentRelationshipsSuccess(componentTypes.data))
-//   } catch (error) {
-//     yield put(actionCreators.fetchcomponentTypeComponentRelationshipsFailure(error))
-//   }
-// }
 
 export function * getComponentConstraints (action) {
   try {
@@ -217,6 +217,35 @@ export function * deleteComponentTypeComponent (action) {
     yield put(actionCreators.deletecomponentTypeComponentSuccess(deleteComponent.data))
   } catch (error) {
     yield put(actionCreators.deletecomponentTypeComponentFailure(error))
+  }
+  console.log(action.payload)
+}
+
+export function * getRelationshipProperty (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const viewRelationship = yield call(
+      axios.get,
+      api.viewComponentRelationship(action.payload)
+      // action.payload
+     )
+    yield put(actionCreators.viewRelationshipPropertySuccess(viewRelationship.data))
+  } catch (error) {
+    yield put(actionCreators.viewRelationshipPropertyFailure(error))
+  }
+}
+
+export function * updateRelationshipProperty (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const updateRelationship = yield call(
+      axios.patch,
+      api.viewComponentRelationship(action.payload),
+      action.payload.payloadData
+     )
+    yield put(actionCreators.updateRelationshipPropertySuccess(updateRelationship.data))
+  } catch (error) {
+    yield put(actionCreators.updateRelationshipPropertyFailure(error))
   }
   console.log(action.payload)
 }

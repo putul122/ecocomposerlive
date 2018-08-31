@@ -1,36 +1,37 @@
 import React from 'react'
 import styles from './applicationActivityComponent.scss'
-// import PropTypes from 'prop-types'
+import PropTypes from 'prop-types'
 // import _ from 'lodash'
-import ReactHtmlParser from 'react-html-parser'
-import messageData from './GetMessages'
+// import ReactHtmlParser from 'react-html-parser'
+// import messageData from './GetMessages'
 export default function ApplicationActivity (props) {
-  let activityMessages = messageData.resources
+  console.log('activity message props', props.activityMessages, props)
+  let activityMessages = props.activityMessages
   let activityMessagesList = ''
   if (activityMessages !== '') {
-    activityMessagesList = activityMessages.map(function (messageGroup, index) {
-      let contextIconlink = messageGroup.links.find(function (link) { return link.rel === 'context_icon' })
-      let context = messageGroup.context_name
-      let discussion = messageGroup.discussion_name
-      // let messageList = messageGroup.map(function (message, i) {
-      let userIconlink = messageGroup.links.find(function (link) { return link.rel === 'author_avatar' })
-      let messageContent = messageGroup.name.replace(/<m i=0>/g, '<a href="javascript:void(0);">@').replace(/<\/m>/g, '</a>')
-      .replace(/<r i=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
-      .replace(/<r i=1>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
-      .replace(/<t>/g, ' #').replace(/<\/t>/g, '')
-        // return (<li><img src={userIconlink.href} alt={message.user} />{ReactHtmlParser(messageContent)}</li>)
-      // })
-      return (
-        <li key={index} >
-          <div className={styles.groupspace}>
-            <img src={contextIconlink ? contextIconlink.href : ''} alt={context} /><div className={styles.tooltip}><a href=''>{context}</a><span className={styles.tooltiptext}>{discussion}</span></div>::<a href='javascript:void(0);'>{discussion}</a>
-            <ul>
-              <li><img src={userIconlink.href} alt={messageGroup.author_name} />{ReactHtmlParser(messageContent)}</li>
-            </ul>
-          </div>
-        </li>
-      )
-    })
+    // activityMessagesList = activityMessages.resources.map(function (messageGroup, index) {
+    //   let contextIconlink = messageGroup.links.find(function (link) { return link.rel === 'context_icon' })
+    //   let context = messageGroup.context_name
+    //   let discussion = messageGroup.discussion_name
+    //   // let messageList = messageGroup.map(function (message, i) {
+    //   let userIconlink = messageGroup.links.find(function (link) { return link.rel === 'author_avatar' })
+    //   let messageContent = messageGroup.name.replace(/<m i=0>/g, '<a href="javascript:void(0);">@').replace(/<\/m>/g, '</a>')
+    //   .replace(/<r i=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
+    //   .replace(/<r i=1>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
+    //   .replace(/<t>/g, ' #').replace(/<\/t>/g, '')
+    //     // return (<li><img src={userIconlink.href} alt={message.user} />{ReactHtmlParser(messageContent)}</li>)
+    //   // })
+    //   return (
+    //     <li key={index} >
+    //       <div className={styles.groupspace}>
+    //         <img src={contextIconlink ? contextIconlink.href : ''} alt={context} /><div className={styles.tooltip}><a href=''>{context}</a><span className={styles.tooltiptext}>{discussion}</span></div>::<a href='javascript:void(0);'>{discussion}</a>
+    //         <ul>
+    //           <li><img src={userIconlink.href} alt={messageGroup.author_name} />{ReactHtmlParser(messageContent)}</li>
+    //         </ul>
+    //       </div>
+    //     </li>
+    //   )
+    // })
   }
 
   // if (activityMessages !== '') {
@@ -103,5 +104,5 @@ export default function ApplicationActivity (props) {
   )
 }
 ApplicationActivity.propTypes = {
-  // activityMessages: PropTypes.any
+  activityMessages: PropTypes.any
 }

@@ -5,7 +5,7 @@ const api = {
     loginUser: 'https://ecoconductor-dev-api-account.azurewebsites.net/user_access_token',
     authenticateUser: 'https://ecoconductor-dev-api-account.azurewebsites.net/user_access_token',
     registerProcess: 'https://ecoconductor-dev-api-notification.azurewebsites.net/processes',
-    getActivityMessage: function (componentTypeId) {
+    getActivityMessage: function () {
         return 'https://ecoconductor-dev-api-notification.azurewebsites.net/messages'
     },
     getComponentById: function (componentTypeId) {
@@ -43,6 +43,9 @@ const api = {
     },
     deleteComponent: function (componentTypeId) {
         return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + componentTypeId
+    },
+    viewComponentRelationship: function (payload) {
+        return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_relationships/' + payload.relationshipId
     }
   }
 

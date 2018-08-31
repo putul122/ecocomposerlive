@@ -1,7 +1,6 @@
 import React from 'react'
 import styles from './componentTypeComponentComponent.scss'
 import PropTypes from 'prop-types'
-// import relationshipData from './mockData'
 // import ComponentTypeComponentsData from './mockGetComponentTypeComponents'
 // import ComponentTypeConstraintsData from './mockGetComponentTypeConstraints'
 import _ from 'lodash'
@@ -250,7 +249,10 @@ export default function ComponentTypeComponent (props) {
     let editTextProperty = function (index, childIndex, value) {
       let payload
       let typeProperty = componentTypeComponentProperties[index].properties[childIndex].type_property
-      if (componentTypeComponentProperties[index].properties[childIndex].property_type.key === 'Integer') {
+      if (componentTypeComponentProperties[index].properties[childIndex].property_type.key === 'Boolean') {
+        componentTypeComponentProperties[index].properties[childIndex].boolean_value = value
+        payload = { 'op': 'replace', 'path': `/${typeProperty}/boolean_value`, 'value': value }
+      } else if (componentTypeComponentProperties[index].properties[childIndex].property_type.key === 'Integer') {
         componentTypeComponentProperties[index].properties[childIndex].int_value = value
         payload = { 'op': 'replace', 'path': `/${typeProperty}/int_value`, 'value': value }
         // if (typeof value !== 'number') {
@@ -367,6 +369,241 @@ export default function ComponentTypeComponent (props) {
       editPayload.property = {resources: componentTypeComponentProperties}
       props.editComponentProperties(editPayload)
     }
+    // Start Update Connection Code
+    let componentRelationshipPropertiesList = ''
+    // let relationshipPropertyPayload = JSON.parse(JSON.stringify(props.relationshipPropertyPayload))
+    let relationshipPropertyPayload = props.relationshipPropertyPayload
+    console.log('property payload', relationshipPropertyPayload)
+    let componentRelationshipProperties = props.relationshipProperty.resources ? [...props.relationshipProperty.resources[0].properties] : ''
+    let updateRelationshipProperty = function (event) {
+      event.preventDefault()
+      let payload = {}
+      payload.componentId = props.relationshipActionSettings.selectedObject.target_component.id
+      payload.relationshipId = props.relationshipActionSettings.selectedObject.connection.id
+      payload.payloadData = relationshipPropertyPayload
+      props.updateRelationshipProperty(payload)
+    }
+    if (props.updateRelationshipPropertyResponse !== '') {
+      console.log('update response', props.updateRelationshipPropertyResponse)
+      if (props.updateRelationshipPropertyResponse.result_code !== -1) {
+        // eslint-disable-next-line
+        toastr.options = {
+          'closeButton': false,
+          'debug': false,
+          'newestOnTop': false,
+          'progressBar': false,
+          'positionClass': 'toast-bottom-full-width',
+          'preventDuplicates': false,
+          'onclick': null,
+          'showDuration': '300',
+          'hideDuration': '1000',
+          'timeOut': '5000',
+          'extendedTimeOut': '1000',
+          'showEasing': 'swing',
+          'hideEasing': 'linear',
+          'showMethod': 'fadeIn',
+          'hideMethod': 'fadeOut'
+        }
+        // eslint-disable-next-line
+        toastr.success('Successfully updated relationship ' + props.relationshipActionSettings.relationshipText + ': ' + props.relationshipActionSettings.componentName, 'Updated!')
+      } else {
+        // eslint-disable-next-line
+        toastr.options = {
+          'closeButton': false,
+          'debug': false,
+          'newestOnTop': false,
+          'progressBar': false,
+          'positionClass': 'toast-bottom-full-width',
+          'preventDuplicates': false,
+          'onclick': null,
+          'showDuration': '300',
+          'hideDuration': '1000',
+          'timeOut': '5000',
+          'extendedTimeOut': '1000',
+          'showEasing': 'swing',
+          'hideEasing': 'linear',
+          'showMethod': 'fadeIn',
+          'hideMethod': 'fadeOut'
+        }
+        // eslint-disable-next-line
+        toastr.error(props.updateRelationshipResponse.error_message, props.updateRelationshipResponse.error_code)
+      }
+      props.resetUpdateRelationshipResponse()
+      let settingPayload = {...props.relationshipActionSettings, 'isModalOpen': false}
+      props.setRelationshipActionSettings(settingPayload)
+    }
+    let handleRelationshipPropertySelect = function (index, childIndex) {
+      return function (newValue: any, actionMeta: any) {
+        if (actionMeta.action === 'select-option') {
+          if (newValue !== null) {
+            let payload
+            let typeProperty = componentRelationshipProperties[index].properties[childIndex].type_property
+            componentRelationshipProperties[index].properties[childIndex].value_set_value = newValue
+            console.log('select value', newValue)
+            payload = { 'op': 'replace', 'path': `/${typeProperty}/value_set_value`, 'value': {id: newValue.value} }
+
+            if (relationshipPropertyPayload.length === 0) {
+              relationshipPropertyPayload.push(payload)
+            } else {
+              if (payload.path === relationshipPropertyPayload[relationshipPropertyPayload.length - 1].path) {
+                relationshipPropertyPayload[relationshipPropertyPayload.length - 1] = payload
+              } else {
+                relationshipPropertyPayload.push(payload)
+              }
+            }
+            let editPayload = {}
+            editPayload.resources = []
+            let propObject = {}
+            propObject.properties = componentRelationshipProperties
+            editPayload.resources.push(propObject)
+            props.editComponentRelationshipProperties(editPayload)
+            props.editComponentRelationshipPropertyPayload(relationshipPropertyPayload)
+          }
+        }
+      }
+    }
+    let editTextRelationshipProperty = function (index, childIndex, value) {
+      let payload
+      let typeProperty = componentRelationshipProperties[index].properties[childIndex].type_property
+      if (componentRelationshipProperties[index].properties[childIndex].property_type.key === 'Boolean') {
+        componentRelationshipProperties[index].properties[childIndex].boolean_value = value
+        payload = { 'op': 'replace', 'path': `/${typeProperty}/boolean_value`, 'value': value }
+      } else if (componentRelationshipProperties[index].properties[childIndex].property_type.key === 'Integer') {
+        componentRelationshipProperties[index].properties[childIndex].int_value = value
+        payload = { 'op': 'replace', 'path': `/${typeProperty}/int_value`, 'value': value }
+      } else if (componentRelationshipProperties[index].properties[childIndex].property_type.key === 'Decimal') {
+        componentRelationshipProperties[index].properties[childIndex].float_value = value
+        payload = { 'op': 'replace', 'path': `/${typeProperty}/float_value`, 'value': value }
+      } else if (componentRelationshipProperties[index].properties[childIndex].property_type.key === 'DateTime') {
+        componentRelationshipProperties[index].properties[childIndex].date_time_value = value
+        payload = { 'op': 'replace', 'path': `/${typeProperty}/date_time_value`, 'value': value }
+      } else if (componentRelationshipProperties[index].properties[childIndex].property_type.key === 'Text') {
+        componentRelationshipProperties[index].properties[childIndex].text_value = value
+        payload = { 'op': 'replace', 'path': `/${typeProperty}/text_value`, 'value': value }
+      } else {
+        componentRelationshipProperties[index].properties[childIndex].other_value = value
+        payload = { 'op': 'replace', 'path': `/${typeProperty}/other_value`, 'value': value }
+        componentRelationshipProperties[index].properties[childIndex].showMessage = false
+      }
+      if (relationshipPropertyPayload.length === 0) {
+        relationshipPropertyPayload.push(payload)
+      } else {
+        if (payload.path === relationshipPropertyPayload[relationshipPropertyPayload.length - 1].path) {
+          relationshipPropertyPayload[relationshipPropertyPayload.length - 1] = payload
+        } else {
+          relationshipPropertyPayload.push(payload)
+        }
+      }
+      let editPayload = {}
+      editPayload.resources = []
+      let propObject = {}
+      propObject.properties = componentRelationshipProperties
+      editPayload.resources.push(propObject)
+      props.editComponentRelationshipProperties(editPayload)
+      props.editComponentRelationshipPropertyPayload(relationshipPropertyPayload)
+    }
+    let closeRelationshipActionModal = function (event) {
+      console.log('open relationship action modal')
+      console.log('settings property 00', props.relationshipActionSettings)
+      let settingPayload = {...props.relationshipActionSettings, 'isModalOpen': false}
+      props.setRelationshipActionSettings(settingPayload)
+      props.resetComponentRelationshipProperties()
+    }
+    if (props.relationshipProperty !== '') {
+      componentRelationshipPropertiesList = componentRelationshipProperties.map(function (property, index) {
+        let propertyProperties = property.properties
+        let childProperties = propertyProperties.map(function (childProperty, childIndex) {
+          let value
+          let htmlElement
+          if (childProperty.property_type.key === 'Integer') {
+            value = childProperty.int_value
+            htmlElement = function () {
+              return (<div className='col-8 form-group m-form__group has-info'>
+                <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextRelationshipProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
+                {true && (<div className='form-control-feedback'>should be Number</div>)}
+              </div>)
+            }
+          } else if (childProperty.property_type.key === 'Decimal') {
+            value = childProperty.float_value
+            htmlElement = function () {
+              return (<div className='col-8 form-group m-form__group has-info'>
+                <input type='number' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextRelationshipProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
+                {true && (<div className='form-control-feedback'>should be Number</div>)}
+              </div>)
+            }
+          } else if (childProperty.property_type.key === 'DateTime') {
+            value = childProperty.date_time_value
+            htmlElement = function () {
+              return (<div className='col-8 form-group m-form__group has-info'>
+                <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextRelationshipProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
+                {true && (<div className='form-control-feedback'>should be Text</div>)}
+              </div>)
+            }
+          } else if (childProperty.property_type.key === 'Text') {
+            value = childProperty.text_value
+            htmlElement = function () {
+              return (<div className='col-8 form-group m-form__group has-info'>
+                <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextRelationshipProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
+                {true && (<div className='form-control-feedback'>should be Text</div>)}
+              </div>)
+            }
+          } else if (childProperty.property_type.key === 'List') {
+            let childPropertyOption = childProperty.value_set.values.map((option, opIndex) => {
+              option.label = option.name
+              option.value = option.id
+              return option
+            })
+            let dvalue = childProperty.value_set_value
+            if (childProperty.value_set_value !== null) {
+              dvalue.label = childProperty.value_set_value.name
+              dvalue.value = childProperty.value_set_value.id
+            }
+            value = childProperty.value_set_value ? childProperty.value_set_value.name : null
+            htmlElement = function () {
+              return (<Select
+                className='col-7 input-sm form-control m-input'
+                placeholder='Select Options'
+                isClearable
+                defaultValue={dvalue}
+                onChange={handleRelationshipPropertySelect(index, childIndex)}
+                isSearchable={false}
+                name={'selectProperty'}
+                options={childPropertyOption}
+              />)
+            }
+          } else {
+            value = childProperty.other_value
+            htmlElement = function () {
+              return (<div className='col-8 form-group m-form__group has-info'>
+                <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextRelationshipProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
+                {true && (<div className='form-control-feedback'>should be Text</div>)}
+              </div>)
+            }
+          }
+          return (
+            <tr key={'child' + childIndex}>
+              <td><p className={styles.labelbold}>{childProperty.name}</p></td>
+              <td>
+                {props.relationshipActionSettings.actionType === 'view' && (<p>{value}</p>)}
+                {props.relationshipActionSettings.actionType === 'edit' && htmlElement()}
+              </td>
+            </tr>
+          )
+        })
+        return (
+          <tbody key={index} className={'col-6'}>
+            <tr>
+              <td><p className={styles.labelbold}>Type</p></td>
+              <td><p>{property.name}</p></td>
+            </tr>
+            {childProperties}
+          </tbody>
+        )
+      })
+    } else {
+      console.log('check relationship properties else', props)
+    }
+    // End Update Connection Code
     // Model ADD new Connections Code
     // let firstSelectboxSelected = props.addNewConnectionSettings.firstSelectboxSelected
     // let secondSelectboxSelected = props.addNewConnectionSettings.secondSelectboxSelected
@@ -807,20 +1044,25 @@ export default function ComponentTypeComponent (props) {
       let incoming = _.filter(componentTypeComponentRelationships.resources, {'relationship_type': 'ConnectFrom'})
       incoming = _.orderBy(incoming, ['connection.name', 'target_component.name'], ['asc', 'asc'])
       let child = _.filter(componentTypeComponentRelationships.resources, {'relationship_type': 'Child'})
+      console.log('outgoing connections', outgoing)
 
       let parentComponentRelationshipListFn = function () {
         if (parent.length > 0) {
           let childElementList = parent.map(function (element, i) {
+          let relationshipActionSettings = {...props.relationshipActionSettings}
           return (<span>
             <a href='javascript:void(0);'>{element.target_component.name}</a>
-            {/* <div className='dropdown'>
-              <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
-              <div className='dropdown-menu' aria-labelledby='dropdownMenuButton' x-placement='bottom-start' style={{position: 'absolute', 'will-change': 'transform', 'top': '0px', 'left': '0px', 'transform': "translate3d('0px', '40px', '0px')"}}>
-                <a className='dropdown-item' href='javascript:void(0);' data-toggle='m-tooltip' title='' data-placement='right' data-skin='dark' data-container='body' data-original-title='Tooltip title'>Action</a>
-                <a className='dropdown-item' href='javascript:void(0);'>Another action</a>
-                <a className='dropdown-item' href='javascript:void(0);' data-toggle='m-tooltip' title='' data-placement='left' data-original-title='Tooltip title'>Something else here</a>
+            <div className='dropdown pull-right'>
+              <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
+              <div className={styles.dropmenu}>
+                <ul className='dropdown-menu'>
+                  <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
+                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; props.setRelationshipActionSettings(relationshipActionSettings) }}>View</a></li>
+                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; props.setRelationshipActionSettings(relationshipActionSettings) }}>Edit</a></li>
+                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
+                </ul>
               </div>
-            </div> */}
+            </div>
             <br />
           </span>)
         })
@@ -845,16 +1087,20 @@ export default function ComponentTypeComponent (props) {
       let childComponentRelationshipListFn = function () {
         if (child.length > 0) {
           let childElementList = child.map(function (element, i) {
+          let relationshipActionSettings = {...props.relationshipActionSettings}
           return (<span>
             <a href='javascript:void(0);'>{element.target_component.name}</a>
-            {/* <div className='dropdown'>
-              <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
-              <div className='dropdown-menu' aria-labelledby='dropdownMenuButton' x-placement='bottom-start' style={{position: 'absolute', 'will-change': 'transform', 'top': '0px', 'left': '0px', 'transform': "translate3d('0px', '40px', '0px')"}}>
-                <a className='dropdown-item' href='javascript:void(0);' data-toggle='m-tooltip' title='' data-placement='right' data-skin='dark' data-container='body' data-original-title='Tooltip title'>Action</a>
-                <a className='dropdown-item' href='javascript:void(0);'>Another action</a>
-                <a className='dropdown-item' href='javascript:void(0);' data-toggle='m-tooltip' title='' data-placement='left' data-original-title='Tooltip title'>Something else here</a>
+            <div className='dropdown pull-right'>
+              <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
+              <div className={styles.dropmenu}>
+                <ul className='dropdown-menu'>
+                  <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
+                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; props.setRelationshipActionSettings(relationshipActionSettings) }}>View</a></li>
+                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; props.setRelationshipActionSettings(relationshipActionSettings) }}>Edit</a></li>
+                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
+                </ul>
               </div>
-            </div> */}
+            </div>
             <br />
           </span>)
         })
@@ -886,22 +1132,30 @@ export default function ComponentTypeComponent (props) {
           let outerKey = 0
           for (let connectionKey in outgoingGroup) {
             if (outgoingGroup.hasOwnProperty(connectionKey)) {
-              // console.log(connectionKey, '-->>', outgoingGroup[connectionKey])
+              console.log(connectionKey, '-->>', outgoingGroup[connectionKey])
               outerKey++
               let innerKey = 0
               for (let targetComponentTypeKey in outgoingGroup[connectionKey]) {
                 if (outgoingGroup[connectionKey].hasOwnProperty(targetComponentTypeKey)) {
-                  // console.log(targetComponentTypeKey, '-->>', outgoingGroup[connectionKey][targetComponentTypeKey])
+                  console.log(targetComponentTypeKey, '-->>', outgoingGroup[connectionKey][targetComponentTypeKey])
                   innerKey++
+                  let relationshipActionSettings = {...props.relationshipActionSettings}
+                  relationshipActionSettings.relationshipText = outgoingGroup[connectionKey][targetComponentTypeKey][0].component.name + ' ' + connectionKey + ' ' + targetComponentTypeKey
+                  relationshipActionSettings.relationshipId = outgoingGroup[connectionKey][targetComponentTypeKey][0].id
                   let childElementList = outgoingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
                     return (<span>
                       <a href='javascript:void(0);'>{element.target_component.name}</a>
-                      {/* <div className='dropdown'>
-                        <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
-                        <div className='dropdown-menu' aria-labelledby='dropdownMenuButton' x-placement='bottom-start' style={{position: 'absolute', 'will-change': 'transform', 'top': '0px', 'left': '0px', 'transform': "translate3d('0px', '40px', '0px')"}}>
-                          <a className='dropdown-item' href='javascript:void(0);' data-toggle='m-tooltip' title='' data-placement='right' data-skin='dark' data-container='body' data-original-title='Tooltip title'>Relationships Action</a>
+                      <div className='dropdown pull-right'>
+                        <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
+                        <div className={styles.dropmenu}>
+                          <ul className='dropdown-menu'>
+                            <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
+                            <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.actionType = 'view'; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>View</a></li>
+                            <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Edit</a></li>
+                            <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
+                          </ul>
                         </div>
-                      </div> */}
+                      </div>
                       <br />
                     </span>)
                   })
@@ -946,21 +1200,23 @@ export default function ComponentTypeComponent (props) {
                 if (incomingGroup[connectionKey].hasOwnProperty(targetComponentTypeKey)) {
                   // console.log(targetComponentTypeKey, '-->>', incomingGroup[connectionKey][targetComponentTypeKey])
                   innerKey++
-                  // let relationshipActionSettings = {...props.relationshipActionSettings}
+                  let relationshipActionSettings = {...props.relationshipActionSettings}
+                  relationshipActionSettings.relationshipText = targetComponentTypeKey + ' ' + connectionKey + ' ' + incomingGroup[connectionKey][targetComponentTypeKey][0].component.name
+                  relationshipActionSettings.relationshipId = incomingGroup[connectionKey][targetComponentTypeKey][0].id
                   let childElementList = incomingGroup[connectionKey][targetComponentTypeKey].map(function (element, i) {
                     return (<span>
                       <a href='javascript:void(0);'>{element.target_component.name}</a>
-                      {/* <div className='dropdown pull-right' style={{'z-index': 9999}}>
+                      <div className='dropdown pull-right'>
                         <button className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' data-toggle='dropdown' data-hover='dropdown' aria-haspopup='true' aria-expanded='false'><i className='la la-ellipsis-h' /></button>
                         <div className={styles.dropmenu}>
                           <ul className='dropdown-menu'>
                             <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
-                            <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; props.setRelationshipActionSettings(relationshipActionSettings) }}>View</a></li>
-                            <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; props.setRelationshipActionSettings(relationshipActionSettings) }}>Edit</a></li>
-                            <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
+                            <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'view'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>View</a></li>
+                            <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Edit</a></li>
+                            <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
                           </ul>
                         </div>
-                      </div> */}
+                      </div>
                       <br />
                     </span>)
                   })
@@ -1257,6 +1513,38 @@ export default function ComponentTypeComponent (props) {
               </div>
             </div>
           </ReactModal>
+          <ReactModal isOpen={props.relationshipActionSettings.isModalOpen}
+            onRequestClose={closeRelationshipActionModal}
+            shouldCloseOnOverlayClick={false}
+            // className={''}
+            >
+            {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
+            <div className={''} id='relationshipPropertyContent'>
+              <div className='modal-dialog modal-lg'>
+                <div className='modal-content'>
+                  <div className='modal-header'>
+                    <h4 className='modal-title' id='exampleModalLabel'>{'Relationship details for ' + props.relationshipActionSettings.relationshipText + ': ' + props.relationshipActionSettings.componentName}</h4>
+                    <button type='button' onClick={closeRelationshipActionModal} className='close' data-dismiss='modal' aria-label='Close'>
+                      <span aria-hidden='true'>×</span>
+                    </button>
+                  </div>
+                  <div className='modal-body'>
+                    { componentRelationshipPropertiesList !== '' && (
+                    <table className={'table ' + styles.borderless}>
+                      {componentRelationshipPropertiesList}
+                    </table>
+                    )}
+                  </div>
+                  <div className='modal-footer'>
+                    <button onClick={closeRelationshipActionModal} className='btn btn-sm btn-outline-info'>Cancel</button>
+                    {props.relationshipActionSettings.actionType === 'edit' && (
+                    <button onClick={updateRelationshipProperty} className={'btn btn-sm btn-info '}>Update</button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ReactModal>
         </div>
       </div>
     )
@@ -1274,6 +1562,13 @@ ComponentTypeComponent.propTypes = {
   // updateComponentTypeComponentProperties: PropTypes.func,
   // updateComponentTypeComponent: PropTypes.func,
   // setConfirmationModalOpenStatus: PropTypes.func,
+  // relationshipProperty: PropTypes.any,
+  // viewRelationshipProperty: PropTypes.func,
+  setRelationshipActionSettings: PropTypes.func,
+  updateRelationshipPropertyResponse: PropTypes.any,
+  relationshipPropertyPayload: PropTypes.any,
+  relationshipActionSettings: PropTypes.any,
+  relationshipProperty: PropTypes.any,
   resetUpdateRelationshipResponse: PropTypes.func,
   updateRelationshipResponse: PropTypes.any,
   successmodalIsOpen: PropTypes.any,

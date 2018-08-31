@@ -12,7 +12,7 @@ export default function SignUp (props) {
   let createUserResponse = props.createUserResponse
   let loggedInMessageResponse = function (message) {
     return (<div className='m-alert m-alert--outline alert alert-danger alert-dismissible animated fadeIn' role='alert'>
-      <button type='button' className='close' data-dismiss='alert' aria-label='Close' />
+      {/* <button type='button' className='close' data-dismiss='alert' aria-label='Close' /> */}
       <span>{message}</span>
     </div>
     )

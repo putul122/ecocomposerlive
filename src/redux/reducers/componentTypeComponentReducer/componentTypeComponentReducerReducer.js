@@ -5,7 +5,9 @@ import { FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS,
   FETCH_COMPONENT_CONSTRAINTS_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENTS_SUCCESS,
   UPDATE_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
-  DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS
+  DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS,
+  VIEW_RELATIONSHIP_PROPERTY_SUCCESS,
+  UPDATE_RELATIONSHIP_PROPERTY_SUCCESS
  } from '../../sagas/componentTypeComponent/componentTypeComponentSaga'
 // Name Spaced Action Types
 const SET_DATA_LOADING = 'ComponentTypeComponentReducer/SET_DATA_LOADING'
@@ -21,6 +23,10 @@ const EDIT_COMPONENT_PROPERTIES = 'ComponentTypeComponentReducer/EDIT_COMPONENT_
 const PUSH_COMPONENT_PROPERTY_PAYLOAD = 'ComponentTypeComponentReducer/PUSH_COMPONENT_PROPERTY_PAYLOAD'
 const RESET_UPDATE_RELATIONSHIP_RESPONSE = 'ComponentTypeComponentReducer/RESET_UPDATE_RELATIONSHIP_RESPONSE'
 const SET_DELETE_FLAG = 'ComponentTypeComponentReducer/SET_DELETE_FLAG'
+const EDIT_COMPONENT_RELATIONSHIP_PROPERTY = 'ComponentTypeComponentReducer/EDIT_COMPONENT_RELATIONSHIP_PROPERTY'
+const RESET_COMPONENT_RELATIONSHIP_PROPERTY = 'ComponentTypeComponentReducer/RESET_COMPONENT_RELATIONSHIP_PROPERTY'
+const SET_RELATIONSHIP_ACTION_SETTINGS = 'ComponentTypeComponentReducer/SET_RELATIONSHIP_ACTION_SETTINGS'
+const EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD = 'ComponentTypeComponentReducer/EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD'
 
 export const actions = {
   FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS,
@@ -41,7 +47,13 @@ export const actions = {
   EDIT_COMPONENT_PROPERTIES,
   PUSH_COMPONENT_PROPERTY_PAYLOAD,
   RESET_UPDATE_RELATIONSHIP_RESPONSE,
-  DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS
+  DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS,
+  SET_RELATIONSHIP_ACTION_SETTINGS,
+  VIEW_RELATIONSHIP_PROPERTY_SUCCESS,
+  EDIT_COMPONENT_RELATIONSHIP_PROPERTY,
+  RESET_COMPONENT_RELATIONSHIP_PROPERTY,
+  EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD,
+  UPDATE_RELATIONSHIP_PROPERTY_SUCCESS
 }
 
 export const actionCreators = {
@@ -58,7 +70,11 @@ export const actionCreators = {
     pushComponentPropertyPayload: createAction(PUSH_COMPONENT_PROPERTY_PAYLOAD),
     resetUpdateRelationshipResponse: createAction(RESET_UPDATE_RELATIONSHIP_RESPONSE),
     setDeleteFlag: createAction(SET_DELETE_FLAG),
-    setRedirectFlag: createAction(DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS)
+    setRedirectFlag: createAction(DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS),
+    setRelationshipActionSettings: createAction(SET_RELATIONSHIP_ACTION_SETTINGS),
+    editComponentRelationshipProperties: createAction(EDIT_COMPONENT_RELATIONSHIP_PROPERTY),
+    resetComponentRelationshipProperties: createAction(RESET_COMPONENT_RELATIONSHIP_PROPERTY),
+    editComponentRelationshipPropertyPayload: createAction(EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD)
 }
 
 export const initialState = {
@@ -94,7 +110,18 @@ export const initialState = {
     componentText: '',
     newConnectionArray: []
   },
-  deleteComponent: false
+  relationshipActionSettings: {
+    isModalOpen: false,
+    actionType: '',
+    relationshipId: '',
+    relationshipText: '',
+    componentName: '',
+    selectedObject: ''
+  },
+  deleteComponent: false,
+  relationshipProperty: '',
+  relationshipPropertyPayload: [],
+  updateRelationshipPropertyResponse: ''
 }
 
 export default handleActions(
@@ -168,11 +195,36 @@ export default handleActions(
     }),
     [RESET_UPDATE_RELATIONSHIP_RESPONSE]: (state, action) => ({
       ...state,
-      updateRelationshipResponse: ''
+      updateRelationshipResponse: '',
+      updateRelationshipPropertyResponse: ''
     }),
     [DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS]: (state, action) => ({
       ...state,
       deleteComponent: action.payload
+    }),
+    [SET_RELATIONSHIP_ACTION_SETTINGS]: (state, action) => ({
+      ...state,
+      relationshipActionSettings: action.payload
+    }),
+    [VIEW_RELATIONSHIP_PROPERTY_SUCCESS]: (state, action) => ({
+      ...state,
+      relationshipProperty: action.payload
+    }),
+    [EDIT_COMPONENT_RELATIONSHIP_PROPERTY]: (state, action) => ({
+      ...state,
+      relationshipProperty: action.payload
+    }),
+    [RESET_COMPONENT_RELATIONSHIP_PROPERTY]: (state, action) => ({
+      ...state,
+      relationshipProperty: ''
+    }),
+    [EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD]: (state, action) => ({
+      ...state,
+      relationshipPropertyPayload: action.payload
+    }),
+    [UPDATE_RELATIONSHIP_PROPERTY_SUCCESS]: (state, action) => ({
+      ...state,
+      updateRelationshipPropertyResponse: action.payload
     })
   },
   initialState
