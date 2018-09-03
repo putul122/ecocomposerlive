@@ -25,11 +25,12 @@ class LeftNavigation extends React.Component {
       {/* <!-- BEGIN: Aside Menu --> */}
       <div id='m_ver_menu'className='m-aside-menu  m-aside-menu--skin-light m-aside-menu--submenu-skin-light '>
         <ul className='m-menu__nav  m-menu__nav--dropdown-submenu-arrow '>
-          <li className='m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight' ><Link to='/home' className='m-menu__link'><i className='m-menu__link-icon flaticon-menu' /></Link></li>
           <li className='m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight' ><Link to='/components' className='m-menu__link'><i className='m-menu__link-icon fa fa-th' /></Link></li>
-          <li className='m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight' ><a href='javascript:;' className='m-menu__link'><i className='m-menu__link-icon fa fa-table' /></a></li>
+          <li className='m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight' ><Link to='/home' className='m-menu__link'><i className='m-menu__link-icon flaticon-menu' /></Link></li>
+          {/* <li className='m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight' ><Link to='/components' className='m-menu__link'><i className='m-menu__link-icon fa fa-th' /></Link></li> */}
+          {/* <li className='m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight' ><a href='javascript:;' className='m-menu__link'><i className='m-menu__link-icon fa fa-table' /></a></li>
           <li className='m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight' ><a href='javascript:;' className='m-menu__link'><i className='m-menu__link-icon fa fa-compress' /></a></li>
-          <li className='m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight' ><a href='javascript:;' className='m-menu__link'><i className='m-menu__link-icon flaticon-settings' /></a></li>
+          <li className='m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight' ><a href='javascript:;' className='m-menu__link'><i className='m-menu__link-icon flaticon-settings' /></a></li> */}
         </ul>
       </div>
       {/* <!-- END: Aside Menu --> */}

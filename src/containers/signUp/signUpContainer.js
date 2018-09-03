@@ -45,7 +45,8 @@ export default compose(
           localStorage.setItem('userAccessToken', nextProps.createUserResponse.resources[0]['access_token'])
           localStorage.setItem('isLoggedin', true)
           console.log('create user response', nextProps)
-          this.props.history.push('/registering')
+          // this.props.history.push('/registering')
+          this.props.history.push('/components')
         }
         if (nextProps.createUserResponse !== this.props.createUserResponse) {
           this.props.setCreateUserProcessStatus(false)

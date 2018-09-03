@@ -1409,7 +1409,7 @@ export default function ComponentTypeComponent (props) {
                   <a className={'nav-link' + showProperties} data-toggle='tab' onClick={showProperty} href='javascript:void(0);'>Properties</a>
                 </li>
                 <li className='nav-item'>
-                  <a className={'nav-link' + showRelationships} data-toggle='tab' onClick={showRelationship} href='javascript:void(0);'>RelationShips</a>
+                  <a className={'nav-link' + showRelationships} data-toggle='tab' onClick={showRelationship} href='javascript:void(0);'>Relationships</a>
                 </li>
               </ul>
               <div className='tab-content'>

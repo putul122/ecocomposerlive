@@ -293,7 +293,7 @@ export default function ApplicationDetail (props) {
         <div className={'row' + styles.description}>
           <div>
             <img className={styles.iconcenter} src={ComponentTypeIcon.href} alt={ComponentName} />
-            <span className='row col-sm-12 col-md-6'>
+            <span className='row col-sm-12 col-md-8'>
               <h2>{ ComponentName }</h2>
               <div className=''><button type='button' onClick={openModal} id='m_login_signup' className={styles.buttonbg}>Add { ComponentName }</button></div>
               <div>
@@ -315,11 +315,11 @@ export default function ApplicationDetail (props) {
                             {/* {messageBlock} */}
                             <div className='form-group'>
                               <label htmlFor='component-name' className='form-control-label'>Name:</label>
-                              <input type='text' className='form-control' ref={input => (NameInputBox = input)} id='component-name' required />
+                              <input type='text' className='form-control' ref={input => (NameInputBox = input)} id='component-name' autoComplete='off' required />
                             </div>
                             <div className='form-group'>
                               <label htmlFor='description-text' className='form-control-label'>Description:</label>
-                              <textarea className='form-control'ref={textarea => (DescriptionBox = textarea)} defaultValue={''} required />
+                              <textarea className='form-control'ref={textarea => (DescriptionBox = textarea)} defaultValue={''} autoComplete='off' required />
                             </div>
                           </form>
                         </div>

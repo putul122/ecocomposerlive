@@ -42,7 +42,7 @@ export default compose(
         if (!nextProps.loggedInresponse.error_code) {
           localStorage.setItem('userAccessToken', nextProps.loggedInresponse.resources[0]['access_token'])
           localStorage.setItem('isLoggedin', true)
-          this.props.history.push('/home')
+          this.props.history.push('/components')
         } else {
           // error in login
         }
