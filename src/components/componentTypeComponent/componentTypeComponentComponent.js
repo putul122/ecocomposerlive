@@ -7,9 +7,12 @@ import _ from 'lodash'
 import ComponentModelComponent from '../componentModel/componentModelComponent'
 import Select from 'react-select'
 import CreatableSelect from 'react-select/lib/Creatable'
+import moment from 'moment'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
-
+const NEWCOMPONENT = '99999'
 var divStyle = {
   width: '900px',
   height: '700px',
@@ -253,7 +256,29 @@ export default function ComponentTypeComponent (props) {
         }
       }
     }
+    let editDateProperty = function (index, childIndex, value) {
+      let payload
+      let typeProperty = componentTypeComponentProperties[index].properties[childIndex].type_property
+      let selectedDate = value.format('DD MMM YYYY')
+      componentTypeComponentProperties[index].properties[childIndex].date_time_value = value.format('DD MMM YYYY')
+      payload = { 'op': 'replace', 'path': `/${typeProperty}/date_time_value`, 'value': selectedDate }
+      if (componentPropertiesPayload.property.length === 0) {
+        componentPropertiesPayload.property.push(payload)
+      } else {
+        if (payload.path === componentPropertiesPayload.property[componentPropertiesPayload.property.length - 1].path) {
+          componentPropertiesPayload.property[componentPropertiesPayload.property.length - 1] = payload
+        } else {
+          componentPropertiesPayload.property.push(payload)
+        }
+      }
+      let editPayload = {}
+      editPayload.component = componentTypeComponentData
+      editPayload.property = {resources: componentTypeComponentProperties}
+      props.editComponentProperties(editPayload)
+      props.pushComponentPropertyPayload(componentPropertiesPayload)
+    }
     let editTextProperty = function (index, childIndex, value) {
+      console.log('edit text property')
       let payload
       let typeProperty = componentTypeComponentProperties[index].properties[childIndex].type_property
       if (componentTypeComponentProperties[index].properties[childIndex].property_type.key === 'Boolean') {
@@ -555,6 +580,29 @@ export default function ComponentTypeComponent (props) {
         }
       }
     }
+    let editDateRelationshipProperty = function (index, childIndex, value) {
+      let payload
+      let typeProperty = componentRelationshipProperties[index].properties[childIndex].type_property
+      let selectedDate = value.format('DD MMM YYYY')
+      componentRelationshipProperties[index].properties[childIndex].date_time_value = value.format('DD MMM YYYY')
+      payload = { 'op': 'replace', 'path': `/${typeProperty}/date_time_value`, 'value': selectedDate }
+      if (relationshipPropertyPayload.length === 0) {
+        relationshipPropertyPayload.push(payload)
+      } else {
+        if (payload.path === relationshipPropertyPayload[relationshipPropertyPayload.length - 1].path) {
+          relationshipPropertyPayload[relationshipPropertyPayload.length - 1] = payload
+        } else {
+          relationshipPropertyPayload.push(payload)
+        }
+      }
+      let editPayload = {}
+      editPayload.resources = []
+      let propObject = {}
+      propObject.properties = componentRelationshipProperties
+      editPayload.resources.push(propObject)
+      props.editComponentRelationshipProperties(editPayload)
+      props.editComponentRelationshipPropertyPayload(relationshipPropertyPayload)
+    }
     let editTextRelationshipProperty = function (index, childIndex, value) {
       let payload
       let typeProperty = componentRelationshipProperties[index].properties[childIndex].type_property
@@ -625,11 +673,18 @@ export default function ComponentTypeComponent (props) {
               </div>)
             }
           } else if (childProperty.property_type.key === 'DateTime') {
-            value = childProperty.date_time_value
+            // value = childProperty.date_time_value
+            value = childProperty.date_time_value ? moment(childProperty.date_time_value).format('DD MMM YYYY') : ''
             htmlElement = function () {
               return (<div className='col-8 form-group m-form__group has-info'>
-                <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextRelationshipProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
-                {true && (<div className='form-control-feedback'>should be Text</div>)}
+                <DatePicker
+                  className='input-sm form-control m-input'
+                  selected={childProperty.date_time_value ? moment(childProperty.date_time_value) : ''}
+                  dateFormat='DD MMM YYYY'
+                  onSelect={(date) => { editDateRelationshipProperty(index, childIndex, date) }}
+                  />
+                {/* <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextRelationshipProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' /> */}
+                {true && (<div className='form-control-feedback'>should be Date</div>)}
               </div>)
             }
           } else if (childProperty.property_type.key === 'Text') {
@@ -701,7 +756,7 @@ export default function ComponentTypeComponent (props) {
     let openModal = function (event) {
       // event.preventDefault()
       props.setModalOpenStatus(true)
-      let payload = {...props.addNewConnectionSettings, 'firstSelectboxSelected': false, 'isParentSelected': false, 'secondSelectboxSelected': false, 'slectedConstraintObject': {}, 'relationshipText': '', 'newConnectionArray': []}
+      let payload = {...props.addNewConnectionSettings, 'firstSelectboxSelected': false, 'firstSelectboxIndex': null, 'isParentSelected': false, 'secondSelectboxSelected': false, 'showCreateConnectionButton': false, 'slectedConstraintObject': {}, 'relationshipText': '', 'newConnectionArray': []}
       props.setAddConnectionSettings(payload)
       componentPropertiesPayload.relationship = []
       props.pushComponentPropertyPayload(componentPropertiesPayload)
@@ -752,7 +807,7 @@ export default function ComponentTypeComponent (props) {
           } else if (constraintObject.constraint_type === 'ConnectTo') {
             displayText = props.componentTypeComponentData.resources[0].name + ' ' + constraintObject.connection_type.name + ' ' + constraintObject.target_component_type.name
           } else if (constraintObject.constraint_type === 'ConnectFrom') {
-            displayText = props.componentTypeComponentData.resources[0].name + ' ' + constraintObject.connection_type.name + ' ' + constraintObject.target_component_type.name
+            displayText = constraintObject.target_component_type.name + ' ' + constraintObject.connection_type.name + ' ' + props.componentTypeComponentData.resources[0].name
           }
           let payload = {...props.addNewConnectionSettings, 'firstSelectboxSelected': true, 'firstSelectboxIndex': newValue, 'targetComponentTypeId': targetComponentTypeId, 'isWaitingForApiResponse': isWaitingForApiResponse, 'secondSelectboxSelected': false, 'slectedConstraintObject': constraintObject, 'relationshipText': displayText, 'selectedComponentObject': {}}
           props.setAddConnectionSettings(payload)
@@ -886,9 +941,17 @@ export default function ComponentTypeComponent (props) {
       if (actionMeta.action === 'select-option') {
         if (newValue !== null) {
           // let index = newValue.value
-          let componentObject = newValue // props.componentTypeComponents.resources[index]
-          let payload = {...props.addNewConnectionSettings, 'secondSelectboxSelected': true, 'isNewComponent': false, 'selectedComponentObject': componentObject, 'componentText': componentObject.name}
-          props.setAddConnectionSettings(payload)
+          if (newValue.value === NEWCOMPONENT) {
+            let componentObject = {}
+            componentObject.name = ''
+            let showAddRelationshipButton = false
+            let payload = {...props.addNewConnectionSettings, 'secondSelectboxSelected': true, 'isNewComponent': true, 'selectedComponentObject': componentObject, 'componentText': componentObject.name, 'newComponentName': componentObject.name, 'showAddRelationshipButton': showAddRelationshipButton}
+            props.setAddConnectionSettings(payload)
+          } else {
+            let componentObject = newValue // props.componentTypeComponents.resources[index]
+            let payload = {...props.addNewConnectionSettings, 'secondSelectboxSelected': true, 'isNewComponent': false, 'selectedComponentObject': componentObject, 'componentText': componentObject.name}
+            props.setAddConnectionSettings(payload)
+          }
         } else {
           let payload = {...props.addNewConnectionSettings, 'secondSelectboxSelected': false, 'isNewComponent': false, 'selectedComponentObject': {}, 'componentText': ''}
           props.setAddConnectionSettings(payload)
@@ -988,12 +1051,13 @@ export default function ComponentTypeComponent (props) {
             data.display_name = props.componentTypeComponentData.resources[0].name + ' ' + constraint.connection_type.name + ' ' + constraint.target_component_type.name
             data.isParent = false
           } else if (constraint.constraint_type === 'ConnectFrom') {
-            data.display_name = props.componentTypeComponentData.resources[0].name + ' ' + constraint.connection_type.name + ' ' + constraint.target_component_type.name
+            data.display_name = constraint.target_component_type.name + ' ' + constraint.connection_type.name + ' ' + props.componentTypeComponentData.resources[0].name
             data.isParent = false
           }
           data.disabled = true
           data.id = constraint.id
           data.constraint_type = constraint.constraint_type
+          data.target_component_type = constraint.target_component_type
           data.name = constraint.name
           data.is_disabled = true
           data.value = constraint.id
@@ -1018,6 +1082,12 @@ export default function ComponentTypeComponent (props) {
         option.label = component.name
         return option
       })
+      if (props.addNewConnectionSettings.firstSelectboxIndex !== null) {
+        let newOption = {}
+        newOption.value = NEWCOMPONENT
+        newOption.label = 'New ' + props.addNewConnectionSettings.firstSelectboxIndex.target_component_type.name
+        selectComponentOptions1.push(newOption)
+      }
     }
 
     if (props.componentTypeComponentData !== '') {
@@ -1053,11 +1123,17 @@ export default function ComponentTypeComponent (props) {
               </div>)
             }
           } else if (childProperty.property_type.key === 'DateTime') {
-            value = childProperty.date_time_value
+            value = childProperty.date_time_value ? moment(childProperty.date_time_value).format('DD MMM YYYY') : ''
             htmlElement = function () {
               return (<div className='col-8 form-group m-form__group has-info'>
-                <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' />
-                {true && (<div className='form-control-feedback'>should be Text</div>)}
+                <DatePicker
+                  className='input-sm form-control m-input'
+                  selected={childProperty.date_time_value ? moment(childProperty.date_time_value) : ''}
+                  dateFormat='DD MMM YYYY'
+                  onSelect={(date) => { editDateProperty(index, childIndex, date) }}
+                  />
+                {/* <input type='text' className='input-sm form-control m-input' value={value} onChange={(event) => { editTextProperty(index, childIndex, event.target.value) }} placeholder='Enter Here' /> */}
+                {true && (<div className='form-control-feedback'>should be Date</div>)}
               </div>)
             }
           } else if (childProperty.property_type.key === 'Text') {
@@ -1225,12 +1301,12 @@ export default function ComponentTypeComponent (props) {
           let outerKey = 0
           for (let connectionKey in outgoingGroup) {
             if (outgoingGroup.hasOwnProperty(connectionKey)) {
-              console.log(connectionKey, '-->>', outgoingGroup[connectionKey])
+              console.log('outgoing', connectionKey, '-->>', outgoingGroup[connectionKey])
               outerKey++
               let innerKey = 0
               for (let targetComponentTypeKey in outgoingGroup[connectionKey]) {
                 if (outgoingGroup[connectionKey].hasOwnProperty(targetComponentTypeKey)) {
-                  console.log(targetComponentTypeKey, '-->>', outgoingGroup[connectionKey][targetComponentTypeKey])
+                  console.log('outgoing', targetComponentTypeKey, '-->>', outgoingGroup[connectionKey][targetComponentTypeKey])
                   innerKey++
                   let relationshipActionSettings = {...props.relationshipActionSettings}
                   relationshipActionSettings.relationshipText = outgoingGroup[connectionKey][targetComponentTypeKey][0].component.name + ' ' + connectionKey + ' ' + targetComponentTypeKey
@@ -1286,12 +1362,12 @@ export default function ComponentTypeComponent (props) {
           let outerKey = 0
           for (let connectionKey in incomingGroup) {
             if (incomingGroup.hasOwnProperty(connectionKey)) {
-              // console.log(connectionKey, '-->>', incomingGroup[connectionKey])
+              console.log(connectionKey, '-->>', incomingGroup[connectionKey])
               outerKey++
               let innerKey = 0
               for (let targetComponentTypeKey in incomingGroup[connectionKey]) {
                 if (incomingGroup[connectionKey].hasOwnProperty(targetComponentTypeKey)) {
-                  // console.log(targetComponentTypeKey, '-->>', incomingGroup[connectionKey][targetComponentTypeKey])
+                  console.log(targetComponentTypeKey, '-->>', incomingGroup[connectionKey][targetComponentTypeKey])
                   innerKey++
                   let relationshipActionSettings = {...props.relationshipActionSettings}
                   relationshipActionSettings.relationshipText = targetComponentTypeKey + ' ' + connectionKey + ' ' + incomingGroup[connectionKey][targetComponentTypeKey][0].component.name
@@ -1420,7 +1496,7 @@ export default function ComponentTypeComponent (props) {
                 </div>
                 <div className={'tab-pane' + showRelationships} id='m_tabs_3_2' role='tabpanel'>
                   <div className='pull-right'>
-                    <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Connections</button>
+                    <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
                   </div>
                   <div className={'row'}>
                     <div className='m--space-10' />
@@ -1488,11 +1564,13 @@ export default function ComponentTypeComponent (props) {
           <ReactModal isOpen={props.modalIsOpen}
             onRequestClose={closeModal}
             shouldCloseOnOverlayClick={false}
+            className='modal-dialog modal-lg'
+            style={{'content': {'top': '20%'}}}
             // className={''}
             >
             {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
-            <div className={styles.modalStyle}>
-              <div className='modal-dialog modal-lg'>
+            <div>
+              <div>
                 <div className='modal-content'>
                   <div className='modal-header'>
                     <h4 className='modal-title' id='exampleModalLabel'>{'How is the ' + componentTypeComponentName + ' related to other things'}</h4>
@@ -1579,7 +1657,7 @@ export default function ComponentTypeComponent (props) {
                   </div>
                   <div className='modal-footer'>
                     <button onClick={closeModal} className='btn btn-sm btn-outline-info'>Cancel</button>
-                    <button onClick={addConnections} className={'btn btn-sm btn-info ' + addConnectionClass}>Add Connections</button>
+                    <button onClick={addConnections} className={'btn btn-sm btn-info ' + addConnectionClass}>Confirm</button>
                   </div>
                 </div>
               </div>
@@ -1609,7 +1687,8 @@ export default function ComponentTypeComponent (props) {
           <ReactModal isOpen={props.relationshipActionSettings.isModalOpen}
             onRequestClose={closeRelationshipActionModal}
             shouldCloseOnOverlayClick={false}
-            // className={''}
+            // className='modal-dialog modal-lg'
+            // style={{'content': {'top': '20%', 'display': 'block'}}}
             >
             {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
             <div className={''} id='relationshipPropertyContent'>

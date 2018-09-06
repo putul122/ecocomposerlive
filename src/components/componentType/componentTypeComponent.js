@@ -155,8 +155,8 @@ export default function ComponentType (props) {
   return (
     <div className={styles.compborder}>
       <div className='row'>
-        <div className='col-md-4'>
-          <h2> Components</h2>
+        <div className='col-md-6'>
+          <h2> Component Type</h2>
         </div>
         <div className={' col-md-6'}>
           <div className='m-input-icon m-input-icon--left'>

@@ -72,14 +72,16 @@ export default function ApplicationActivity (props) {
           // console.log('------>messag full', result)
           activityMessagesList = result.map(function (messageGroup, index) {
             // console.log('------>messag ', index, messageGroup)
-            let contextIconlink = 'https://ecocomposermockapis.azurewebsites.net/ecocomposer-resources/icons/6'
-          //   // let contextIconlink = messageGroup[0].links.find(function (link) { console.log(link); return link.rel === 'context_icon' })
+            let contextIconlink = messageGroup[0].discussion.context.icon ? messageGroup[0].discussion.context.icon : 'https://ecocomposermockapis.azurewebsites.net/ecocomposer-resources/icons/0'
+            console.log('context icon link', contextIconlink)
+            //   // let contextIconlink = messageGroup[0].links.find(function (link) { console.log(link); return link.rel === 'context_icon' })
           //   console.log(contextIconlink)
               let context = messageGroup[0].discussion.context.name
               let discussion = messageGroup[0].discussion.name
+              let description = messageGroup[0].discussion.context.description
               let messageList = messageGroup.map(function (message, i) {
                 // let userIconlink = message.links.find(function (link) { return link.rel === 'author_avatar' })
-                let userIconlink = 'https://ecocomposermockapis.azurewebsites.net/ecocomposer-resources/icons/10'
+                let userIconlink = message.author.icon ? message.author.icon : 'https://ecocomposermockapis.azurewebsites.net/ecocomposer-resources/icons/10'
                 let messageContent = message.name.replace(/<m ix=0>/g, '<a href="javascript:void(0);">@').replace(/<\/m>/g, '</a>')
                 .replace(/<r ix=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
                 .replace(/<r ix=1>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
@@ -89,7 +91,7 @@ export default function ApplicationActivity (props) {
             return (
               <li key={index} >
                 <div className={styles.groupspace}>
-                  <img src={contextIconlink} alt={context} /><div className={styles.tooltip}><a href=''>{context}</a><span className={styles.tooltiptext}>{discussion}</span></div>::<a href='javascript:void(0);'>{discussion}</a>
+                  <img src={contextIconlink} alt={context} /><div className={styles.tooltip}><a href='javascript:void(0);'>{context}</a><span className={styles.tooltiptext}>{description}</span></div>::<a href='javascript:void(0);'>{discussion}</a>
                   <ul>
                     {messageList}
                   </ul>

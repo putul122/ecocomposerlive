@@ -108,7 +108,7 @@ export default compose(
               separator: true
             },
             {
-              name: 'Components',
+              name: 'Component Type',
               href: '/components',
               separator: false
             },

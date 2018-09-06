@@ -52,7 +52,7 @@ export default compose(
       // eslint-disable-next-line
       // mApp || false &&  mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let breadcrumb = {
-        title: 'Components',
+        title: 'Component Type',
         items: [
           {
             name: 'Home',
@@ -63,7 +63,7 @@ export default compose(
             separator: true
           },
           {
-            name: 'Components',
+            name: 'Component Type',
             href: '/components',
             separator: false
           }
