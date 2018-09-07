@@ -433,23 +433,26 @@ class ComponentModelComponent extends React.Component {
                         }
                         nodeArray.push(node)
                         var link = {}
-                        link.type = data.connection.name || 'empty'
                         link.direction = 'output'
                         link.strokeWidth = 1.2
                         link.fontFamily = 'sans-serif'
                         link.fontSize = 12
                         if (data.relationship_type === 'Parent') {  // down
+                            link.type = 'Is Child Of'
                             link.source = 0
                             link.target = index
                             link.direction = 'output'
                         } else if (data.relationship_type === 'Child') {  // up
+                            link.type = 'Is Parent Of'
                             link.source = 0
                             link.target = index
                             link.direction = 'output'
                         } else if (data.relationship_type === 'ConnectFrom') {  // Left
+                            link.type = data.connection.name || 'empty'
                             link.source = index
                             link.target = 0
                         } else if (data.relationship_type === 'ConnectTo') {  // Right
+                            link.type = data.connection.name || 'empty'
                             link.source = 0
                             link.target = index
                         }

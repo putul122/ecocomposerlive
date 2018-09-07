@@ -37,6 +37,7 @@ const customStyles = {
 export default function ComponentTypeComponent (props) {
     console.log('component type component properties', props)
     let isParentSelected = props.addNewConnectionSettings.isParentSelected
+    let ComponentTypeName
     let componentTypeComponentName
     let componentNameMessage
     let componentTypeComponentDescription
@@ -55,9 +56,6 @@ export default function ComponentTypeComponent (props) {
     let showProperties = props.showTabs.showProperty
     let showRelationships = props.showTabs.showRelationship
     let childrenList
-    let parentList
-    let connecttoList
-    let connectfromList
     // Code for Delete Modal begins
     let showToasterfordelete = function () {
       // eslint-disable-next-line
@@ -79,7 +77,7 @@ export default function ComponentTypeComponent (props) {
         'hideMethod': 'fadeOut'
       }
       // eslint-disable-next-line
-      toastr.success('The' + '' + componentTypeComponentName + '' + 'Application was successfully deleted', 'Zapped!')
+      toastr.success('The ' + componentTypeComponentName + ' ' + ComponentTypeName + ' was successfully deleted', 'Zapped!')
     }
     let removeComponent = function (event) {
       event.preventDefault()
@@ -106,18 +104,6 @@ export default function ComponentTypeComponent (props) {
     if (componentTypeComponentRelationships !== '') {
       let child = _.filter(componentTypeComponentRelationships.resources, {'relationship_type': 'Child'})
         childrenList = child.map(function (element, index) {
-          return (<span><a>{element.target_component.name}</a><br /></span>)
-        })
-      let parent = _.filter(componentTypeComponentRelationships.resources, {'relationship_type': 'Parent'})
-        parentList = parent.map(function (element, index) {
-          return (<span><a>{element.target_component.name}</a><br /></span>)
-        })
-      let connectfrom = _.filter(componentTypeComponentRelationships.resources, {'relationship_type': 'ConnectFrom'})
-        connectfromList = connectfrom.map(function (element, index) {
-          return (<span><a>{element.target_component.name}</a><br /></span>)
-        })
-      let connectto = _.filter(componentTypeComponentRelationships.resources, {'relationship_type': 'ConnectTo'})
-        connecttoList = connectto.map(function (element, index) {
           return (<span><a>{element.target_component.name}</a><br /></span>)
         })
       }
@@ -407,14 +393,19 @@ export default function ComponentTypeComponent (props) {
       event.preventDefault()
       let payload = {}
       payload.componentId = props.relationshipActionSettings.selectedObject.target_component.id
-      payload.relationshipId = props.relationshipActionSettings.selectedObject.connection.id
       let relationshipType = props.relationshipActionSettings.selectedObject.relationship_type
       if (relationshipType === 'Parent') {
         payload.deletePayload = { 'parent': true }
+        payload.relationshipId = '' // props.relationshipActionSettings.selectedObject.component.parent.id
+        payload.relationshipType = 'parent'
       } else if (relationshipType === 'Child') {
         payload.deletePayload = { 'child': true }
+        // payload.relationshipId = props.relationshipActionSettings.selectedObject.component.child.id
+        payload.relationshipType = 'child'
       } else if (relationshipType === 'ConnectFrom' || relationshipType === 'ConnectTo') {
         payload.deletePayload = {}
+        payload.relationshipId = props.relationshipActionSettings.selectedObject.connection.id
+        payload.relationshipType = 'others'
       }
       props.deleteComponentRelationship(payload)
     }
@@ -741,8 +732,8 @@ export default function ComponentTypeComponent (props) {
         return (
           <tbody key={index} className={'col-6'}>
             <tr>
-              <td><p className={styles.labelbold}>Type</p></td>
-              <td><p>{property.name}</p></td>
+              <td><span className={styles.labelbold}>Type</span></td>
+              <td><span>{property.name}</span></td>
             </tr>
             {childProperties}
           </tbody>
@@ -755,8 +746,10 @@ export default function ComponentTypeComponent (props) {
     // Model ADD new Connections Code
     let openModal = function (event) {
       // event.preventDefault()
+      let parent = _.filter(componentTypeComponentRelationships.resources, {'relationship_type': 'Parent'})
+      let isParentSelected = parent.length > 0
       props.setModalOpenStatus(true)
-      let payload = {...props.addNewConnectionSettings, 'firstSelectboxSelected': false, 'firstSelectboxIndex': null, 'isParentSelected': false, 'secondSelectboxSelected': false, 'showCreateConnectionButton': false, 'slectedConstraintObject': {}, 'relationshipText': '', 'newConnectionArray': []}
+      let payload = {...props.addNewConnectionSettings, 'firstSelectboxSelected': false, 'firstSelectboxIndex': null, 'isParentSelected': isParentSelected, 'secondSelectboxSelected': false, 'showCreateConnectionButton': false, 'slectedConstraintObject': {}, 'relationshipText': '', 'newConnectionArray': []}
       props.setAddConnectionSettings(payload)
       componentPropertiesPayload.relationship = []
       props.pushComponentPropertyPayload(componentPropertiesPayload)
@@ -771,9 +764,9 @@ export default function ComponentTypeComponent (props) {
     let addConnectionClass = props.addNewConnectionSettings.showCreateConnectionButton ? '' : 'disabled ' + styles.pointerDisabled
     let addRelationshipClass = props.addNewConnectionSettings.showAddRelationshipButton ? '' : 'disabled ' + styles.pointerDisabled
     let SelectedData
-    let selectComponentOptions = ''
+    // let selectComponentOptions = ''
     let selectComponentOptions1 = ''
-    let optionItems = ''
+    // let optionItems = ''
     let newRelationshipArray = [...props.addNewConnectionSettings.newConnectionArray]
     // Action for first select
     let handleFirstSelect = function (newValue: any, actionMeta: any) {
@@ -801,9 +794,9 @@ export default function ComponentTypeComponent (props) {
           }
           let displayText
           if (constraintObject.constraint_type === 'Parent') {
-            displayText = constraintObject.target_component_type.name + ' is ' + constraintObject.connection_type.name + ' of ' + props.componentTypeComponentData.resources[0].name
+            displayText = constraintObject.target_component_type.name + ' ' + constraintObject.constraint_type + ' Components'
           } else if (constraintObject.constraint_type === 'Child') {
-            displayText = constraintObject.target_component_type.name + ' is ' + constraintObject.connection_type.name + ' of ' + props.componentTypeComponentData.resources[0].name
+            displayText = constraintObject.target_component_type.name + ' ' + constraintObject.constraint_type + ' Components'
           } else if (constraintObject.constraint_type === 'ConnectTo') {
             displayText = props.componentTypeComponentData.resources[0].name + ' ' + constraintObject.connection_type.name + ' ' + constraintObject.target_component_type.name
           } else if (constraintObject.constraint_type === 'ConnectFrom') {
@@ -837,8 +830,10 @@ export default function ComponentTypeComponent (props) {
         payload.value.target_component.component_type.id = props.addNewConnectionSettings.slectedConstraintObject.target_component_type.id
       }
       payload.value.relationship_type = props.addNewConnectionSettings.slectedConstraintObject.constraint_type
-      payload.value.connection = {}
-      payload.value.connection.connection_type = props.addNewConnectionSettings.slectedConstraintObject.connection_type.id
+      if (props.addNewConnectionSettings.slectedConstraintObject.constraint_type !== 'Parent' && props.addNewConnectionSettings.slectedConstraintObject.constraint_type !== 'Child') {
+        payload.value.connection = {}
+        payload.value.connection.connection_type = props.addNewConnectionSettings.slectedConstraintObject.connection_type.id
+      }
       if (props.addNewConnectionSettings.slectedConstraintObject.constraint_type === 'Parent') {
         payload.path = '/-' // '/parent'
       } else if (props.addNewConnectionSettings.slectedConstraintObject.constraint_type === 'Child') {
@@ -980,28 +975,6 @@ export default function ComponentTypeComponent (props) {
       console.log(`action: ${actionMeta.action}`)
       console.groupEnd()
     }
-    // let showToaster = function () {
-    //   // eslint-disable-next-line
-    //   toastr.options = {
-    //     'closeButton': false,
-    //     'debug': false,
-    //     'newestOnTop': false,
-    //     'progressBar': false,
-    //     'positionClass': 'toast-bottom-full-width',
-    //     'preventDuplicates': false,
-    //     'onclick': null,
-    //     'showDuration': '300',
-    //     'hideDuration': '1000',
-    //     'timeOut': '5000',
-    //     'extendedTimeOut': '1000',
-    //     'showEasing': 'swing',
-    //     'hideEasing': 'linear',
-    //     'showMethod': 'fadeIn',
-    //     'hideMethod': 'fadeOut'
-    //   }
-    //   // eslint-disable-next-line
-    //   toastr.success('We\'ve added the new relationships to the ' + componentTypeComponentName + '', 'Connecting the dots!')
-    // }
     let removeRelationship = function (index) {
       let newConnection = [...props.addNewConnectionSettings.newConnectionArray]
       newConnection.splice(index, 1)
@@ -1022,7 +995,6 @@ export default function ComponentTypeComponent (props) {
         componentPropertiesPayload.relationship = []
         props.pushComponentPropertyPayload(componentPropertiesPayload)
       }
-      console.log('componentPropertiesPayload relation Ships', componentPropertiesPayload)
     }
     let handleNewComponent = function (event) {
       let newComponent = event.target.value
@@ -1035,17 +1007,17 @@ export default function ComponentTypeComponent (props) {
 
     if (props.componentTypeComponentConstraints !== '' && props.componentTypeComponents !== '') {
       SelectedData = props.componentTypeComponentConstraints.resources.filter(function (constraint) {
-          if (constraint.target_component_type !== null && constraint.connection_type !== null) {
+          if (constraint.target_component_type !== null) {
           return constraint
           }
         }).map(function (constraint, index) {
-        if (constraint.target_component_type !== null && constraint.connection_type !== null) {
+        if (constraint.target_component_type !== null) {
           let data = {}
           if (constraint.constraint_type === 'Parent') {
-            data.display_name = constraint.target_component_type.name + ' is ' + constraint.connection_type.name + ' of ' + props.componentTypeComponentData.resources[0].name
+            data.display_name = props.componentTypeComponentData.resources[0].name + ' ' + constraint.constraint_type + ' Components'
             data.isParent = true
           } else if (constraint.constraint_type === 'Child') {
-            data.display_name = constraint.target_component_type.name + ' is ' + constraint.connection_type.name + ' of ' + props.componentTypeComponentData.resources[0].name
+            data.display_name = props.componentTypeComponentData.resources[0].name + ' ' + constraint.constraint_type + ' Components'
             data.isParent = false
           } else if (constraint.constraint_type === 'ConnectTo') {
             data.display_name = props.componentTypeComponentData.resources[0].name + ' ' + constraint.connection_type.name + ' ' + constraint.target_component_type.name
@@ -1067,14 +1039,14 @@ export default function ComponentTypeComponent (props) {
           return false
         }
       })
-      optionItems = SelectedData.map((option, index) =>
-        <option key={index} value={option.id}>{option.display_name}</option>
-      )
-      optionItems.unshift(<option key={-1} value={'-1'}>{'--Choose Relationship Type--'}</option>)
-      selectComponentOptions = props.componentTypeComponents.resources.map((option, index) =>
-        <option key={index} value={index}>{option.name}</option>
-      )
-      selectComponentOptions.unshift(<option key={-1} value={'-1'}>{'--Search Server--'}</option>)
+      // optionItems = SelectedData.map((option, index) =>
+      //   <option key={index} value={option.id}>{option.display_name}</option>
+      // )
+      // optionItems.unshift(<option key={-1} value={'-1'}>{'--Choose Relationship Type--'}</option>)
+      // selectComponentOptions = props.componentTypeComponents.resources.map((option, index) =>
+      //   <option key={index} value={index}>{option.name}</option>
+      // )
+      // selectComponentOptions.unshift(<option key={-1} value={'-1'}>{'--Search Server--'}</option>)
 
       selectComponentOptions1 = props.componentTypeComponents.resources.map((component, index) => {
         let option = {...component}
@@ -1092,6 +1064,7 @@ export default function ComponentTypeComponent (props) {
 
     if (props.componentTypeComponentData !== '') {
       componentTypeComponentName = props.componentTypeComponentData.resources[0].name
+      ComponentTypeName = props.componentTypeComponentData.resources[0].component_type.name
       componentNameMessage = props.componentTypeComponentData.resources[0].nameMessage
       componentTypeComponentDescription = props.componentTypeComponentData.resources[0].description
       startNode.name = props.componentTypeComponentData.resources[0].name
@@ -1179,9 +1152,9 @@ export default function ComponentTypeComponent (props) {
           }
           return (
             <tr key={'child' + childIndex}>
-              <td><p className={styles.labelbold}>{childProperty.name}</p></td>
-              <td>
-                {!props.isEditComponent && (<p>{value}</p>)}
+              <td><span className={styles.labelbold}>{childProperty.name}</span></td>
+              <td align='left'>
+                {!props.isEditComponent && (<span>{value}</span>)}
                 {props.isEditComponent && htmlElement()}
               </td>
             </tr>
@@ -1190,8 +1163,8 @@ export default function ComponentTypeComponent (props) {
         return (
           <tbody key={index} className={'col-6'}>
             <tr>
-              <td><p className={styles.labelbold}>Type</p></td>
-              <td><p>{property.name}</p></td>
+              <td><span className={styles.title}>Type</span></td>
+              <td><span className={styles.labelbold}>{property.name}</span></td>
             </tr>
             {childProperties}
           </tbody>
@@ -1209,14 +1182,15 @@ export default function ComponentTypeComponent (props) {
       let incoming = _.filter(componentTypeComponentRelationships.resources, {'relationship_type': 'ConnectFrom'})
       incoming = _.orderBy(incoming, ['connection.name', 'target_component.name'], ['asc', 'asc'])
       let child = _.filter(componentTypeComponentRelationships.resources, {'relationship_type': 'Child'})
-      console.log('outgoing connections', outgoing)
-
       let parentComponentRelationshipListFn = function () {
         if (parent.length > 0) {
           let childElementList = parent.map(function (element, i) {
           let relationshipActionSettings = {...props.relationshipActionSettings}
           relationshipActionSettings.relationshipText = parent[0].component.name + ' ' + parent[0].relationship_type + ' Components'
-          relationshipActionSettings.relationshipId = element.connection.id
+          relationshipActionSettings.relationshipId = element.component.parent.id
+          // onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.actionType = 'view'; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}
+          // onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}
+          // onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}
           return (<span>
             <a href='javascript:void(0);'>{element.target_component.name}</a>
             <div className='dropdown pull-right'>
@@ -1224,9 +1198,9 @@ export default function ComponentTypeComponent (props) {
               <div className={styles.dropmenu}>
                 <ul className='dropdown-menu'>
                   <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
-                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.actionType = 'view'; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>View</a></li>
-                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Edit</a></li>
-                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
+                  <li><a href='javascript:void(0);' >View</a></li>
+                  <li><a href='javascript:void(0);' >Edit</a></li>
+                  <li><a href='javascript:void(0);' >Delete</a></li>
                 </ul>
               </div>
             </div>
@@ -1257,6 +1231,9 @@ export default function ComponentTypeComponent (props) {
           let relationshipActionSettings = {...props.relationshipActionSettings}
           relationshipActionSettings.relationshipText = child[0].component.name + ' ' + child[0].relationship_type + ' Components'
           relationshipActionSettings.relationshipId = element.connection.id
+          // onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.actionType = 'view'; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}
+          // onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}
+          // onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}
           return (<span>
             <a href='javascript:void(0);'>{element.target_component.name}</a>
             <div className='dropdown pull-right'>
@@ -1264,9 +1241,9 @@ export default function ComponentTypeComponent (props) {
               <div className={styles.dropmenu}>
                 <ul className='dropdown-menu'>
                   <li><a href='javascript:void(0);'><h6>Relationships Action</h6></a></li>
-                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.actionType = 'view'; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>View</a></li>
-                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'edit'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Edit</a></li>
-                  <li><a href='javascript:void(0);' onClick={(event) => { relationshipActionSettings.isModalOpen = true; relationshipActionSettings.actionType = 'delete'; relationshipActionSettings.componentName = element.target_component.name; relationshipActionSettings.selectedObject = element; props.setRelationshipActionSettings(relationshipActionSettings) }}>Delete</a></li>
+                  <li><a href='javascript:void(0);'>View</a></li>
+                  <li><a href='javascript:void(0);'>Edit</a></li>
+                  <li><a href='javascript:void(0);'>Delete</a></li>
                 </ul>
               </div>
             </div>
@@ -1301,12 +1278,10 @@ export default function ComponentTypeComponent (props) {
           let outerKey = 0
           for (let connectionKey in outgoingGroup) {
             if (outgoingGroup.hasOwnProperty(connectionKey)) {
-              console.log('outgoing', connectionKey, '-->>', outgoingGroup[connectionKey])
               outerKey++
               let innerKey = 0
               for (let targetComponentTypeKey in outgoingGroup[connectionKey]) {
                 if (outgoingGroup[connectionKey].hasOwnProperty(targetComponentTypeKey)) {
-                  console.log('outgoing', targetComponentTypeKey, '-->>', outgoingGroup[connectionKey][targetComponentTypeKey])
                   innerKey++
                   let relationshipActionSettings = {...props.relationshipActionSettings}
                   relationshipActionSettings.relationshipText = outgoingGroup[connectionKey][targetComponentTypeKey][0].component.name + ' ' + connectionKey + ' ' + targetComponentTypeKey
@@ -1362,12 +1337,10 @@ export default function ComponentTypeComponent (props) {
           let outerKey = 0
           for (let connectionKey in incomingGroup) {
             if (incomingGroup.hasOwnProperty(connectionKey)) {
-              console.log(connectionKey, '-->>', incomingGroup[connectionKey])
               outerKey++
               let innerKey = 0
               for (let targetComponentTypeKey in incomingGroup[connectionKey]) {
                 if (incomingGroup[connectionKey].hasOwnProperty(targetComponentTypeKey)) {
-                  console.log(targetComponentTypeKey, '-->>', incomingGroup[connectionKey][targetComponentTypeKey])
                   innerKey++
                   let relationshipActionSettings = {...props.relationshipActionSettings}
                   relationshipActionSettings.relationshipText = targetComponentTypeKey + ' ' + connectionKey + ' ' + incomingGroup[connectionKey][targetComponentTypeKey][0].component.name
@@ -1423,7 +1396,7 @@ export default function ComponentTypeComponent (props) {
     return (
       <div className={styles.borderline}>
         <div className='row'>
-          <div className='col-sm-12 col-md-6' >
+          <div className='col-sm-12 col-md-5' >
             <div className={'row'}>
               <i className={' fa fa-share'} />
               {!props.isEditComponent && (<h2 className='col-8'>{componentTypeComponentName}</h2>)}
@@ -1498,7 +1471,7 @@ export default function ComponentTypeComponent (props) {
                   <div className='pull-right'>
                     <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
                   </div>
-                  <div className={'row'}>
+                  <div className={'row'} style={{'marginTop': '20px'}}>
                     <div className='m--space-10' />
                     <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' role='tablist' aria-multiselectable='true'>
                       {parentComponentRelationshipList}
@@ -1531,19 +1504,16 @@ export default function ComponentTypeComponent (props) {
               <div className='modal-dialog'>
                 <div className='modal-content'>
                   <div className='modal-header'>
-                    <h6 className='modal-title' id='exampleModalLabel'>Deleting the {componentTypeComponentName} Application, are you sure?</h6>
+                    <h6 className='modal-title' id='exampleModalLabel'>Deleting the {componentTypeComponentName} {ComponentTypeName}, are you sure?</h6>
                     <button type='button' onClick={closeDeleteModal} className='close' data-dismiss='modal' aria-label='Close'>
                       <span aria-hidden='true'>×</span>
                     </button>
                   </div>
                   <div className='modal-body'>
-                    <h6>Deleting the {componentTypeComponentName} Application will also delete the following:</h6>
+                    <h6>Deleting the {componentTypeComponentName} {ComponentTypeName} will also delete the following:</h6>
                     <div>
                       <h5>Children Components</h5>
                       {childrenList}
-                      {parentList}
-                      {connecttoList}
-                      {connectfromList}
                     </div>
                     <div>
                       <h5>Relationships</h5>
@@ -1687,13 +1657,13 @@ export default function ComponentTypeComponent (props) {
           <ReactModal isOpen={props.relationshipActionSettings.isModalOpen}
             onRequestClose={closeRelationshipActionModal}
             shouldCloseOnOverlayClick={false}
-            // className='modal-dialog modal-lg'
-            // style={{'content': {'top': '20%', 'display': 'block'}}}
+            className=''// style={{'content': {'top': '20%', 'display': 'block'}}
+            style={{'content': {'top': '20%'}}}
             >
             {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
             <div className={''} id='relationshipPropertyContent'>
               <div className='modal-dialog modal-lg'>
-                <div className='modal-content'>
+                <div className='modal-content' >
                   <div className='modal-header'>
                     {(props.relationshipActionSettings.actionType === 'edit' || props.relationshipActionSettings.actionType === 'view') && (
                       <h4 className='modal-title' id='exampleModalLabel'>{'Relationship details for ' + props.relationshipActionSettings.relationshipText + ': ' + props.relationshipActionSettings.componentName}</h4>

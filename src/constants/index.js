@@ -48,7 +48,13 @@ const api = {
         return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_relationships/' + payload.relationshipId
     },
     deleteRelationship: function (payload) {
-        return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_relationships/' + payload.relationshipId
+        if (payload.relationshipType === 'parent') {
+            return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/relationships'
+        } else if (payload.relationshipType === 'child') {
+            return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/relationships/' + payload.relationshipId
+        } else {
+            return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_relationships/' + payload.relationshipId
+        }
     }
   }
 
