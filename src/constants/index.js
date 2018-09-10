@@ -47,18 +47,14 @@ const api = {
     viewComponentRelationship: function (payload) {
         if (payload.relationshipType === 'Parent') {
             return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_relationships/' + payload.relationshipId + '?parent=true'
+        } else if (payload.relationshipType === 'Child') {
+            return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_relationships/' + payload.relationshipId + '?child=true'
         } else {
             return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_relationships/' + payload.relationshipId
         }
     },
     deleteRelationship: function (payload) {
-        if (payload.relationshipType === 'parent') {
-            return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_relationships/' + payload.relationshipId
-        } else if (payload.relationshipType === 'child') {
-            return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/relationships/' + payload.relationshipId
-        } else {
-            return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_relationships/' + payload.relationshipId
-        }
+        return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_relationships/' + payload.relationshipId
     }
   }
 
