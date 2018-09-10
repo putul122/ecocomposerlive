@@ -134,10 +134,10 @@ export default compose(
           if (nextProps.relationshipActionSettings.actionType === 'view' || nextProps.relationshipActionSettings.actionType === 'edit') {
             // eslint-disable-next-line
             mApp && mApp.block('#relationshipPropertyContent .modal-content', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-            let payload = {
-              'componentId': nextProps.relationshipActionSettings.selectedObject.target_component.id,
-              'relationshipId': nextProps.relationshipActionSettings.selectedObject.connection.id
-            }
+            let payload = {}
+            payload.componentId = this.props.componentTypeComponentData.resources[0].id
+            payload.relationshipType = nextProps.relationshipActionSettings.selectedObject.relationship_type
+            payload.relationshipId = nextProps.relationshipActionSettings.relationshipId
             this.props.viewRelationshipProperty(payload)
           }
         }

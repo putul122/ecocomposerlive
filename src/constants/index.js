@@ -45,11 +45,15 @@ const api = {
         return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + componentTypeId
     },
     viewComponentRelationship: function (payload) {
-        return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_relationships/' + payload.relationshipId
+        if (payload.relationshipType === 'Parent') {
+            return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_relationships/' + payload.relationshipId + '?parent=true'
+        } else {
+            return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_relationships/' + payload.relationshipId
+        }
     },
     deleteRelationship: function (payload) {
         if (payload.relationshipType === 'parent') {
-            return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/relationships'
+            return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_relationships/' + payload.relationshipId
         } else if (payload.relationshipType === 'child') {
             return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/relationships/' + payload.relationshipId
         } else {

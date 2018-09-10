@@ -384,7 +384,7 @@ class ComponentModelComponent extends React.Component {
                                     node.y = cor.y
                                 }
                             }
-                        } else if (data.relationship_type === 'ConnectFrom') {
+                        } else if (data.relationship_type === 'ConnectTo') {
                             // Left Side Cordinates
                             let leftLength = leftCordinates.length
                             if (leftLength < 1) {
@@ -407,7 +407,7 @@ class ComponentModelComponent extends React.Component {
                                     node.y = cor.y
                                 }
                             }
-                        } else if (data.relationship_type === 'ConnectTo') {  // Right
+                        } else if (data.relationship_type === 'ConnectFrom') {  // Right
                             // Right Side Cordinates
                             let rightLength = rightCordinates.length
                             if (rightLength < 1) {
@@ -447,11 +447,11 @@ class ComponentModelComponent extends React.Component {
                             link.source = 0
                             link.target = index
                             link.direction = 'output'
-                        } else if (data.relationship_type === 'ConnectFrom') {  // Left
+                        } else if (data.relationship_type === 'ConnectTo') {  // Left
                             link.type = data.connection.name || 'empty'
                             link.source = index
                             link.target = 0
-                        } else if (data.relationship_type === 'ConnectTo') {  // Right
+                        } else if (data.relationship_type === 'ConnectFrom') {  // Right
                             link.type = data.connection.name || 'empty'
                             link.source = 0
                             link.target = index
