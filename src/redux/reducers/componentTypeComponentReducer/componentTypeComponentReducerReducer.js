@@ -200,7 +200,8 @@ export default handleActions(
       ...state,
       updateRelationshipResponse: '',
       updateRelationshipPropertyResponse: '',
-      deleteRelationshipResponse: ''
+      deleteRelationshipResponse: '',
+      relationshipPropertyPayload: []
     }),
     [DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS]: (state, action) => ({
       ...state,

@@ -21,6 +21,8 @@ var divStyle = {
   'border': '1px solid #000000'
 }
 
+const customStylescrud = { content: { top: '20%', background: 'none', border: '0px', overflow: 'none' } }
+
 const customStyles = {
   content: {
     top: '50%',
@@ -200,7 +202,6 @@ export default function ComponentTypeComponent (props) {
             let payload
             let typeProperty = componentTypeComponentProperties[index].properties[childIndex].type_property
             componentTypeComponentProperties[index].properties[childIndex].value_set_value = newValue
-            console.log('select value', newValue)
             payload = { 'op': 'replace', 'path': `/${typeProperty}/value_set_value`, 'value': {id: newValue.value} }
 
             if (componentPropertiesPayload.property.length === 0) {
@@ -264,7 +265,6 @@ export default function ComponentTypeComponent (props) {
       props.pushComponentPropertyPayload(componentPropertiesPayload)
     }
     let editTextProperty = function (index, childIndex, value) {
-      console.log('edit text property')
       let payload
       let typeProperty = componentTypeComponentProperties[index].properties[childIndex].type_property
       if (componentTypeComponentProperties[index].properties[childIndex].property_type.key === 'Boolean') {
@@ -471,7 +471,6 @@ export default function ComponentTypeComponent (props) {
       props.updateRelationshipProperty(payload)
     }
     if (props.updateRelationshipPropertyResponse !== '') {
-      console.log('update response', props.updateRelationshipPropertyResponse)
       if (props.updateRelationshipPropertyResponse.result_code !== 1) {
         // eslint-disable-next-line
         toastr.options = {
@@ -635,8 +634,6 @@ export default function ComponentTypeComponent (props) {
       props.editComponentRelationshipPropertyPayload(relationshipPropertyPayload)
     }
     let closeRelationshipActionModal = function (event) {
-      console.log('open relationship action modal')
-      console.log('settings property 00', props.relationshipActionSettings)
       let settingPayload = {...props.relationshipActionSettings, 'isModalOpen': false}
       props.setRelationshipActionSettings(settingPayload)
       props.resetComponentRelationshipProperties()
@@ -779,9 +776,8 @@ export default function ComponentTypeComponent (props) {
           let index = newValue.id
         // let constraintObject = props.componentTypeComponentConstraints.resources[index]
           let constraintObject = _.find(props.componentTypeComponentConstraints.resources, function (obj) {
-                                      return parseInt(obj.id) === parseInt(index)
+                                      return (parseInt(obj.id) === parseInt(index) && obj.constraint_type === newValue.constraint_type)
                                   })
-          console.log('select constraint object', constraintObject.target_component_type.id, props)
           let targetComponentTypeId = parseInt(constraintObject.target_component_type.id)
           let isWaitingForApiResponse = props.addNewConnectionSettings.isWaitingForApiResponse
           if (props.addNewConnectionSettings.targetComponentTypeId !== targetComponentTypeId) {
@@ -873,7 +869,6 @@ export default function ComponentTypeComponent (props) {
       closeModal()
     }
     if (props.updateRelationshipResponse !== '') {
-      console.log('update response', props.updateRelationshipResponse)
       if (props.updateRelationshipResponse.result_code !== 1) {
         // eslint-disable-next-line
         toastr.options = {
@@ -973,7 +968,6 @@ export default function ComponentTypeComponent (props) {
       let payload = {...props.addNewConnectionSettings, 'newConnectionArray': newConnection, 'showCreateConnectionButton': showCreateConnectionButton}
       props.setAddConnectionSettings(payload)
       // props.setRelationshipsValue({'resources': newConnection})
-      console.log(JSON.stringify(newConnection))
       // modelRelationshipData = newConnection
       if (newConnection.length > 0) {
         let payload = []
@@ -997,7 +991,6 @@ export default function ComponentTypeComponent (props) {
     }
 
     if (props.componentTypeComponentConstraints !== '' && props.componentTypeComponents !== '') {
-      console.log('all constraints', props.componentTypeComponentConstraints)
       SelectedData = props.componentTypeComponentConstraints.resources.filter(function (constraint) {
           if (constraint.target_component_type !== null) {
           return constraint
@@ -1011,14 +1004,13 @@ export default function ComponentTypeComponent (props) {
           } else if (constraint.constraint_type === 'Child') {
             data.display_name = props.componentTypeComponentData.resources[0].name + ' ' + constraint.constraint_type + ' Components'
             data.isParent = false
-          } else if (constraint.constraint_type === 'ConnectTo') {
+          } else if (constraint.constraint_type === 'ConnectFrom') {
             data.display_name = props.componentTypeComponentData.resources[0].name + ' ' + constraint.connection_type.name + ' ' + constraint.target_component_type.name
             data.isParent = false
-          } else if (constraint.constraint_type === 'ConnectFrom') {
+          } else if (constraint.constraint_type === 'ConnectTo') {
             data.display_name = constraint.target_component_type.name + ' ' + constraint.connection_type.name + ' ' + props.componentTypeComponentData.resources[0].name
             data.isParent = false
           }
-          console.log('disply name', data.display_name)
           data.disabled = true
           data.id = constraint.id
           data.constraint_type = constraint.constraint_type
@@ -1146,7 +1138,7 @@ export default function ComponentTypeComponent (props) {
           return (
             <tr key={'child' + childIndex}>
               <td><span className={styles.labelbold}>{childProperty.name}</span></td>
-              <td align='left'>
+              <td>
                 {!props.isEditComponent && (<span>{value}</span>)}
                 {props.isEditComponent && htmlElement()}
               </td>
@@ -1645,8 +1637,7 @@ export default function ComponentTypeComponent (props) {
             onRequestClose={closeRelationshipActionModal}
             shouldCloseOnOverlayClick={false}
             className=''// style={{'content': {'top': '20%', 'display': 'block'}}
-            style={{'content': {'top': '20%'}}}
-            >
+            style={customStylescrud}>
             {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
             <div className={''} id='relationshipPropertyContent'>
               <div className='modal-dialog modal-lg'>
@@ -1662,7 +1653,7 @@ export default function ComponentTypeComponent (props) {
                       <span aria-hidden='true'>×</span>
                     </button>
                   </div>
-                  <div className='modal-body'>
+                  <div className='modal-body' style={{'height': 'calc(50vh - 65px)', 'overflow': 'auto'}}>
                     { componentRelationshipPropertiesList !== '' && (
                     <table className={'table ' + styles.borderless}>
                       {componentRelationshipPropertiesList}
