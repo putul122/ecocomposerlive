@@ -410,7 +410,7 @@ export default function ComponentTypeComponent (props) {
       props.deleteComponentRelationship(payload)
     }
     if (props.deleteRelationshipResponse !== '') {
-      if (props.updateRelationshipPropertyResponse.result_code !== -1) {
+      if (props.updateRelationshipPropertyResponse.result_code !== 1) {
         // eslint-disable-next-line
         toastr.options = {
           'closeButton': false,
@@ -472,7 +472,7 @@ export default function ComponentTypeComponent (props) {
     }
     if (props.updateRelationshipPropertyResponse !== '') {
       console.log('update response', props.updateRelationshipPropertyResponse)
-      if (props.updateRelationshipPropertyResponse.result_code !== -1) {
+      if (props.updateRelationshipPropertyResponse.result_code !== 1) {
         // eslint-disable-next-line
         toastr.options = {
           'closeButton': false,
@@ -874,7 +874,7 @@ export default function ComponentTypeComponent (props) {
     }
     if (props.updateRelationshipResponse !== '') {
       console.log('update response', props.updateRelationshipResponse)
-      if (props.updateRelationshipResponse.result_code !== -1) {
+      if (props.updateRelationshipResponse.result_code !== 1) {
         // eslint-disable-next-line
         toastr.options = {
           'closeButton': false,
@@ -997,6 +997,7 @@ export default function ComponentTypeComponent (props) {
     }
 
     if (props.componentTypeComponentConstraints !== '' && props.componentTypeComponents !== '') {
+      console.log('all constraints', props.componentTypeComponentConstraints)
       SelectedData = props.componentTypeComponentConstraints.resources.filter(function (constraint) {
           if (constraint.target_component_type !== null) {
           return constraint
@@ -1017,6 +1018,7 @@ export default function ComponentTypeComponent (props) {
             data.display_name = constraint.target_component_type.name + ' ' + constraint.connection_type.name + ' ' + props.componentTypeComponentData.resources[0].name
             data.isParent = false
           }
+          console.log('disply name', data.display_name)
           data.disabled = true
           data.id = constraint.id
           data.constraint_type = constraint.constraint_type
