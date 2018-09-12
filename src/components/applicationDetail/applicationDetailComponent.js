@@ -62,7 +62,6 @@ export default function ApplicationDetail (props) {
   console.log('props', props.setModalOpenStatus)
   // console.log('propsforredirect ', props.addComponent)
   console.log('props', props.setConfirmationModalOpenStatus)
-  console.log('componentdata', props.addComponent)
   console.log('creating state for redirection', props.setAddRedirectFlag)
   // console.log('props', props.showToasterSuccess)
   // let paginationList
