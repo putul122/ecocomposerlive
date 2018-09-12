@@ -80,17 +80,36 @@ export default compose(
       }
       if (nextProps.addComponent && nextProps.componentDetail) {
         console.log('deleting deleteComponent component', nextProps.addComponent)
-    //         setTimeout(() => {
-    //   let componentId = props.addComponent.resources[0].id
-    //   props.history.push('/components/' + ComponentTypeId + '/' + componentId)
-    // }, 1000)
-        let deletecomponentid = nextProps.componentDetail.resources[0].id
-        let componentId = nextProps.addComponent.resources[0].id
-        let ComponentTypeId = nextProps.componentDetail.resources[0].id
-        nextProps.history.push('/components/' + ComponentTypeId + '/' + componentId)
-        console.log('id', deletecomponentid)
-        nextProps.setAddRedirectFlag(true)
-        console.log('After redirection of deleting the state', nextProps.deleteComponent)
+        // eslint-disable-next-line
+        toastr.options = {
+          'closeButton': false,
+          'debug': false,
+          'newestOnTop': false,
+          'progressBar': false,
+          'positionClass': 'toast-bottom-full-width',
+          'preventDuplicates': false,
+          'onclick': null,
+          'showDuration': '300',
+          'hideDuration': '1000',
+          'timeOut': '5000',
+          'extendedTimeOut': '1000',
+          'showEasing': 'swing',
+          'hideEasing': 'linear',
+          'showMethod': 'fadeIn',
+          'hideMethod': 'fadeOut'
+        }
+        if (nextProps.addComponent.result_code !== 1) {
+          let newComponent = nextProps.addComponent.resources[0].name
+          let componentId = nextProps.addComponent.resources[0].id
+          let ComponentTypeId = nextProps.componentDetail.resources[0].id
+          nextProps.history.push('/components/' + ComponentTypeId + '/' + componentId)
+          nextProps.setAddRedirectFlag(true)
+          // eslint-disable-next-line
+          toastr.success('We\'ve added the ' +  newComponent  +  ' to your model' , 'Nice!')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.addComponent.error_message, nextProps.addComponent.error_code)
+        }
       }
       if (nextProps.componentDetail && (nextProps.componentDetail !== this.props.componentDetail)) {
         console.log('inside receive props detail props', nextProps)

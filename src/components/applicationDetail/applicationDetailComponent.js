@@ -72,36 +72,6 @@ export default function ApplicationDetail (props) {
     ComponentTypeId = props.componentDetail.resources[0].id
     ComponentTypeIcon = props.componentDetail.resources[0].links.find(function (link) { return link.rel === 'icon' })
   }
-  if (props.addComponent) {
-    console.log('add Component --->', props.addComponent)
-    let toaster = props.addComponent.resources[0].name
-    // eslint-disable-next-line
-    toastr.options = {
-      'closeButton': false,
-      'debug': false,
-      'newestOnTop': false,
-      'progressBar': false,
-      'positionClass': 'toast-bottom-full-width',
-      'preventDuplicates': false,
-      'onclick': null,
-      'showDuration': '300',
-      'hideDuration': '1000',
-      'timeOut': '5000',
-      'extendedTimeOut': '1000',
-      'showEasing': 'swing',
-      'hideEasing': 'linear',
-      'showMethod': 'fadeIn',
-      'hideMethod': 'fadeOut'
-    }
-    // eslint-disable-next-line
-    toastr.success('We\'ve added the ' +  toaster  +  ' to your model' , 'Nice!')
-    // setTimeout(() => {
-    //   let componentId = props.addComponent.resources[0].id
-    //   props.history.push('/components/' + ComponentTypeId + '/' + componentId)
-    // }, 1000)
-    // let componentId = props.addComponent.resources[0].id
-    // props.history.push('/components/' + ComponentTypeId + '/' + componentId)
-  }
   if (typeof componentComponents !== 'undefined') {
     componentComponentsList = componentComponents.map(function (componentComponent, index) {
       return (
@@ -456,7 +426,6 @@ ApplicationDetail.propTypes = {
   // searchComponentComponent: PropTypes.func,
   // showToasterSuccess: PropTypes.func,
   currentPage: PropTypes.any,
-  addComponent: PropTypes.any,
   // history: PropTypes.any,
   setAddRedirectFlag: PropTypes.func
   // setCurrentPage: PropTypes.func,
