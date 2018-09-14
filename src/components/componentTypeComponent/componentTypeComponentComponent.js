@@ -58,40 +58,38 @@ export default function ComponentTypeComponent (props) {
     let showProperties = props.showTabs.showProperty
     let showRelationships = props.showTabs.showRelationship
     let childrenList
+    // Code for setting toaster options
+    // eslint-disable-next-line
+    toastr.options = {
+      'closeButton': false,
+      'debug': false,
+      'newestOnTop': false,
+      'progressBar': false,
+      'positionClass': 'toast-bottom-full-width',
+      'preventDuplicates': false,
+      'onclick': null,
+      'showDuration': '300',
+      'hideDuration': '1000',
+      'timeOut': '4000',
+      'extendedTimeOut': '1000',
+      'showEasing': 'swing',
+      'hideEasing': 'linear',
+      'showMethod': 'fadeIn',
+      'hideMethod': 'fadeOut'
+    }
     // Code for Delete Modal begins
     let showToasterfordelete = function () {
-      // eslint-disable-next-line
-      toastr.options = {
-        'closeButton': false,
-        'debug': false,
-        'newestOnTop': false,
-        'progressBar': false,
-        'positionClass': 'toast-bottom-full-width',
-        'preventDuplicates': false,
-        'onclick': null,
-        'showDuration': '300',
-        'hideDuration': '1000',
-        'timeOut': '4000',
-        'extendedTimeOut': '1000',
-        'showEasing': 'swing',
-        'hideEasing': 'linear',
-        'showMethod': 'fadeIn',
-        'hideMethod': 'fadeOut'
-      }
       // eslint-disable-next-line
       toastr.success('The ' + componentTypeComponentName + ' ' + ComponentTypeName + ' was successfully deleted', 'Zapped!')
     }
     let removeComponent = function (event) {
       event.preventDefault()
       let payload = {
-         'id': props.componentTypeComponentData.resources[0].id
+         'id': props.match.params.componentId
         }
-        console.log('payloaddelete', payload, props)
         props.deletecomponentTypeComponent(payload)
-        // props.setdeleteComponent(true)
-        props.setRedirectFlag(false)
-        props.setAddRedirectFlag(true)
         showToasterfordelete()
+        props.resetUpdateRelationshipResponse()
       }
     let openDeleteModal = function (event) {
       event.preventDefault()
@@ -149,14 +147,6 @@ export default function ComponentTypeComponent (props) {
       props.setDropdownFlag(false)
     }
     let saveComponentProperty = function (event) {
-      // props.setEditComponentFlag(false)
-      // props.setDropdownFlag(false)
-      // let payload = {}
-      // payload.componentId = props.componentTypeComponentData.resources[0].id
-      // payload.property = componentPropertiesPayload.property
-      // payload.component = componentPropertiesPayload.component
-      // props.updateComponentTypeComponentProperties(payload)
-      // props.updateComponentTypeComponent(payload)
       props.setConfirmationModalOpenStatus(true)
     }
     let closeConfirmationModal = function (event) {
@@ -174,24 +164,6 @@ export default function ComponentTypeComponent (props) {
       props.updateComponentTypeComponentProperties(payload)
       props.updateComponentTypeComponent(payload)
       props.setConfirmationModalOpenStatus(false)
-      // eslint-disable-next-line
-      toastr.options = {
-        'closeButton': false,
-        'debug': false,
-        'newestOnTop': false,
-        'progressBar': false,
-        'positionClass': 'toast-bottom-full-width',
-        'preventDuplicates': false,
-        'onclick': null,
-        'showDuration': '300',
-        'hideDuration': '1000',
-        'timeOut': '5000',
-        'extendedTimeOut': '1000',
-        'showEasing': 'swing',
-        'hideEasing': 'linear',
-        'showMethod': 'fadeIn',
-        'hideMethod': 'fadeOut'
-      }
       // eslint-disable-next-line
       toastr.success('The ' + componentTypeComponentName + ' was successfully updated', 'Good Stuff!')
     }
@@ -273,37 +245,15 @@ export default function ComponentTypeComponent (props) {
       } else if (componentTypeComponentProperties[index].properties[childIndex].property_type.key === 'Integer') {
         componentTypeComponentProperties[index].properties[childIndex].int_value = value
         payload = { 'op': 'replace', 'path': `/${typeProperty}/int_value`, 'value': value }
-        // if (typeof value !== 'number') {
-        //   console.log('check if', value, typeof value)
-        //   componentTypeComponentProperties[index].properties[childIndex].showMessage = true
-        // } else {
-        //   console.log('check else', value)
-        //   componentTypeComponentProperties[index].properties[childIndex].showMessage = false
-        // }
       } else if (componentTypeComponentProperties[index].properties[childIndex].property_type.key === 'Decimal') {
         componentTypeComponentProperties[index].properties[childIndex].float_value = value
         payload = { 'op': 'replace', 'path': `/${typeProperty}/float_value`, 'value': value }
-        // if (typeof value !== 'number') {
-        //   componentTypeComponentProperties[index].properties[childIndex].showMessage = true
-        // } else {
-        //   componentTypeComponentProperties[index].properties[childIndex].showMessage = false
-        // }
       } else if (componentTypeComponentProperties[index].properties[childIndex].property_type.key === 'DateTime') {
         componentTypeComponentProperties[index].properties[childIndex].date_time_value = value
         payload = { 'op': 'replace', 'path': `/${typeProperty}/date_time_value`, 'value': value }
-        // if (typeof value !== 'string') {
-        //   componentTypeComponentProperties[index].properties[childIndex].showMessage = true
-        // } else {
-        //   componentTypeComponentProperties[index].properties[childIndex].showMessage = false
-        // }
       } else if (componentTypeComponentProperties[index].properties[childIndex].property_type.key === 'Text') {
         componentTypeComponentProperties[index].properties[childIndex].text_value = value
         payload = { 'op': 'replace', 'path': `/${typeProperty}/text_value`, 'value': value }
-        // if (typeof value !== 'string') {
-        //   componentTypeComponentProperties[index].properties[childIndex].showMessage = true
-        // } else {
-        //   componentTypeComponentProperties[index].properties[childIndex].showMessage = false
-        // }
       } else {
         componentTypeComponentProperties[index].properties[childIndex].other_value = value
         payload = { 'op': 'replace', 'path': `/${typeProperty}/other_value`, 'value': value }
@@ -412,44 +362,8 @@ export default function ComponentTypeComponent (props) {
     if (props.deleteRelationshipResponse !== '') {
       if (props.updateRelationshipPropertyResponse.result_code !== 1) {
         // eslint-disable-next-line
-        toastr.options = {
-          'closeButton': false,
-          'debug': false,
-          'newestOnTop': false,
-          'progressBar': false,
-          'positionClass': 'toast-bottom-full-width',
-          'preventDuplicates': false,
-          'onclick': null,
-          'showDuration': '300',
-          'hideDuration': '1000',
-          'timeOut': '5000',
-          'extendedTimeOut': '1000',
-          'showEasing': 'swing',
-          'hideEasing': 'linear',
-          'showMethod': 'fadeIn',
-          'hideMethod': 'fadeOut'
-        }
-        // eslint-disable-next-line
         toastr.success('Successfully deleted relationship ' + props.relationshipActionSettings.relationshipText + ': ' + props.relationshipActionSettings.componentName + '', 'Disconnected')
       } else {
-        // eslint-disable-next-line
-        toastr.options = {
-          'closeButton': false,
-          'debug': false,
-          'newestOnTop': false,
-          'progressBar': false,
-          'positionClass': 'toast-bottom-full-width',
-          'preventDuplicates': false,
-          'onclick': null,
-          'showDuration': '300',
-          'hideDuration': '1000',
-          'timeOut': '5000',
-          'extendedTimeOut': '1000',
-          'showEasing': 'swing',
-          'hideEasing': 'linear',
-          'showMethod': 'fadeIn',
-          'hideMethod': 'fadeOut'
-        }
         // eslint-disable-next-line
         toastr.error(props.updateRelationshipResponse.error_message, props.updateRelationshipResponse.error_code)
       }
@@ -473,44 +387,8 @@ export default function ComponentTypeComponent (props) {
     if (props.updateRelationshipPropertyResponse !== '') {
       if (props.updateRelationshipPropertyResponse.result_code !== 1) {
         // eslint-disable-next-line
-        toastr.options = {
-          'closeButton': false,
-          'debug': false,
-          'newestOnTop': false,
-          'progressBar': false,
-          'positionClass': 'toast-bottom-full-width',
-          'preventDuplicates': false,
-          'onclick': null,
-          'showDuration': '300',
-          'hideDuration': '1000',
-          'timeOut': '5000',
-          'extendedTimeOut': '1000',
-          'showEasing': 'swing',
-          'hideEasing': 'linear',
-          'showMethod': 'fadeIn',
-          'hideMethod': 'fadeOut'
-        }
-        // eslint-disable-next-line
         toastr.success('Successfully updated relationship ' + props.relationshipActionSettings.relationshipText + ': ' + props.relationshipActionSettings.componentName, 'Updated!')
       } else {
-        // eslint-disable-next-line
-        toastr.options = {
-          'closeButton': false,
-          'debug': false,
-          'newestOnTop': false,
-          'progressBar': false,
-          'positionClass': 'toast-bottom-full-width',
-          'preventDuplicates': false,
-          'onclick': null,
-          'showDuration': '300',
-          'hideDuration': '1000',
-          'timeOut': '5000',
-          'extendedTimeOut': '1000',
-          'showEasing': 'swing',
-          'hideEasing': 'linear',
-          'showMethod': 'fadeIn',
-          'hideMethod': 'fadeOut'
-        }
         // eslint-disable-next-line
         toastr.error(props.updateRelationshipResponse.error_message, props.updateRelationshipResponse.error_code)
       }
@@ -871,44 +749,8 @@ export default function ComponentTypeComponent (props) {
     if (props.updateRelationshipResponse !== '') {
       if (props.updateRelationshipResponse.result_code !== 1) {
         // eslint-disable-next-line
-        toastr.options = {
-          'closeButton': false,
-          'debug': false,
-          'newestOnTop': false,
-          'progressBar': false,
-          'positionClass': 'toast-bottom-full-width',
-          'preventDuplicates': false,
-          'onclick': null,
-          'showDuration': '300',
-          'hideDuration': '1000',
-          'timeOut': '5000',
-          'extendedTimeOut': '1000',
-          'showEasing': 'swing',
-          'hideEasing': 'linear',
-          'showMethod': 'fadeIn',
-          'hideMethod': 'fadeOut'
-        }
-        // eslint-disable-next-line
         toastr.success('We\'ve added the new relationships to the ' + props.componentTypeComponentData.resources[0].name + '', 'Connecting the dots!')
       } else {
-        // eslint-disable-next-line
-        toastr.options = {
-          'closeButton': false,
-          'debug': false,
-          'newestOnTop': false,
-          'progressBar': false,
-          'positionClass': 'toast-bottom-full-width',
-          'preventDuplicates': false,
-          'onclick': null,
-          'showDuration': '300',
-          'hideDuration': '1000',
-          'timeOut': '5000',
-          'extendedTimeOut': '1000',
-          'showEasing': 'swing',
-          'hideEasing': 'linear',
-          'showMethod': 'fadeIn',
-          'hideMethod': 'fadeOut'
-        }
         // eslint-disable-next-line
         toastr.error(props.updateRelationshipResponse.error_message, props.updateRelationshipResponse.error_code)
       }

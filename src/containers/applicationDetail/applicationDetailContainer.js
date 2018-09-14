@@ -110,6 +110,7 @@ export default compose(
           // eslint-disable-next-line
           toastr.error(nextProps.addComponent.error_message, nextProps.addComponent.error_code)
         }
+        nextProps.resetAddComponentResponse()
       }
       if (nextProps.componentDetail && (nextProps.componentDetail !== this.props.componentDetail)) {
         console.log('inside receive props detail props', nextProps)

@@ -3,6 +3,7 @@ import { FETCH_COMPONENT_BY_ID_SUCCESS, FETCH_COMPONENT_CONSTRAINT_SUCCESS, FETC
 // Name Spaced Action Types
 const SELECTED_COMPONENT_TYPE = 'applicationDetailReducer/SELECTED_COMPONENT_TYPE'
 const SET_CURRENT_PAGE = 'applicationDetailReducer/SET_CURRENT_PAGE'
+const RESET_ADD_COMPONENT_RESPONSE = 'applicationDetailReducer/RESET_ADD_COMPONENT_RESPONSE'
 
 export const actions = {
   FETCH_COMPONENT_BY_ID_SUCCESS,
@@ -10,14 +11,15 @@ export const actions = {
   FETCH_COMPONENT_COMPONENT_SUCCESS,
   SEARCH_COMPONENT_COMPONENT_SUCCESS,
   SET_CURRENT_PAGE,
-  ADD_COMPONENT_COMPONENT_SUCCESS
-
+  ADD_COMPONENT_COMPONENT_SUCCESS,
+  RESET_ADD_COMPONENT_RESPONSE
 }
 
 export const actionCreators = {
   selectedComponentType: createAction(SELECTED_COMPONENT_TYPE),
   setCurrentPage: createAction(SET_CURRENT_PAGE),
-  setAddRedirectFlag: createAction(ADD_COMPONENT_COMPONENT_SUCCESS)
+  setAddRedirectFlag: createAction(ADD_COMPONENT_COMPONENT_SUCCESS),
+  resetAddComponentResponse: createAction(RESET_ADD_COMPONENT_RESPONSE)
 }
 
 export const initialState = {
@@ -59,6 +61,10 @@ export default handleActions(
     [ADD_COMPONENT_COMPONENT_SUCCESS]: (state, action) => ({
       ...state,
       addComponent: action.payload
+    }),
+    [RESET_ADD_COMPONENT_RESPONSE]: (state, action) => ({
+      ...state,
+      addComponent: ''
     })
   },
   initialState

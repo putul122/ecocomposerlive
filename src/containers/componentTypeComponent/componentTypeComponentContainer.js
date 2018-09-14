@@ -120,8 +120,6 @@ export default compose(
         let deletecomponentid = nextProps.componentDetail.resources[0].id
         this.props.history.push('/components/' + deletecomponentid)
         this.props.history.go('/components/' + deletecomponentid)
-        nextProps.setRedirectFlag(false)
-        nextProps.setAddRedirectFlag(false)
         nextProps.setDeleteModalOpenStatus(false)
       }
       if (nextProps.updateRelationshipResponse && nextProps.updateRelationshipResponse !== '') {
