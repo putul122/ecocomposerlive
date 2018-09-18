@@ -841,10 +841,12 @@ export default function ComponentTypeComponent (props) {
         if (constraint.target_component_type !== null) {
           let data = {}
           if (constraint.constraint_type === 'Parent') {
-            data.display_name = props.componentTypeComponentData.resources[0].name + ' ' + constraint.constraint_type + ' Components'
+            // data.display_name = props.componentTypeComponentData.resources[0].name + ' ' + constraint.constraint_type + ' Components'
+            data.display_name = props.componentTypeComponentData.resources[0].name + ' is Child of ' + constraint.target_component_type.name
             data.isParent = true
           } else if (constraint.constraint_type === 'Child') {
-            data.display_name = props.componentTypeComponentData.resources[0].name + ' ' + constraint.constraint_type + ' Components'
+            // data.display_name = props.componentTypeComponentData.resources[0].name + ' ' + constraint.constraint_type + ' Components'
+            data.display_name = props.componentTypeComponentData.resources[0].name + ' is Parent of ' + constraint.target_component_type.name
             data.isParent = false
           } else if (constraint.constraint_type === 'ConnectFrom') {
             data.display_name = props.componentTypeComponentData.resources[0].name + ' ' + constraint.connection_type.name + ' ' + constraint.target_component_type.name
@@ -1034,7 +1036,7 @@ export default function ComponentTypeComponent (props) {
         return (
           <div className='m-accordion__item' style={{'overflow': 'visible'}}>
             <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + parent[0].relationship_type} aria-expanded='true'>
-              <span className='m-accordion__item-title'>{parent[0].component.name} {parent[0].relationship_type} {'Components'}</span>
+              <span className='m-accordion__item-title'>{parent[0].component.name} {'is Child of'} {parent[0].target_component.component_type.name}</span>
               <span className='m-accordion__item-mode' />
             </div>
             <div className='m-accordion__item-body collapse' id={'m_accordion_2_item_1_body' + parent[0].relationship_type} role='tabpanel' aria-labelledby='m_accordion_2_item_1_head' data-parent='#m_accordion_2'>
@@ -1074,7 +1076,7 @@ export default function ComponentTypeComponent (props) {
         return (
           <div className='m-accordion__item' style={{'overflow': 'visible'}}>
             <div className='m-accordion__item-head collapsed' role='tab' id='m_accordion_2_item_1_head' data-toggle='collapse' href={'#m_accordion_2_item_1_body' + child[0].relationship_type} aria-expanded='true'>
-              <span className='m-accordion__item-title'>{child[0].component.name} {child[0].relationship_type} {'Components'}</span>
+              <span className='m-accordion__item-title'>{child[0].component.name} {'is Parent of'} {child[0].target_component.component_type.name}</span>
               <span className='m-accordion__item-mode' />
             </div>
             <div className='m-accordion__item-body collapse' id={'m_accordion_2_item_1_body' + child[0].relationship_type} role='tabpanel' aria-labelledby='m_accordion_2_item_1_head' data-parent='#m_accordion_2'>
