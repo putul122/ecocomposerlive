@@ -65,10 +65,10 @@ export const initialState = {
   showToasterSuccess: localStorage.getItem('showToasterSuccess') || false,
   breadcrumb: '',
   clientAccessToken: '',
-  // client_id: 'eco_conductor_web_ui',
-  client_id: 'telkom_eco_web_ui',
-  // client_secret: 'Pm41WXE9WU4nVCVdTDlVdUh5PE4iS1dbO1VFNi1ZTnGMzX0pBVDdSciszMkhfI3M4SEVbLQ',
-  client_secret: 'SysHZjmhytHtZwQA4DRctXKU4TTvQajTu2zVANUU9PKmAUnC2gnMUfRxNpbXHJdu',
+  client_id: 'eco_conductor_web_ui',
+  // client_id: 'telkom_eco_web_ui',
+  client_secret: 'Pm41WXE9WU4nVCVdTDlVdUh5PE4iS1dbO1VFNi1ZTnGMzX0pBVDdSciszMkhfI3M4SEVbLQ',
+  // client_secret: 'SysHZjmhytHtZwQA4DRctXKU4TTvQajTu2zVANUU9PKmAUnC2gnMUfRxNpbXHJdu',
   authenticateUser: '',
   isDropDownOpen: false
 }
