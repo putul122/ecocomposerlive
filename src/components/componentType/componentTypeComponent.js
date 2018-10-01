@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from './componentTypeComponent.scss'
 import PropTypes from 'prop-types'
-// import { Link } from 'react-router-dom'
+import { debounce } from 'throttle-debounce'
 import _ from 'lodash'
 
 export default function ComponentType (props) {
@@ -19,6 +19,13 @@ export default function ComponentType (props) {
     let listPage = []
     let paginationLimit = 6
     let componentLoading = props.isComponentTypeLoading
+    let autocompleteSearch = payload => {
+      // call api
+      console.log('de payload', payload)
+      console.log('de searchObject', props.searchObject)
+    }
+    let autocompleteSearchDebounced = debounce(1000, autocompleteSearch)
+    console.log(props.searchObject)
 
     if (typeof componentTypes !== 'undefined') {
       componentTypesList = componentTypes.map(function (componentType, index) {
@@ -66,12 +73,15 @@ export default function ComponentType (props) {
         'page': currentPage,
         'recommended': searchTextBox.value === ''
       }
-      if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
-        props.searchComponent(payload)
-        // eslint-disable-next-line
-        mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-        // props.setComponentTypeLoading(true)
-      }
+      props.setSearchObject(payload)
+      // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
+      //   props.searchComponent(payload)
+      //   // eslint-disable-next-line
+      //   mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      //   // props.setComponentTypeLoading(true)
+      // }
+      autocompleteSearchDebounced(payload)
+      props.setSearchObject(payload)
       listPage = _.filter(pageArray, function (group) {
         let found = _.filter(group, {'number': currentPage})
         if (found.length > 0) { return group }
@@ -106,7 +116,7 @@ export default function ComponentType (props) {
     let handlePrevious = function (event) {
       event.preventDefault()
       if (currentPage === 1) {
-        previousClass = styles.disabled
+        previousClass = 'm-datatable__pager-link--disabled'
       } else {
         let payload = {
           'search': searchTextBox.value ? searchTextBox.value : '',
@@ -130,7 +140,7 @@ export default function ComponentType (props) {
     let handleNext = function (event) {
       event.preventDefault()
       if (currentPage === totalNoPages) {
-        nextClass = styles.disabled
+        nextClass = 'm-datatable__pager-link--disabled'
       } else {
         let payload = {
           'search': searchTextBox.value ? searchTextBox.value : '',
@@ -215,7 +225,7 @@ ComponentType.propTypes = {
   // componentType: PropTypes.any,
   // componentDetail: PropTypes.any,
   // searchComponent: PropTypes.func,
-  // setComponentTypeLoading: PropTypes.func,
+  searchObject: PropTypes.any,
   isComponentTypeLoading: PropTypes.any,
   currentPage: PropTypes.any
   // setCurrentPage: PropTypes.func,

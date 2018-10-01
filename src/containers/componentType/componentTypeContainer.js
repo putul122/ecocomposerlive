@@ -13,7 +13,8 @@ export function mapStateToProps (state, props) {
     componentTypes: state.componentTypeReducer.componentTypes,
     // searchComponentType: state.componentTypeReducer.searchComponentType,
     isComponentTypeLoading: state.componentTypeReducer.isComponentTypeLoading,
-    currentPage: state.componentTypeReducer.currentPage
+    currentPage: state.componentTypeReducer.currentPage,
+    searchObject: state.componentTypeReducer.searchObject
   }
 }
 
@@ -25,6 +26,7 @@ export const propsMapping: Callbacks = {
   // setSearchComponentType: actionCreators.setSearchComponentType,
   setComponentTypeLoading: componentTypeActioncreators.setComponentTypeLoading,
   setCurrentPage: componentTypeActioncreators.setCurrentPage,
+  setSearchObject: componentTypeActioncreators.setSearchObject,
   setBreadcrumb: basicActionCreators.setBreadcrumb
 }
 
@@ -50,7 +52,7 @@ export default compose(
       }
       this.props.fetchComponent && this.props.fetchComponent(payload)
       // eslint-disable-next-line
-      // mApp || false &&  mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      mApp &&  mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       let breadcrumb = {
         title: 'Component Type',
         items: [

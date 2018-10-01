@@ -13,6 +13,7 @@ export function mapStateToProps (state, props) {
     componentConstraints: state.applicationDetailReducer.componentConstraints,
     componentComponents: state.applicationDetailReducer.componentComponents,
     currentPage: state.applicationDetailReducer.currentPage,
+    perPage: state.applicationDetailReducer.perPage,
     addComponent: state.applicationDetailReducer.addComponent,
     modalIsOpen: state.basicReducer.modalIsOpen,
     successmodalIsOpen: state.basicReducer.successmodalIsOpen
@@ -27,7 +28,9 @@ export const propsMapping: Callbacks = {
   searchComponentComponent: sagaActions.applicationDetailActions.searchComponentComponent,
   selectedComponentType: applicationDetailActionCreators.selectedComponentType,
   setCurrentPage: applicationDetailActionCreators.setCurrentPage,
+  setPerPage: applicationDetailActionCreators.setPerPage,
   addComponentComponent: sagaActions.applicationDetailActions.addComponentComponent,
+  resetAddComponentResponse: applicationDetailActionCreators.resetAddComponentResponse,
   setAddRedirectFlag: basicActionCreators.setAddRedirectFlag,
   setRedirectFlag: basicActionCreators.setRedirectFlag,
   setBreadcrumb: basicActionCreators.setBreadcrumb,
@@ -54,13 +57,13 @@ export default compose(
         'id': componentTypeId,
         'ComponentTypeComponent': {
           'search': '',
-          'page_size': 10,
+          'page_size': this.props.perPage,
           'page': 1,
           'recommended': true
         }
       }
       // eslint-disable-next-line
-      // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       this.props.fetchComponentById && this.props.fetchComponentById(payload)
       this.props.fetchComponentById && this.props.fetchComponentConstraint(payload)
       this.props.fetchComponentComponent && this.props.fetchComponentComponent(payload)
@@ -74,11 +77,13 @@ export default compose(
           this.props.history.push('/')
         }
       }
-      if (nextProps.componentComponents && nextProps.componentComponents !== this.props.componentComponents) {
+      if (nextProps.componentComponents && nextProps.componentComponents !== '') {
         // eslint-disable-next-line
         mApp && mApp.unblock('#style-1')
       }
-      if (nextProps.addComponent && nextProps.componentDetail) {
+      if (nextProps.addComponent !== '') {
+      if (nextProps.addComponent && nextProps.addComponent !== '') {
+        console.log('+++++', nextProps)
         console.log('deleting deleteComponent component', nextProps.addComponent)
         // eslint-disable-next-line
         toastr.options = {
@@ -91,31 +96,48 @@ export default compose(
           'onclick': null,
           'showDuration': '300',
           'hideDuration': '1000',
-          'timeOut': '5000',
+          'timeOut': '4000',
           'extendedTimeOut': '1000',
           'showEasing': 'swing',
           'hideEasing': 'linear',
           'showMethod': 'fadeIn',
           'hideMethod': 'fadeOut'
         }
-        if (nextProps.addComponent.result_code !== 1) {
+        if (nextProps.addComponent.error_code === null) {
           let newComponent = nextProps.addComponent.resources[0].name
           let componentId = nextProps.addComponent.resources[0].id
-          let ComponentTypeId = nextProps.componentDetail.resources[0].id
-          nextProps.history.push('/components/' + ComponentTypeId + '/' + componentId)
-          nextProps.setAddRedirectFlag(true)
+          // let ComponentTypeId = nextProps.componentDetail.resources[0].id
+          let ComponentTypeId = nextProps.match.params.id
+          // let ComponentTypeId = nextProps.match.params.componentTypeId
+          // nextProps.setAddRedirectFlag(false)
           // eslint-disable-next-line
           toastr.success('We\'ve added the ' +  newComponent  +  ' to your model' , 'Nice!')
+          nextProps.history.push('/components/' + ComponentTypeId + '/' + componentId)
         } else {
           // eslint-disable-next-line
           toastr.error(nextProps.addComponent.error_message, nextProps.addComponent.error_code)
         }
         nextProps.resetAddComponentResponse()
       }
+    }
+    if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
+      const componentTypeId = this.props.match.params.id
+      // eslint-disable-next-line
+      mApp.block('#style-1', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      let payload = {
+        'id': componentTypeId,
+        'ComponentTypeComponent': {
+          'search': '',
+          'page_size': nextProps.perPage,
+          'page': 1,
+          'recommended': true
+        }
+      }
+      this.props.fetchComponentComponent && this.props.fetchComponentComponent(payload)
+    }
       if (nextProps.componentDetail && (nextProps.componentDetail !== this.props.componentDetail)) {
-        console.log('inside receive props detail props', nextProps)
         // eslint-disable-next-line
-        // mApp.unblockPage()
+        mApp.unblockPage()
         let breadcrumb = {
           title: nextProps.componentDetail.resources[0].name,
           items: [

@@ -112,16 +112,32 @@ export default compose(
           this.props.history.push('/')
         }
       }
+      if (nextProps.componentTypeComponentData && nextProps.componentTypeComponentData !== this.props.componentTypeComponentData) {
+        // let deletecomponentid = nextProps.match.params.componentTypeId
+        if (nextProps.componentTypeComponentData.error_code === 'SHARED-001') {
+        // eslint-disable-next-line
+        toastr.error(nextProps.componentTypeComponentData.error_message, nextProps.componentTypeComponentData.error_code)
+        this.props.history.push('/components')
+        }
+      }
       if (nextProps.componentTypeComponents && nextProps.componentTypeComponents !== this.props.componentTypeComponents) {
         let settingPayload = {...this.props.addNewConnectionSettings, 'isWaitingForApiResponse': false}
         this.props.setAddConnectionSettings(settingPayload)
       }
-      if (nextProps.deleteComponent && nextProps.componentDetail) {
-        let deletecomponentid = nextProps.componentDetail.resources[0].id
+      if (nextProps.deleteComponent && nextProps.deleteComponent !== '') {
+        // let deletecomponentid = nextProps.componentDetail.resources[0].id
+        if (nextProps.deleteComponent.error_code === null) {
+        let deletecomponentid = nextProps.match.params.componentTypeId
         this.props.history.push('/components/' + deletecomponentid)
-        this.props.history.go('/components/' + deletecomponentid)
+        // this.props.history.push('/components/' + compid)
+        // this.props.history.go('/components/' + deletecomponentid)
+        // nextProps.setRedirectFlag(false)
+        // nextProps.setAddRedirectFlag(false)
         nextProps.setDeleteModalOpenStatus(false)
+        // eslint-disable-next-line
+        location.reload()
       }
+    }
       if (nextProps.updateRelationshipResponse && nextProps.updateRelationshipResponse !== '') {
         if (!nextProps.updateRelationshipResponse.error_code) {
           this.props.fetchcomponentTypeComponentRelationships && this.props.fetchcomponentTypeComponentRelationships(payload)

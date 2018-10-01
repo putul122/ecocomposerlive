@@ -30,6 +30,24 @@ export const propsMapping: Callbacks = {
 //     onClick: () => dispatch(actions.starsActions.FETCH_STARS)
 //   }
 // }
+// eslint-disable-next-line
+toastr.options = {
+  'closeButton': false,
+  'debug': false,
+  'newestOnTop': false,
+  'progressBar': false,
+  'positionClass': 'toast-bottom-full-width',
+  'preventDuplicates': false,
+  'onclick': null,
+  'showDuration': '300',
+  'hideDuration': '1000',
+  'timeOut': '4000',
+  'extendedTimeOut': '1000',
+  'showEasing': 'swing',
+  'hideEasing': 'linear',
+  'showMethod': 'fadeIn',
+  'hideMethod': 'fadeOut'
+}
 
 export default compose(
   connect(mapStateToProps, propsMapping),
@@ -59,6 +77,8 @@ export default compose(
         if (this.props.isAccountCreated && this.props.isComposerModelConnected && this.props.registerProcessResponse.resources[0]['status'] === 'Completed') {
           console.log('final process in redirect to home', this.props)
           window.setTimeout(() => {
+            // eslint-disable-next-line
+            toastr.success('you logged in successfully.')
             this.props.history.push('/home')
           }, 100)
         }
@@ -72,13 +92,22 @@ export default compose(
       }
 
       if (nextProps.registerProcessResponse && (nextProps.registerProcessResponse.resources.length > 0) && nextProps.registerProcessResponse !== this.props.registerProcessResponse) {
-        if (nextProps.registerProcessResponse.resources[0]['status'] !== 'Completed') {
-          this.props.fetchRegisterProcess && this.props.fetchRegisterProcess()
-        } else {
+        if (nextProps.registerProcessResponse.resources[0]['status'] === 'Failed') {
+          // eslint-disable-next-line
+          toastr.error('Process Failed on steps ' + nextProps.registerProcessResponse.resources[0]['name'])
+          window.location.href = window.location.origin
+          // this.props.history.push('/')
+        } else if (nextProps.registerProcessResponse.resources[0]['status'] === 'Completed') {
           this.props.composerModelConnected && this.props.composerModelConnected(true)
+        } else {
+          window.setTimeout(() => {
+            this.props.fetchRegisterProcess && this.props.fetchRegisterProcess()
+          }, 500)
         }
       } else {
-        this.props.fetchRegisterProcess && this.props.fetchRegisterProcess()
+        window.setTimeout(() => {
+          this.props.fetchRegisterProcess && this.props.fetchRegisterProcess()
+        }, 500)
       }
     }
   })

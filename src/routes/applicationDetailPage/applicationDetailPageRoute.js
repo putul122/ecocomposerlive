@@ -1,6 +1,6 @@
 import React from 'react'
 import ApplicationDetail from '../../containers/applicationDetail/applicationDetailContainer'
-import ApplicationActions from '../../components/applicationActions/applicationActionsComponent'
+// import ApplicationActions from '../../components/applicationActions/applicationActionsComponent'
 // import ApplicationActivity from '../../components/applicationActivity/applicationActivityComponent'
 import Header from '../../containers/header/headerContainer'
 import FooterComponent from '../../components/footer/footerComponent'
@@ -21,13 +21,13 @@ class applicationDetailPageRoute extends React.Component {
         {/* <!-- END: Subheader --> */}
         <div className='m-content'>
           <div className='row'>
-            <div className='col-sm-10'>
+            <div className='col-sm-12'>
               <ApplicationDetail {...this.props} />
             </div>
-            <div className='col-sm-2'>
+            {/* <div className='col-sm-2'>
               <ApplicationActions />
-              {/* <ApplicationActivity /> */}
-            </div>
+              {/* <ApplicationActivity /> }
+            </div> */}
           </div>
         </div>
       </div>

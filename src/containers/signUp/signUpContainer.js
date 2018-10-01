@@ -32,21 +32,14 @@ export default compose(
   lifecycle({
     componentDidMount: function () {},
     componentWillReceiveProps (nextProps) {
-      if (nextProps.clientAccessToken) {
-        // console.log('@@@@client access token', nextProps.clientAccessToken.resources[0]["access_token"])
-        localStorage.setItem('clientAccessToken', nextProps.clientAccessToken.resources[0]['access_token'])
-      }
       if (nextProps.isLoggedin) {
         localStorage.setItem('isLoggedin', nextProps.isLoggedin)
-        // this.props.history.push('/registering')
       }
       if (nextProps.createUserResponse) {
         if (!nextProps.createUserResponse.error_code) {
           localStorage.setItem('userAccessToken', nextProps.createUserResponse.resources[0]['access_token'])
           localStorage.setItem('isLoggedin', true)
-          console.log('create user response', nextProps)
-          // this.props.history.push('/registering')
-          this.props.history.push('/components')
+          this.props.history.push('/registering')
         }
         if (nextProps.createUserResponse !== this.props.createUserResponse) {
           this.props.setCreateUserProcessStatus(false)

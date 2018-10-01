@@ -6,7 +6,8 @@ import { actions as sagaActions } from '../../redux/sagas/'
 export function mapStateToProps (state, props) {
   return {
     client_id: state.basicReducer.client_id,
-    client_secret: state.basicReducer.client_secret
+    client_secret: state.basicReducer.client_secret,
+    clientAccessToken: state.basicReducer.clientAccessToken
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -33,6 +34,11 @@ export default compose(
     },
     componentDidMount: function () {
       console.log('component did mount landing', this.props)
+    },
+    componentWillReceiveProps (nextProps) {
+      if (nextProps.clientAccessToken && nextProps.clientAccessToken !== '') {
+        localStorage.setItem('clientAccessToken', nextProps.clientAccessToken.resources[0]['access_token'])
+      }
     }
   })
 )(Landing)

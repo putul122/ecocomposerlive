@@ -61,7 +61,8 @@ export default function Login (props) {
 
   if (loggedInresponse !== '') {
     if (loggedInresponse.error_code) {
-      messageBlock = loggedInMessageResponse(loggedInresponse.error_message)
+      // messageBlock = loggedInMessageResponse(loggedInresponse.error_message)
+      messageBlock = loggedInMessageResponse('Incorrect username or password')
     } else {
       messageBlock = loggedInMessageResponse('')
     }

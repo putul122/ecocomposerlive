@@ -42,34 +42,7 @@ export default compose(
       }
       this.props.setBreadcrumb && this.props.setBreadcrumb(breadcrumb)
     },
-    componentDidMount: function () {
-      // if (!this.props.showToasterSuccess) {
-        if (!localStorage.getItem('showToasterSuccess') && localStorage.getItem('isLoggedin') && localStorage.getItem('userAccessToken')) {
-          // eslint-disable-next-line
-          toastr.options = {
-            'closeButton': false,
-            'debug': false,
-            'newestOnTop': false,
-            'progressBar': false,
-            'positionClass': 'toast-top-right',
-            'preventDuplicates': false,
-            'onclick': null,
-            'showDuration': '300',
-            'hideDuration': '100',
-            'timeOut': '2000',
-            'extendedTimeOut': '1000',
-            'showEasing': 'swing',
-            'hideEasing': 'linear',
-            'showMethod': 'fadeIn',
-            'hideMethod': 'fadeOut'
-          }
-          // eslint-disable-next-line
-          toastr.success('you logged in successfully.')
-          localStorage.setItem('showToasterSuccess', true)
-          this.props.setToasterSuccessStatus(true)
-        }
-      // }
-    },
+    componentDidMount: function () {},
     componentWillReceiveProps: function (nextProps) {
       console.log('component will receive props', nextProps)
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {

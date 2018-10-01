@@ -46,7 +46,7 @@ export default function ApplicationDetail (props) {
   let componentComponents = props.componentComponents.resources
   let componentComponentsList
   let totalNoPages
-  let perPage = 10
+  let perPage = props.perPage
   let currentPage = props.currentPage
   let nextClass = ''
   let previousClass = ''
@@ -55,9 +55,16 @@ export default function ApplicationDetail (props) {
   let ComponentTypeId
   // let componentId
   let listPage = []
-  let paginationLimit = 4
+  let paginationLimit = 5
   let NameInputBox
   let DescriptionBox
+  let handleBlurChange = function (event) {
+    console.log('handle Blur change', event.target.value)
+  }
+  let handleChange = function (event) {
+    console.log('handle change', event.target.value, typeof event.target.value)
+    props.setPerPage(parseInt(event.target.value))
+  }
   // let messageBlock = addComponentMessageResponse('')
   console.log('props', props.setModalOpenStatus)
   // console.log('propsforredirect ', props.addComponent)
@@ -71,7 +78,8 @@ export default function ApplicationDetail (props) {
     ComponentTypeId = props.componentDetail.resources[0].id
     ComponentTypeIcon = props.componentDetail.resources[0].links.find(function (link) { return link.rel === 'icon' })
   }
-  if (typeof componentComponents !== 'undefined') {
+  if (props.componentComponents !== '') {
+    console.log(props.componentComponents)
     componentComponentsList = componentComponents.map(function (componentComponent, index) {
       return (
         <tr className='m-datatable__row m-datatable__row--even' key={index} style={{ 'left': '0px' }} >
@@ -82,7 +90,7 @@ export default function ApplicationDetail (props) {
         </tr>
       )
     })
-
+    console.log(componentComponentsList)
     totalComponentTypeComponent = props.componentComponents.total_count
     totalNoPages = Math.ceil(totalComponentTypeComponent / perPage)
 
@@ -118,7 +126,7 @@ export default function ApplicationDetail (props) {
         'id': props.componentDetail.resources[0].id,
         'ComponentTypeComponent': {
           'search': searchTextBox.value ? searchTextBox.value : '',
-          'page_size': 10,
+          'page_size': props.perPage,
           'page': currentPage - 1,
           'recommended': searchTextBox.value === ''
         }
@@ -143,7 +151,7 @@ export default function ApplicationDetail (props) {
       'id': props.componentDetail.resources[0].id,
       'ComponentTypeComponent': {
         'search': searchTextBox.value ? searchTextBox.value : '',
-        'page_size': 10,
+        'page_size': props.perPage,
         'page': currentPage + 1,
         'recommended': searchTextBox.value === ''
       }
@@ -169,7 +177,7 @@ export default function ApplicationDetail (props) {
       'id': props.componentDetail.resources[0].id,
       'ComponentTypeComponent': {
         'search': searchTextBox.value ? searchTextBox.value : '',
-        'page_size': 10,
+        'page_size': props.perPage,
         'page': page,
         'recommended': searchTextBox.value === ''
       }
@@ -191,7 +199,7 @@ export default function ApplicationDetail (props) {
       'id': props.componentDetail.resources[0].id,
       'ComponentTypeComponent': {
         'search': searchTextBox.value ? searchTextBox.value : '',
-        'page_size': 10,
+        'page_size': props.perPage,
         'page': currentPage,
         'recommended': searchTextBox.value === ''
       }
@@ -259,12 +267,11 @@ export default function ApplicationDetail (props) {
   return (
     <div>
       <div className={styles.borderline}>
-        <div className={'row' + styles.description}>
+        <div className={'row'}>
           <div>
             <img className={styles.iconcenter} src={ComponentTypeIcon.href} alt={ComponentName} />
-            <span className='row col-sm-12 col-md-8'>
-              <h2>{ ComponentName }</h2>
-              <div className=''><button type='button' onClick={openModal} id='m_login_signup' className={styles.buttonbg}>Add { ComponentName }</button></div>
+            <span className='row col-sm-12 col-md-12'>
+              <p>{ ComponentDescription }</p>
               <div>
                 <Modal isOpen={props.modalIsOpen}
                   onRequestClose={closeModal}
@@ -325,13 +332,12 @@ export default function ApplicationDetail (props) {
                 </Modal>
               </div>
             </span>
-            <span className='row col-sm-12 col-md-4'><p>{ ComponentDescription }</p></span>
           </div>
         </div>
         <div className='row clearfix'>
           <div className='col-sm-12 col-md-4'>
             <div className='row'>
-              <div className='col-sm-12 col-md-11 m--align-right'>
+              <div className='col-sm-12 col-md-9 m--align-left'>
                 <div className='m-input-icon m-input-icon--left'>
                   <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onChange={handleInputChange} />
                   <span className='m-input-icon__icon m-input-icon__icon--left'>
@@ -341,6 +347,12 @@ export default function ApplicationDetail (props) {
                   </span>
                 </div>
               </div>
+              <div className='col-sm-12 col-md-2 m--align-right'>
+                <a href='javascript:void(0);' onClick={openModal} className='btn btn-info m-btn m-btn--icon btn-sm m-btn--icon-only  m-btn--pill m-btn--air'>
+                  <i className='fa flaticon-add-circular-button' />
+                </a>
+                {/* <button onClick={openModal} className={'flaticon-add-circular-button'} /> */}
+              </div>
             </div><br />
             {/* <div className={styles.containersearch}>
               <span className={styles.icon}><i className='fa fa-search' /></span>
@@ -349,27 +361,38 @@ export default function ApplicationDetail (props) {
             <div className='col-sm-12 col-md-12'>
               <div className='m_datatable' id='scrolling_vertical'>
                 <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
-                  <table className='m-datatable__table' style={{ 'display': 'block', 'min-height': '300px', 'max-height': '550px' }} >
-                    <thead className='m-datatable__head'>
-                      <tr className='m-datatable__row' style={{ 'left': '0px;' }}>
-                        {/* <th data-field='RecordID' className='m-datatable__cell m-datatable__cell--check'>
-                          <span style={{width: 40}}><label htmlFor='m-checkbox m-checkbox--single m-checkbox--all m-checkbox--solid m-checkbox--brand'>
-                            <input type='checkbox' /><span /></label></span></th> */}
-                        <th className='m-datatable__cell m-datatable__cell--sort'>Name</th>
-                        <th className='m-datatable__cell m-datatable__cell--sort'>Description</th>
-                      </tr>
-                    </thead>
-                    <tbody style={{ 'max-height': '495px' }} className='m-datatable__body ps ps--active-y ps--scrolling-y'>
-                      <div className={styles.scrollbar} id='style-1'>
+                  <div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '50vh'}}>
+                    <table className='m-datatable__table' style={{ 'display': 'block', 'min-height': '300px', 'max-height': '550px' }} >
+                      <thead className='m-datatable__head'>
+                        <tr className='m-datatable__row' style={{ 'left': '0px;' }}>
+                          {/* <th data-field='RecordID' className='m-datatable__cell m-datatable__cell--check'>
+                            <span style={{width: 40}}><label htmlFor='m-checkbox m-checkbox--single m-checkbox--all m-checkbox--solid m-checkbox--brand'>
+                              <input type='checkbox' /><span /></label></span></th> */}
+                          <th className='m-datatable__cell m-datatable__cell--sort'>Name</th>
+                          <th className='m-datatable__cell m-datatable__cell--sort'>Description</th>
+                        </tr>
+                      </thead>
+                      <tbody className='m-datatable__body ps ps--active-y ps--scrolling-y' d='style-1'>
                         { componentComponentsList }
-                      </div>
-                      {/* <div className='ps__rail-x' >
-                        <div className='ps__thumb-x' style={{ 'left': '0px', 'width': '0px' }} />
-                      </div>
-                      <div className='ps__rail-y' style={{'top': '0px', 'height': '495px', 'right': '0'}}><div className='ps__thumb-y' style={{ 'top': '0px', 'height': '216px' }} /></div> */}
-                    </tbody>
-                  </table>
-                  <div className='m-datatable__pager m-datatable--paging-loaded clearfix' style={{ 'text-align': 'center' }}>
+                        {/* <div className='ps__rail-x' >
+                          <div className='ps__thumb-x' style={{ 'left': '0px', 'width': '0px' }} />
+                        </div>
+                        <div className='ps__rail-y' style={{'top': '0px', 'height': '495px', 'right': '0'}}><div className='ps__thumb-y' style={{ 'top': '0px', 'height': '216px' }} /></div> */}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className='col-sm-12 col-md-6'>
+                    <div className='dataTables_length' id='m_table_1_length'>
+                      <label htmlFor='page_no'>Show<select value={props.perPage} onBlur={handleBlurChange} onChange={handleChange} name='m_table_1_length' aria-controls='m_table_1' className='custom-select custom-select-sm form-control form-control-sm'>
+                        <option value={10}>10</option>
+                        <option value={25}>25</option>
+                        <option value={50}>50</option>
+                        <option value={100}>100</option>
+                      </select> entries</label>
+                    </div>
+                  </div>
+                  <div className='col-sm-12 col-md-6' />
+                  <div className='m-datatable__pager m-datatable--paging-loaded pull-left' style={{ 'text-align': 'center' }}>
                     <ul className='m-datatable__pager-nav'>
                       {/* <li><a href='' title='First' className='m-datatable__pager-link m-datatable__pager-link--first' data-page={1}><i className='la la-angle-double-left' /></a></li> */}
                       <li><a href='' title='Previous' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handlePrevious} data-page='4'><i className='la la-angle-left' /></a></li>
@@ -425,6 +448,7 @@ ApplicationDetail.propTypes = {
   // searchComponentComponent: PropTypes.func,
   // showToasterSuccess: PropTypes.func,
   currentPage: PropTypes.any,
+  perPage: PropTypes.any,
   // history: PropTypes.any,
   setAddRedirectFlag: PropTypes.func
   // setCurrentPage: PropTypes.func,
