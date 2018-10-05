@@ -82,7 +82,6 @@ export default compose(
     this.props.setComponentTypeLoading && this.props.setComponentTypeLoading(false)
     },
     componentWillReceiveProps: function (nextProps) {
-      console.log('component types next props response', nextProps)
       if (nextProps.authenticateUser && nextProps.authenticateUser.resources) {
         if (!nextProps.authenticateUser.resources[0].result) {
           this.props.history.push('/')

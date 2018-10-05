@@ -266,12 +266,20 @@ export default function ApplicationDetail (props) {
   }
   return (
     <div>
+      <div className='m-alert m-alert--icon m-alert--air m-alert--square alert alert-dismissible m--margin-bottom-30' role='alert'>
+        <div className='m-alert__icon'>
+          <img className={styles.iconcenter} src={ComponentTypeIcon.href} alt={ComponentName} />
+        </div>
+        <div className='m-alert__text'>
+          { ComponentDescription }
+        </div>
+      </div>
       <div className={styles.borderline}>
         <div className={'row'}>
           <div>
-            <img className={styles.iconcenter} src={ComponentTypeIcon.href} alt={ComponentName} />
+            {/* <img className={styles.iconcenter} src={ComponentTypeIcon.href} alt={ComponentName} /> */}
             <span className='row col-sm-12 col-md-12'>
-              <p>{ ComponentDescription }</p>
+              {/* <p>{ ComponentDescription }</p> */}
               <div>
                 <Modal isOpen={props.modalIsOpen}
                   onRequestClose={closeModal}
@@ -360,9 +368,9 @@ export default function ApplicationDetail (props) {
             </div> */}
             <div className='col-sm-12 col-md-12'>
               <div className='m_datatable' id='scrolling_vertical'>
-                <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
+                <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{ 'display': 'block', 'min-height': '500px', 'max-height': '550px' }}>
                   <div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '50vh'}}>
-                    <table className='m-datatable__table' style={{ 'display': 'block', 'min-height': '300px', 'max-height': '550px' }} >
+                    <table className='table table-striped- table-bordered table-hover table-checkable dataTable no-footer' >
                       <thead className='m-datatable__head'>
                         <tr className='m-datatable__row' style={{ 'left': '0px;' }}>
                           {/* <th data-field='RecordID' className='m-datatable__cell m-datatable__cell--check'>

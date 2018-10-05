@@ -15,6 +15,7 @@ const SET_DELETE_MODAL_OPEN_STATUS = 'BasicReducer/SET_DELETE_MODAL_OPEN_STATUS'
 const SET_DROPDOWN_FLAG = 'BasicReducer/SET_DROPDOWN_FLAG'
 const SET_REDIRECT_FLAG = 'BasicReducer/SET_REDIRECT_FLAG'
 const SET_ADD_REDIRECT_FLAG = 'BasicReducer/SET_ADD_REDIRECT_FLAG'
+const SET_NOTIFICATION_FLAG = 'BasicReducer/SET_NOTIFICATION_FLAG'
 
 export const actions = {
   INCREMENT,
@@ -31,7 +32,8 @@ export const actions = {
   SET_DROPDOWN_FLAG,
   SET_REDIRECT_FLAG,
   SET_ADD_REDIRECT_FLAG,
-  SET_DELETE_MODAL_OPEN_STATUS
+  SET_DELETE_MODAL_OPEN_STATUS,
+  SET_NOTIFICATION_FLAG
   }
 
 export const actionCreators = {
@@ -48,7 +50,8 @@ export const actionCreators = {
   setToasterSuccessStatus: createAction(SET_TOASTER_SUCCESS_STATUS),
   setDropdownFlag: createAction(SET_DROPDOWN_FLAG),
   setRedirectFlag: createAction(SET_REDIRECT_FLAG),
-  setAddRedirectFlag: createAction(SET_ADD_REDIRECT_FLAG)
+  setAddRedirectFlag: createAction(SET_ADD_REDIRECT_FLAG),
+  setNotificationFlag: createAction(SET_NOTIFICATION_FLAG)
 }
 
 export const initialState = {
@@ -70,7 +73,8 @@ export const initialState = {
   client_secret: 'Pm41WXE9WU4nVCVdTDlVdUh5PE4iS1dbO1VFNi1ZTnGMzX0pBVDdSciszMkhfI3M4SEVbLQ',
   // client_secret: 'SysHZjmhytHtZwQA4DRctXKU4TTvQajTu2zVANUU9PKmAUnC2gnMUfRxNpbXHJdu',
   authenticateUser: '',
-  isDropDownOpen: false
+  isDropDownOpen: false,
+  notificationFlag: false
 }
 
 export default handleActions(
@@ -133,6 +137,9 @@ export default handleActions(
     }),
     [SET_DROPDOWN_FLAG]: (state, action) => ({ ...state,
       isDropDownOpen: action.payload
+    }),
+    [SET_NOTIFICATION_FLAG]: (state, action) => ({ ...state,
+      notificationFlag: action.payload
     })
   },
   initialState

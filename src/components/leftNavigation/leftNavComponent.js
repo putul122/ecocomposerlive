@@ -1,6 +1,6 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
-// import styles from './leftNavComponent.scss'
+// import { Link } from 'react-router-dom'
+import styles from './leftNavComponent.scss'
 
 class LeftNavigation extends React.Component {
 	render () {
@@ -23,15 +23,35 @@ class LeftNavigation extends React.Component {
       </div>
       {/* <!-- END: Brand --> */}
       {/* <!-- BEGIN: Aside Menu --> */}
-      <div id='m_ver_menu'className='m-aside-menu  m-aside-menu--skin-light m-aside-menu--submenu-skin-light '>
-        <ul className='m-menu__nav  m-menu__nav--dropdown-submenu-arrow '>
+      <div id='m_ver_menu' style={{'marginLeft': '30px'}} className='m-aside-menu  m-aside-menu--skin-light m-aside-menu--submenu-skin-light '>
+        {/* <ul className='m-menu__nav  m-menu__nav--dropdown-submenu-arrow '>
           <li className='m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight' ><Link to='/home' className='m-menu__link'><i className='m-menu__link-icon flaticon-menu' /></Link></li>
           <li className='m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight' ><Link to='/components' className='m-menu__link'><i className='m-menu__link-icon fa fa-th' /></Link></li>
           {/* <li className='m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight' ><Link to='/components' className='m-menu__link'><i className='m-menu__link-icon fa fa-th' /></Link></li> */}
-          {/* <li className='m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight' ><a href='javascript:;' className='m-menu__link'><i className='m-menu__link-icon fa fa-table' /></a></li>
-          <li className='m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight' ><a href='javascript:;' className='m-menu__link'><i className='m-menu__link-icon fa fa-compress' /></a></li>
-          <li className='m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight' ><a href='javascript:;' className='m-menu__link'><i className='m-menu__link-icon flaticon-settings' /></a></li> */}
-        </ul>
+        {/* <li className='m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight' ><a href='javascript:;' className='m-menu__link'><i className='m-menu__link-icon fa fa-table' /></a></li>
+        <li className='m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight' ><a href='javascript:;' className='m-menu__link'><i className='m-menu__link-icon fa fa-compress' /></a></li>
+        <li className='m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight' ><a href='javascript:;' className='m-menu__link'><i className='m-menu__link-icon flaticon-settings' /></a></li>
+      </ul> */}
+        <nav className={styles.mainmenu}>
+          <ul id='' className={'m-menu__nav  m-menu__nav--dropdown-submenu-arrow'}>
+            <li className={'m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight ' + styles.navicon} style={{'paddingTop': '20px'}}>
+              <a className='m-menu__link' href='/home'>
+                <i className='m-menu__link-icon flaticon-menu' style={{'textAlign': 'center'}} />
+                <span className={styles.navtext}>
+                Home
+                </span>
+              </a>
+            </li>
+            <li className={'m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight ' + styles.navicon}>
+              <a className='m-menu__link' href='/components'>
+                <i className='m-menu__link-icon fa fa-th fa-2x' />
+                <span className={styles.navtext}>
+                  Components
+                </span>
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
       {/* <!-- END: Aside Menu --> */}
     </div>

@@ -170,7 +170,7 @@ export default compose(
       if (nextProps.componentDetail && nextProps.componentTypeComponentData && (nextProps.componentTypeComponentData !== '') && nextProps.componentTypeComponentData.resources) {
         console.log('inside com Xxxxxxxxxxxxxxxxxxxxx', this.props, nextProps)
         let breadcrumb = {
-          title: nextProps.componentTypeComponentData.resources[0].name,
+          title: '',
           items: [
             {
               name: 'Home',

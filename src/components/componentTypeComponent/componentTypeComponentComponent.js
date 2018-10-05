@@ -892,6 +892,8 @@ export default function ComponentTypeComponent (props) {
     }
 
     if (props.componentTypeComponentData !== '') {
+      // let icon = props.componentTypeComponentData.resources[0].links.find(function (link) { console.log(link); return link.rel === 'icon' })
+      // console.log('_-------------------------------> icon', icon)
       componentTypeComponentName = props.componentTypeComponentData.resources[0].name
       ComponentTypeName = props.componentTypeComponentData.resources[0].component_type.name
       componentNameMessage = props.componentTypeComponentData.resources[0].nameMessage
@@ -1217,17 +1219,24 @@ export default function ComponentTypeComponent (props) {
     }
 
     return (
-      <div className={styles.borderline}>
-        <div className='row'>
-          <div className='col-sm-12 col-md-5' >
-            <div className={'row'}>
-              <i className={' fa fa-share'} />
+      <div>
+        <div className='m-alert m-alert--icon m-alert--air m-alert--square alert alert-dismissible m--margin-bottom-30' role='alert'>
+          <div className='m-alert__icon'>
+            <i className={' fa fa-share'} />
+            {/* <img className={styles.iconcenter} src={ComponentTypeIcon.href} alt={ComponentName} /> */}
+          </div>
+          <div className='m-alert__text'>
+            <div className='row'>
               {!props.isEditComponent && (<h2 className='col-8'>{componentTypeComponentName}</h2>)}
-              {props.isEditComponent && (<div className='col-6 form-group m-form__group has-danger'>
+              {props.isEditComponent && (<div className='col-8 form-group m-form__group has-danger'>
                 <input type='text' className='form-control m-input' onChange={editComponentName} value={componentTypeComponentName} placeholder='Component Name' aria-describedby='basic-addon2' />
                 {componentNameMessage && (<div className='form-control-feedback'>Component name required</div>)}
               </div>)}
-              {!props.isEditComponent && (<div className={'col-3 pull-rig m-dropdown m-dropdown--inline m-dropdown--arrow m-dropdown--align-left m-dropdown--align-push ' + dropDownClass}>
+              {props.isEditComponent && (<div className='col-3 pull-right'>
+                <button onClick={cancelEditComponent} className='btn btn-outline-info btn-sm'>Cancel</button>
+                <button onClick={saveComponentProperty} className='btn btn-outline-info btn-sm'>Save</button>
+              </div>)}
+              {!props.isEditComponent && (<div className={'col-3 pull-right m-dropdown m-dropdown--inline m-dropdown--arrow m-dropdown--align-left m-dropdown--align-push ' + dropDownClass}>
                 <a href='javascript:void(0);' className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' onClick={openDropDown}>
                   <i className='la la-ellipsis-h' />
                 </a>
@@ -1268,261 +1277,264 @@ export default function ComponentTypeComponent (props) {
                   </div>
                 </div>
               </div>)}
-              {props.isEditComponent && (<div className='col-4 clearfix'>
-                <button onClick={cancelEditComponent} className='btn btn-outline-info btn-sm'>Cancel</button>
-                <button onClick={saveComponentProperty} className='btn btn-outline-info btn-sm'>Save</button>
-              </div>)}
-              {!props.isEditComponent && (<p className='col-8'>{componentTypeComponentDescription}</p>)}
-              {props.isEditComponent && (<input type='text' className='col-8 form-control m-input' onChange={editComponentDescription} value={componentTypeComponentDescription} placeholder='Component Description' aria-describedby='basic-addon2' />)}
             </div>
-            <div className={styles.tabsprops}>
-              <ul className='nav nav-tabs' role='tablist'>
-                <li className='nav-item'>
-                  <a className={'nav-link' + showProperties} data-toggle='tab' onClick={showProperty} href='javascript:void(0);'>Properties</a>
-                </li>
-                <li className='nav-item'>
-                  <a className={'nav-link' + showRelationships} data-toggle='tab' onClick={showRelationship} href='javascript:void(0);'>Relationships</a>
-                </li>
-              </ul>
-              <div className='tab-content'>
-                <div className={'tab-pane' + showProperties} id='m_tabs_3_1' role='tabpanel'>
-                  <table className={'table ' + styles.borderless}>
-                    {componentTypeComponentPropertiesList}
-                  </table>
-                </div>
-                <div className={'tab-pane' + showRelationships} id='m_tabs_3_2' role='tabpanel'>
-                  <div className='pull-right'>
-                    <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
-                  </div>
-                  <div className={'row'} style={{'marginTop': '20px'}}>
-                    <div className='m--space-10' />
-                    <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' role='tablist' aria-multiselectable='true'>
-                      {parentComponentRelationshipList}
-                      {outgoingComponentRelationshipList}
-                      {incomingComponentRelationshipList}
-                      {childComponentRelationshipList}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className='col-sm-12 col-md-6'>
-            <div className='m--space-10' />
-            <div className={''}>
-              <h2>{componentTypeComponentName} Model Diagram</h2><br />
-              <div className='row'>
-                <div id='divPaperWrapper' style={divStyle}>
-                  <ComponentModelComponent startNode={startNode} relationships={modelRelationshipData} />
-                </div>
-              </div>
-            </div>
+            <br />
+            {!props.isEditComponent && (<p className='col-8'>{componentTypeComponentDescription}</p>)}
+            {props.isEditComponent && (<input type='text' className='col-8 form-control m-input' onChange={editComponentDescription} value={componentTypeComponentDescription} placeholder='Component Description' aria-describedby='basic-addon2' />)}
           </div>
         </div>
-        <div>
-          <ReactModal isOpen={props.deletemodalIsOpen}
-            onRequestClose={closeModal}
-            style={customStyles} >
-            <div className={styles.modalwidth}>
-              <div className='modal-dialog'>
-                <div className='modal-content'>
-                  <div className='modal-header'>
-                    <h6 className='modal-title' id='exampleModalLabel'>Deleting the {componentTypeComponentName} {ComponentTypeName}, are you sure?</h6>
-                    <button type='button' onClick={closeDeleteModal} className='close' data-dismiss='modal' aria-label='Close'>
-                      <span aria-hidden='true'>×</span>
-                    </button>
+        <div className={styles.borderline}>
+          <div className='row'>
+            <div className='col-sm-12 col-md-5' >
+              <div className={styles.tabsprops}>
+                <ul className='nav nav-tabs' role='tablist'>
+                  <li className='nav-item'>
+                    <a className={'nav-link' + showProperties} data-toggle='tab' onClick={showProperty} href='javascript:void(0);'>Properties</a>
+                  </li>
+                  <li className='nav-item'>
+                    <a className={'nav-link' + showRelationships} data-toggle='tab' onClick={showRelationship} href='javascript:void(0);'>Relationships</a>
+                  </li>
+                </ul>
+                <div className='tab-content'>
+                  <div className={'tab-pane' + showProperties} id='m_tabs_3_1' role='tabpanel'>
+                    <table className={'table ' + styles.borderless}>
+                      {componentTypeComponentPropertiesList}
+                    </table>
                   </div>
-                  <div className='modal-body'>
-                    <h6>Deleting the {componentTypeComponentName} {ComponentTypeName} will also delete the following:</h6>
-                    <div>
-                      <h5>Children Components</h5>
-                      {childrenList}
+                  <div className={'tab-pane' + showRelationships} id='m_tabs_3_2' role='tabpanel'>
+                    <div className='pull-right'>
+                      <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
                     </div>
-                    <div>
-                      <h5>Relationships</h5>
-                      {parentComponentRelationshipList}
-                      {outgoingComponentRelationshipList}
-                      {incomingComponentRelationshipList}
-                      {childComponentRelationshipList}
+                    <div className={'row'} style={{'marginTop': '20px'}}>
+                      <div className='m--space-10' />
+                      <div className='accordion m-accordion m-accordion--bordered' id='m_accordion_2' role='tablist' aria-multiselectable='true'>
+                        {parentComponentRelationshipList}
+                        {outgoingComponentRelationshipList}
+                        {incomingComponentRelationshipList}
+                        {childComponentRelationshipList}
+                      </div>
                     </div>
-                  </div>
-                  <div className='modal-footer'>
-                    <button type='button' onClick={closeDeleteModal} id='m_login_signup' className={styles.buttonbg}>Back</button>
-                    <button type='button' id='m_login_signup' className={styles.buttonbg} onClick={removeComponent}>Delete</button>
                   </div>
                 </div>
               </div>
             </div>
-          </ReactModal>
-          <ReactModal isOpen={props.modalIsOpen}
-            onRequestClose={closeModal}
-            shouldCloseOnOverlayClick={false}
-            className='modal-dialog modal-lg'
-            style={{'content': {'top': '20%'}}}
-            // className={''}
-            >
-            {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
-            <div>
-              <div>
-                <div className='modal-content'>
-                  <div className='modal-header'>
-                    <h4 className='modal-title' id='exampleModalLabel'>{'How is the ' + componentTypeComponentName + ' related to other things'}</h4>
-                    <button type='button' onClick={closeModal} className='close' data-dismiss='modal' aria-label='Close'>
-                      <span aria-hidden='true'>×</span>
-                    </button>
+            <div className='col-sm-12 col-md-6'>
+              <div className='m--space-10' />
+              <div className={''}>
+                <h2>{componentTypeComponentName} Model Diagram</h2><br />
+                <div className='row'>
+                  <div id='divPaperWrapper' style={divStyle}>
+                    <ComponentModelComponent startNode={startNode} relationships={modelRelationshipData} />
                   </div>
-                  <div className='modal-body'>
-                    <div className='form-group m-form__group row'>
-                      <label htmlFor='SelectRelationship' className='col-5 col-form-label'>Choose Relationship Type</label>
-                      <div className='col-7'>
-                        <Select
-                          className='input-sm form-control m-input'
-                          placeholder='Choose Relationships Type'
-                          isClearable
-                          isOptionDisabled={(option) => { return (isParentSelected && option.isParent) }}
-                          // defaultValue={childPropertyOption[0]}
-                          // isDisabled={false}
-                          // isLoading={false}
-                          // isClearable={true}
-                          value={props.addNewConnectionSettings.firstSelectboxIndex}
-                          // clearValue={() => { return true }}
-                          onChange={handleFirstSelect}
-                          isSearchable={false}
-                          name='selectConstraint'
-                          options={SelectedData}
-                        />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <ReactModal isOpen={props.deletemodalIsOpen}
+              onRequestClose={closeModal}
+              style={customStyles} >
+              <div className={styles.modalwidth}>
+                <div className='modal-dialog'>
+                  <div className='modal-content'>
+                    <div className='modal-header'>
+                      <h6 className='modal-title' id='exampleModalLabel'>Deleting the {componentTypeComponentName} {ComponentTypeName}, are you sure?</h6>
+                      <button type='button' onClick={closeDeleteModal} className='close' data-dismiss='modal' aria-label='Close'>
+                        <span aria-hidden='true'>×</span>
+                      </button>
+                    </div>
+                    <div className='modal-body'>
+                      <h6>Deleting the {componentTypeComponentName} {ComponentTypeName} will also delete the following:</h6>
+                      <div>
+                        <h5>Children Components</h5>
+                        {childrenList}
+                      </div>
+                      <div>
+                        <h5>Relationships</h5>
+                        {parentComponentRelationshipList}
+                        {outgoingComponentRelationshipList}
+                        {incomingComponentRelationshipList}
+                        {childComponentRelationshipList}
                       </div>
                     </div>
-                    {props.addNewConnectionSettings.firstSelectboxSelected === true && !props.addNewConnectionSettings.isWaitingForApiResponse && (
+                    <div className='modal-footer'>
+                      <button type='button' onClick={closeDeleteModal} id='m_login_signup' className={styles.buttonbg}>Back</button>
+                      <button type='button' id='m_login_signup' className={styles.buttonbg} onClick={removeComponent}>Delete</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ReactModal>
+            <ReactModal isOpen={props.modalIsOpen}
+              onRequestClose={closeModal}
+              shouldCloseOnOverlayClick={false}
+              className='modal-dialog modal-lg'
+              style={{'content': {'top': '20%'}}}
+              // className={''}
+              >
+              {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
+              <div>
+                <div>
+                  <div className='modal-content'>
+                    <div className='modal-header'>
+                      <h4 className='modal-title' id='exampleModalLabel'>{'How is the ' + componentTypeComponentName + ' related to other things'}</h4>
+                      <button type='button' onClick={closeModal} className='close' data-dismiss='modal' aria-label='Close'>
+                        <span aria-hidden='true'>×</span>
+                      </button>
+                    </div>
+                    <div className='modal-body'>
                       <div className='form-group m-form__group row'>
-                        <label htmlFor='SelectRelatedComponent' className='col-5 col-form-label'>Choose Select Related Component</label>
+                        <label htmlFor='SelectRelationship' className='col-5 col-form-label'>Choose Relationship Type</label>
                         <div className='col-7'>
-                          {/* <select className='form-control m-input' onBlur={handleSecondSelect} >{selectComponentOptions}</select> */}
-                          <CreatableSelect
+                          <Select
+                            className='input-sm form-control m-input'
+                            placeholder='Choose Relationships Type'
                             isClearable
-                            className='form-control m-input'
-                            // name='component-select'
-                            // value={props.addNewConnectionSettings.secondSelectboxValue}
-                            onChange={handleSecondSelect}
-                            onInputChange={handleInputChange}
-                            options={selectComponentOptions1}
-                            // isOptionDisabled={(option) => option.is_disabled === true}
+                            isOptionDisabled={(option) => { return (isParentSelected && option.isParent) }}
+                            // defaultValue={childPropertyOption[0]}
+                            // isDisabled={false}
+                            // isLoading={false}
+                            // isClearable={true}
+                            value={props.addNewConnectionSettings.firstSelectboxIndex}
+                            // clearValue={() => { return true }}
+                            onChange={handleFirstSelect}
+                            isSearchable={false}
+                            name='selectConstraint'
+                            options={SelectedData}
                           />
                         </div>
-                        <div className='m--space-10' />
                       </div>
-                    )}
-                    {props.addNewConnectionSettings.secondSelectboxSelected === true && !props.addNewConnectionSettings.isNewComponent && (
-                      <div className='row'>
-                        <p className='col-8'>{props.addNewConnectionSettings.relationshipText + ' ' + props.addNewConnectionSettings.componentText}</p>
-                        <div className='col-4'>
-                          <button onClick={addRelationShip} className={'btn btn-sm btn-outline-info' + ' '}>Add Relationships</button>
+                      {props.addNewConnectionSettings.firstSelectboxSelected === true && !props.addNewConnectionSettings.isWaitingForApiResponse && (
+                        <div className='form-group m-form__group row'>
+                          <label htmlFor='SelectRelatedComponent' className='col-5 col-form-label'>Choose Select Related Component</label>
+                          <div className='col-7'>
+                            {/* <select className='form-control m-input' onBlur={handleSecondSelect} >{selectComponentOptions}</select> */}
+                            <CreatableSelect
+                              isClearable
+                              className='form-control m-input'
+                              // name='component-select'
+                              // value={props.addNewConnectionSettings.secondSelectboxValue}
+                              onChange={handleSecondSelect}
+                              onInputChange={handleInputChange}
+                              options={selectComponentOptions1}
+                              // isOptionDisabled={(option) => option.is_disabled === true}
+                            />
+                          </div>
+                          <div className='m--space-10' />
                         </div>
-                        <div className='m--space-10' />
-                      </div>
-                    )}
-                    {props.addNewConnectionSettings.secondSelectboxSelected === true && props.addNewConnectionSettings.isNewComponent && (
-                      <div className='row'>
-                        <p className='col-5'>{props.addNewConnectionSettings.relationshipText + ' '}</p>
-                        <input type='text' className='col-4 form-control m-input' onChange={handleNewComponent} value={props.addNewConnectionSettings.newComponentName} placeholder='New Component' aria-describedby='basic-addon2' />
-                        <div className='col-3'>
-                          <button onClick={addRelationShip} className={'btn btn-sm btn-outline-info' + ' ' + addRelationshipClass}>Add Relationships</button>
+                      )}
+                      {props.addNewConnectionSettings.secondSelectboxSelected === true && !props.addNewConnectionSettings.isNewComponent && (
+                        <div className='row'>
+                          <p className='col-8'>{props.addNewConnectionSettings.relationshipText + ' ' + props.addNewConnectionSettings.componentText}</p>
+                          <div className='col-4'>
+                            <button onClick={addRelationShip} className={'btn btn-sm btn-outline-info' + ' '}>Add Relationships</button>
+                          </div>
+                          <div className='m--space-10' />
                         </div>
+                      )}
+                      {props.addNewConnectionSettings.secondSelectboxSelected === true && props.addNewConnectionSettings.isNewComponent && (
+                        <div className='row'>
+                          <p className='col-5'>{props.addNewConnectionSettings.relationshipText + ' '}</p>
+                          <input type='text' className='col-4 form-control m-input' onChange={handleNewComponent} value={props.addNewConnectionSettings.newComponentName} placeholder='New Component' aria-describedby='basic-addon2' />
+                          <div className='col-3'>
+                            <button onClick={addRelationShip} className={'btn btn-sm btn-outline-info' + ' ' + addRelationshipClass}>Add Relationships</button>
+                          </div>
+                          <div className='m--space-10' />
+                        </div>
+                      )}
+                      <div className='col-md-12'>
                         <div className='m--space-10' />
+                        <div className='m--space-10' />
+                        <hr size='3' />
+                        {props.addNewConnectionSettings.newConnectionArray.length > 0 &&
+                          props.addNewConnectionSettings.newConnectionArray.map(function (connection, index) {
+                            return (
+                              <div className='row'>
+                                <p className='col-8'>{connection.display_name}</p>
+                                <div className='col-4'>
+                                  <a href='javscript:void(0);' onClick={() => { removeRelationship(index) }} >remove</a>
+                                </div>
+                              </div>)
+                          })
+                        }
                       </div>
-                    )}
-                    <div className='col-md-12'>
-                      <div className='m--space-10' />
-                      <div className='m--space-10' />
-                      <hr size='3' />
-                      {props.addNewConnectionSettings.newConnectionArray.length > 0 &&
-                        props.addNewConnectionSettings.newConnectionArray.map(function (connection, index) {
-                          return (
-                            <div className='row'>
-                              <p className='col-8'>{connection.display_name}</p>
-                              <div className='col-4'>
-                                <a href='javscript:void(0);' onClick={() => { removeRelationship(index) }} >remove</a>
-                              </div>
-                            </div>)
-                        })
-                      }
+                    </div>
+                    <div className='modal-footer'>
+                      <button onClick={closeModal} className='btn btn-sm btn-outline-info'>Cancel</button>
+                      <button onClick={addConnections} className={'btn btn-sm btn-info ' + addConnectionClass}>Confirm</button>
                     </div>
                   </div>
-                  <div className='modal-footer'>
-                    <button onClick={closeModal} className='btn btn-sm btn-outline-info'>Cancel</button>
-                    <button onClick={addConnections} className={'btn btn-sm btn-info ' + addConnectionClass}>Confirm</button>
+                </div>
+              </div>
+            </ReactModal>
+            <ReactModal isOpen={props.successmodalIsOpen}
+              style={customStyles} >
+              {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
+              <div className={styles.modalwidth}>
+                <div className='modal-dialog'>
+                  <div className='modal-content'>
+                    <div className='modal-header'>
+                      <h4 className='modal-title' id='exampleModalLabel'>Confirmation</h4>
+                    </div>
+                    <div className='modal-body'>
+                      <p className={styles.confirmsg}>Some of the required properties do not have any values.</p>
+                      <p className={styles.confirmsg}>Are you sure you want to continue?</p>
+                    </div>
+                    <div className='modal-footer'>
+                      <button onClick={closeConfirmationModal} className='btn btn-sm btn-outline-info'>Back</button>
+                      <button onClick={submitUpdates} id='m_login_signup' className='btn btn-sm btn-info'>Submit Updates</button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </ReactModal>
-          <ReactModal isOpen={props.successmodalIsOpen}
-            style={customStyles} >
-            {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
-            <div className={styles.modalwidth}>
-              <div className='modal-dialog'>
-                <div className='modal-content'>
-                  <div className='modal-header'>
-                    <h4 className='modal-title' id='exampleModalLabel'>Confirmation</h4>
-                  </div>
-                  <div className='modal-body'>
-                    <p className={styles.confirmsg}>Some of the required properties do not have any values.</p>
-                    <p className={styles.confirmsg}>Are you sure you want to continue?</p>
-                  </div>
-                  <div className='modal-footer'>
-                    <button onClick={closeConfirmationModal} className='btn btn-sm btn-outline-info'>Back</button>
-                    <button onClick={submitUpdates} id='m_login_signup' className='btn btn-sm btn-info'>Submit Updates</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </ReactModal>
-          <ReactModal isOpen={props.relationshipActionSettings.isModalOpen}
-            onRequestClose={closeRelationshipActionModal}
-            shouldCloseOnOverlayClick={false}
-            className=''// style={{'content': {'top': '20%', 'display': 'block'}}
-            style={customStylescrud}>
-            {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
-            <div className={''} id='relationshipPropertyContent'>
-              <div className='modal-dialog modal-lg'>
-                <div className='modal-content' >
-                  <div className='modal-header'>
-                    {(props.relationshipActionSettings.actionType === 'edit' || props.relationshipActionSettings.actionType === 'view') && (
-                      <h4 className='modal-title' id='exampleModalLabel'>{'Relationship details for ' + props.relationshipActionSettings.relationshipText + ': ' + props.relationshipActionSettings.componentName}</h4>
-                    )}
-                    {props.relationshipActionSettings.actionType === 'delete' && (
-                      <h4 className='modal-title' id='exampleModalLabel'>Deleting Relationship, are you sure?</h4>
-                    )}
-                    <button type='button' onClick={closeRelationshipActionModal} className='close' data-dismiss='modal' aria-label='Close'>
-                      <span aria-hidden='true'>×</span>
-                    </button>
-                  </div>
-                  <div className='modal-body' style={{'height': 'calc(50vh - 65px)', 'overflow': 'auto'}}>
-                    { componentRelationshipPropertiesList !== '' && (
-                    <table className={'table ' + styles.borderless}>
-                      {componentRelationshipPropertiesList}
-                    </table>
-                    )}
-                    {props.relationshipActionSettings.actionType === 'delete' && (
-                    <h4>Are you sure you want to remove the following relationship?</h4>
-                    )}
-                    {props.relationshipActionSettings.actionType === 'delete' && (
-                    <h5 style={{'text-align': 'center'}}>{'' + props.relationshipActionSettings.relationshipText + ': ' + props.relationshipActionSettings.componentName}</h5>
-                    )}
-                  </div>
-                  <div className='modal-footer'>
-                    <button onClick={closeRelationshipActionModal} className='btn btn-sm btn-outline-info'>Cancel</button>
-                    {props.relationshipActionSettings.actionType === 'edit' && (
-                    <button onClick={updateRelationshipProperty} className={'btn btn-sm btn-info '}>Update</button>
-                    )}
-                    {props.relationshipActionSettings.actionType === 'delete' && (
-                    <button onClick={removeComponentRelationship} className={'btn btn-sm btn-info '}>Delete</button>
-                    )}
+            </ReactModal>
+            <ReactModal isOpen={props.relationshipActionSettings.isModalOpen}
+              onRequestClose={closeRelationshipActionModal}
+              shouldCloseOnOverlayClick={false}
+              className=''// style={{'content': {'top': '20%', 'display': 'block'}}
+              style={customStylescrud}>
+              {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
+              <div className={''} id='relationshipPropertyContent'>
+                <div className='modal-dialog modal-lg'>
+                  <div className='modal-content' >
+                    <div className='modal-header'>
+                      {(props.relationshipActionSettings.actionType === 'edit' || props.relationshipActionSettings.actionType === 'view') && (
+                        <h4 className='modal-title' id='exampleModalLabel'>{'Relationship details for ' + props.relationshipActionSettings.relationshipText + ': ' + props.relationshipActionSettings.componentName}</h4>
+                      )}
+                      {props.relationshipActionSettings.actionType === 'delete' && (
+                        <h4 className='modal-title' id='exampleModalLabel'>Deleting Relationship, are you sure?</h4>
+                      )}
+                      <button type='button' onClick={closeRelationshipActionModal} className='close' data-dismiss='modal' aria-label='Close'>
+                        <span aria-hidden='true'>×</span>
+                      </button>
+                    </div>
+                    <div className='modal-body' style={{'height': 'calc(50vh - 65px)', 'overflow': 'auto'}}>
+                      { componentRelationshipPropertiesList !== '' && (
+                      <table className={'table ' + styles.borderless}>
+                        {componentRelationshipPropertiesList}
+                      </table>
+                      )}
+                      {props.relationshipActionSettings.actionType === 'delete' && (
+                      <h4>Are you sure you want to remove the following relationship?</h4>
+                      )}
+                      {props.relationshipActionSettings.actionType === 'delete' && (
+                      <h5 style={{'text-align': 'center'}}>{'' + props.relationshipActionSettings.relationshipText + ': ' + props.relationshipActionSettings.componentName}</h5>
+                      )}
+                    </div>
+                    <div className='modal-footer'>
+                      <button onClick={closeRelationshipActionModal} className='btn btn-sm btn-outline-info'>Cancel</button>
+                      {props.relationshipActionSettings.actionType === 'edit' && (
+                      <button onClick={updateRelationshipProperty} className={'btn btn-sm btn-info '}>Update</button>
+                      )}
+                      {props.relationshipActionSettings.actionType === 'delete' && (
+                      <button onClick={removeComponentRelationship} className={'btn btn-sm btn-info '}>Delete</button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </ReactModal>
+            </ReactModal>
+          </div>
         </div>
       </div>
     )

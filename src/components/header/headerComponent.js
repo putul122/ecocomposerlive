@@ -1,13 +1,32 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ApplicationActivity from '../../containers/applicationActivity/applicationActivityContainer'
+import * as signalR from '@aspnet/signalr'
 // import { Redirect } from 'react-router-dom'
+let userToken = localStorage.getItem('userAccessToken')
+const connection = new signalR.HubConnectionBuilder()
+          .withUrl(' https://ecoconductor-push-notification-test.azurewebsites.net/notify')
+          .configureLogging(signalR.LogLevel.Information)
+          .build()
+connection.start().then(function () {
+  console.log('Connection Started---- >', connection)
+  connection.invoke('SendUserToken', userToken).catch(err => console.error('Call SendUserToken method---', err))
+}).catch(err => console.error('connection error --------------', err))
 
 export default function HeaderComponent (props) {
   let isQuickSlideOpen = props.isQuickSlideOpen
   let quickSlideClass = 'm-quick-sidebar--off'
   let isLoginSlideOpen = props.isLoginSlideOpen
   let loginSlideClass = 'm-dropdown--close'
+
+  connection.on('ReceiveMessage', (payload) => {
+    console.log('ReceiveMessage', payload)
+    if (payload.notificationFlag === 'true') {
+      props.setNotificationFlag(true)
+    } else {
+      props.setNotificationFlag(false)
+    }
+  })
 
   if (isQuickSlideOpen) {
     quickSlideClass = 'm-quick-sidebar--on'
@@ -18,6 +37,9 @@ export default function HeaderComponent (props) {
     event.preventDefault()
     quickSlideClass = 'm-quick-sidebar--on'
     props.setQuickslideFlag(true)
+    if (props.notificationFlag) {
+      connection.invoke('RecievedNotification', userToken).catch(err => console.error('Call RecievedNotification method---', err))
+    }
   }
 
   let closeQuickSlide = function (event) {
@@ -94,6 +116,7 @@ export default function HeaderComponent (props) {
                   <ul className='m-topbar__nav m-nav m-nav--inline'>
                     <li className='m-nav__item m-topbar__notifications m-dropdown m-dropdown--large m-dropdown--arrow m-dropdown--align-center m-dropdown--mobile-full-width m-dropdown--open' id='search-container' >
                       <a href='' className='m-nav__link m-dropdown__toggle' onClick={openQuickSlide} id='m_topbar_notification_icon'>
+                        {props.notificationFlag && (<span className='m-nav__link-badge m-badge m-badge--dot m-badge--dot-small m-badge--danger' />)}
                         <span className='m-nav__link-icon m-topbar__usericon'>
                           <span className='m-nav__link-icon-wrapper'><i className='flaticon-music-2' /></span>
                         </span>
@@ -242,9 +265,9 @@ export default function HeaderComponent (props) {
 HeaderComponent.propTypes = {
   isLoggedin: PropTypes.any,
   // modalIsOpen: PropTypes.any,
-  // setModalOpenStatus: PropTypes.func,
+  // setNotificationFlag: PropTypes.func,
   isQuickSlideOpen: PropTypes.any,
   isLoginSlideOpen: PropTypes.any,
-  // setQuickslideFlag: PropTypes.func,
+  notificationFlag: PropTypes.any,
   setLoginslideFlag: PropTypes.func
 }

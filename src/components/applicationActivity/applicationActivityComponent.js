@@ -72,7 +72,7 @@ export default function ApplicationActivity (props) {
           // console.log('------>messag full', result)
           activityMessagesList = result.map(function (messageGroup, index) {
             // console.log('------>messag ', index, messageGroup)
-            let contextIconlink = messageGroup[0].discussion.context.icon ? messageGroup[0].discussion.context.icon : 'https://ecocomposermockapis.azurewebsites.net/ecocomposer-resources/icons/0'
+            let contextIconlink = messageGroup[0].discussion.context.icon ? 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/' + messageGroup[0].discussion.context.icon : 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/1'
             console.log('context icon link', contextIconlink)
             //   // let contextIconlink = messageGroup[0].links.find(function (link) { console.log(link); return link.rel === 'context_icon' })
           //   console.log(contextIconlink)
@@ -81,7 +81,7 @@ export default function ApplicationActivity (props) {
               let description = messageGroup[0].discussion.context.description
               let messageList = messageGroup.map(function (message, i) {
                 // let userIconlink = message.links.find(function (link) { return link.rel === 'author_avatar' })
-                let userIconlink = message.author.icon ? message.author.icon : 'https://ecocomposermockapis.azurewebsites.net/ecocomposer-resources/icons/10'
+                let userIconlink = message.author.icon ? 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/' + message.author.icon : 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18'
                 let messageContent = message.name.replace(/<m ix=0>/g, '<a href="javascript:void(0);">@').replace(/<\/m>/g, '</a>')
                 .replace(/<r ix=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
                 .replace(/<r ix=1>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
