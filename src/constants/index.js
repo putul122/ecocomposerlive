@@ -55,6 +55,10 @@ const api = {
     },
     deleteRelationship: function (payload) {
         return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_relationships/' + payload.relationshipId
+    },
+    getDiscussions: 'https://ecoconductor-dev-api-notification.azurewebsites.net/discussions',
+    getDiscussionMessages: function (payload) {
+        return 'https://ecoconductor-dev-api-notification.azurewebsites.net/discussions/' + payload.id + '/messages'
     }
   }
 

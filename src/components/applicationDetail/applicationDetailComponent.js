@@ -2,11 +2,11 @@ import React from 'react'
 import styles from './applicationDetailComponent.scss'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
+import debounce from 'lodash/debounce'
 import Modal from 'react-modal'
 // import ApplicationModelComponent for graph Model Visualization
 import ApplicationModelComponent from '../applicationModel/applicationModelComponent'
 import { Link } from 'react-router-dom'
-// import componentTypeComponentPageRoute from '../../routes/componentTypeComponentPage/componentTypeComponentPageRoute'
 var divStyle = {
   width: '95%',
   height: '30%',
@@ -28,17 +28,6 @@ const customStyles = {
 }
 
 export default function ApplicationDetail (props) {
-  // let addComponentMessageResponse = function (message) {
-  //   if (message) {
-  //     return (<div className='m-alert m-alert--outline alert alert-danger alert-dismissible animated fadeIn' role='alert'>
-  //       <button type='button' className='close' data-dismiss='alert' aria-label='Close' />
-  //       <span>{message}</span>
-  //     </div>
-  //     )
-  //   } else {
-  //     return (<div />)
-  //   }
-  // }
   let ComponentName = ''
   let ComponentDescription = ''
   let ComponentTypeIcon = ''
@@ -53,7 +42,6 @@ export default function ApplicationDetail (props) {
   let totalComponentTypeComponent
   let pageArray = []
   let ComponentTypeId
-  // let componentId
   let listPage = []
   let paginationLimit = 5
   let NameInputBox
@@ -65,13 +53,6 @@ export default function ApplicationDetail (props) {
     console.log('handle change', event.target.value, typeof event.target.value)
     props.setPerPage(parseInt(event.target.value))
   }
-  // let messageBlock = addComponentMessageResponse('')
-  console.log('props', props.setModalOpenStatus)
-  // console.log('propsforredirect ', props.addComponent)
-  console.log('props', props.setConfirmationModalOpenStatus)
-  console.log('creating state for redirection', props.setAddRedirectFlag)
-  // console.log('props', props.showToasterSuccess)
-  // let paginationList
   if (props.componentDetail !== '') {
     ComponentName = props.componentDetail.resources[0].name
     ComponentDescription = props.componentDetail.resources[0].description
@@ -80,17 +61,25 @@ export default function ApplicationDetail (props) {
   }
   if (props.componentComponents !== '') {
     console.log(props.componentComponents)
-    componentComponentsList = componentComponents.map(function (componentComponent, index) {
-      return (
-        <tr className='m-datatable__row m-datatable__row--even' key={index} style={{ 'left': '0px' }} >
-          <td className='m-datatable__cell--sorted m-datatable__cell' style={{ 'width': '142px' }} >
-            <span className='m-card-user m-card-user__details'><Link to={'/components/' + ComponentTypeId + '/' + componentComponent.id}>{ componentComponent.name }</Link></span>
-          </td>
-          <td className='m-datatable__cell--sorted m-datatable__cell'><span>{ componentComponent.description }</span></td>
+    if (componentComponents.length > 0) {
+      componentComponentsList = componentComponents.map(function (componentComponent, index) {
+        return (
+          <tr className='m-datatable__row m-datatable__row--even' key={index} style={{ 'left': '0px' }} >
+            <td className='m-datatable__cell--sorted m-datatable__cell' style={{ 'width': '142px' }} >
+              <span className='m-card-user m-card-user__details'><Link to={'/components/' + ComponentTypeId + '/' + componentComponent.id}>{ componentComponent.name }</Link></span>
+            </td>
+            <td className='m-datatable__cell--sorted m-datatable__cell'><span>{ componentComponent.description }</span></td>
+          </tr>
+        )
+      })
+    } else {
+      componentComponentsList = []
+      componentComponentsList.push((
+        <tr key={0}>
+          <td colSpan='2'>{'No data to display'}</td>
         </tr>
-      )
-    })
-    console.log(componentComponentsList)
+      ))
+    }
     totalComponentTypeComponent = props.componentComponents.total_count
     totalNoPages = Math.ceil(totalComponentTypeComponent / perPage)
 
@@ -193,15 +182,16 @@ export default function ApplicationDetail (props) {
     })
   }
 
-  let handleInputChange = function (event) {
-    console.log('search text', searchTextBox.value)
+  let handleInputChange = debounce((e) => {
+    console.log(e)
+    const value = searchTextBox.value
     let payload = {
       'id': props.componentDetail.resources[0].id,
       'ComponentTypeComponent': {
-        'search': searchTextBox.value ? searchTextBox.value : '',
+        'search': value || '',
         'page_size': props.perPage,
         'page': currentPage,
-        'recommended': searchTextBox.value === ''
+        'recommended': value === ''
       }
     }
     if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
@@ -217,32 +207,18 @@ export default function ApplicationDetail (props) {
       let found = _.filter(group, {'number': currentPage})
       if (found.length > 0) { return group }
     })
-  }
+  }, 500)
   let openModal = function (event) {
     event.preventDefault()
     props.setModalOpenStatus(true)
-    console.log('props', props.setModalOpenStatus)
    }
   let closeModal = function () {
     props.setModalOpenStatus(false)
   }
   let closeConfirmationModal = function (event) {
     event.preventDefault()
-    let payload = {
-      'component_type': {
-        'id': props.componentDetail.resources[0].id
-      }
-      // 'name': NameInputBox.value,
-      // 'description': DescriptionBox.value
-    }
-    console.log('demopayload', payload)
-    // let path = `{'/components/' + nextProps.componentDetail.resources[0].id}`
-    // this.props.history.push(path)
-    // props.addComponent(true)
-    // this.props.router.push('/components/' + props.componentDetail.resources[0].id)
     props.setConfirmationModalOpenStatus(false)
-    // this.props.router.push('/components/' + props.componentDetail.resources[0].id)
-   }
+  }
   let createComponent = function (event) {
     event.preventDefault()
     // messageBlock = addComponentMessageResponse('')
@@ -253,16 +229,10 @@ export default function ApplicationDetail (props) {
       'name': NameInputBox.value,
       'description': DescriptionBox.value
     }
-    console.log('demopayload', payload)
-    console.log('newcomponent', payload.name)
     props.addComponentComponent(payload)
     props.setAddRedirectFlag(false)
     props.setConfirmationModalOpenStatus(false)
     props.setModalOpenStatus(false)
-    // messageBlock = loggedInMessageResponse('')
-    // props.history.push('/')
-    // props.history.push('/components/' + ComponentTypeId + '/' + componentId)
-    // props.showToasterSuccess(true)
   }
   return (
     <div>
@@ -347,7 +317,7 @@ export default function ApplicationDetail (props) {
             <div className='row'>
               <div className='col-sm-12 col-md-9 m--align-left'>
                 <div className='m-input-icon m-input-icon--left'>
-                  <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onChange={handleInputChange} />
+                  <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleInputChange} />
                   <span className='m-input-icon__icon m-input-icon__icon--left'>
                     <span>
                       <i className='la la-search' />
@@ -448,17 +418,8 @@ export default function ApplicationDetail (props) {
 ApplicationDetail.propTypes = {
   componentDetail: PropTypes.any,
   componentComponents: PropTypes.any,
-  // addComponent: PropTypes.func,
   modalIsOpen: PropTypes.any,
   successmodalIsOpen: PropTypes.any,
-  setModalOpenStatus: PropTypes.func,
-  setConfirmationModalOpenStatus: PropTypes.func,
-  // searchComponentComponent: PropTypes.func,
-  // showToasterSuccess: PropTypes.func,
   currentPage: PropTypes.any,
-  perPage: PropTypes.any,
-  // history: PropTypes.any,
-  setAddRedirectFlag: PropTypes.func
-  // setCurrentPage: PropTypes.func,
-  // fetchComponentComponent: PropTypes.func
+  perPage: PropTypes.any
 }

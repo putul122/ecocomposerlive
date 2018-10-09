@@ -7,6 +7,7 @@ import applicationDetailReducer from './applicationDetailReducer/applicationDeta
 import applicationActivityReducer from './applicationActivityReducer/applicationActivityReducerReducer'
 import componentTypeComponentReducer from './componentTypeComponentReducer/componentTypeComponentReducerReducer'
 import signUpReducer from './signUpReducer/signUpReducerReducer'
+import discussionReducer from './discussionReducer/discussionReducerReducer'
 export default combineReducers({
     basicReducer,
     loginReducer,
@@ -15,5 +16,6 @@ export default combineReducers({
     applicationDetailReducer,
     applicationActivityReducer,
     componentTypeComponentReducer,
-    signUpReducer
+    signUpReducer,
+    discussionReducer
 })

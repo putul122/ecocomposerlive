@@ -16,6 +16,7 @@ const SET_DROPDOWN_FLAG = 'BasicReducer/SET_DROPDOWN_FLAG'
 const SET_REDIRECT_FLAG = 'BasicReducer/SET_REDIRECT_FLAG'
 const SET_ADD_REDIRECT_FLAG = 'BasicReducer/SET_ADD_REDIRECT_FLAG'
 const SET_NOTIFICATION_FLAG = 'BasicReducer/SET_NOTIFICATION_FLAG'
+const TOGGLE_FLIPIN_X = 'BasicReducer/TOGGLE_FLIPIN_X'
 
 export const actions = {
   INCREMENT,
@@ -33,7 +34,8 @@ export const actions = {
   SET_REDIRECT_FLAG,
   SET_ADD_REDIRECT_FLAG,
   SET_DELETE_MODAL_OPEN_STATUS,
-  SET_NOTIFICATION_FLAG
+  SET_NOTIFICATION_FLAG,
+  TOGGLE_FLIPIN_X
   }
 
 export const actionCreators = {
@@ -51,7 +53,8 @@ export const actionCreators = {
   setDropdownFlag: createAction(SET_DROPDOWN_FLAG),
   setRedirectFlag: createAction(SET_REDIRECT_FLAG),
   setAddRedirectFlag: createAction(SET_ADD_REDIRECT_FLAG),
-  setNotificationFlag: createAction(SET_NOTIFICATION_FLAG)
+  setNotificationFlag: createAction(SET_NOTIFICATION_FLAG),
+  toggleFlipInX: createAction(TOGGLE_FLIPIN_X)
 }
 
 export const initialState = {
@@ -74,7 +77,8 @@ export const initialState = {
   // client_secret: 'SysHZjmhytHtZwQA4DRctXKU4TTvQajTu2zVANUU9PKmAUnC2gnMUfRxNpbXHJdu',
   authenticateUser: '',
   isDropDownOpen: false,
-  notificationFlag: false
+  notificationFlag: false,
+  flipInX: 'm-login--signin'
 }
 
 export default handleActions(
@@ -140,6 +144,9 @@ export default handleActions(
     }),
     [SET_NOTIFICATION_FLAG]: (state, action) => ({ ...state,
       notificationFlag: action.payload
+    }),
+    [TOGGLE_FLIPIN_X]: (state, action) => ({ ...state,
+      flipInX: action.payload
     })
   },
   initialState

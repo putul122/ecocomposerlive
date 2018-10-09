@@ -1,10 +1,9 @@
 import React from 'react'
 import styles from './componentTypeComponentComponent.scss'
 import PropTypes from 'prop-types'
-// import ComponentTypeComponentsData from './mockGetComponentTypeComponents'
-// import ComponentTypeConstraintsData from './mockGetComponentTypeConstraints'
 import _ from 'lodash'
 import ComponentModelComponent from '../componentModel/componentModelComponent'
+import Discussion from '../../containers/discussion/discussionContainer'
 import Select from 'react-select'
 import CreatableSelect from 'react-select/lib/Creatable'
 import moment from 'moment'
@@ -575,7 +574,7 @@ export default function ComponentTypeComponent (props) {
             value = childProperty.value_set_value ? childProperty.value_set_value.name : null
             htmlElement = function () {
               return (<Select
-                className='col-7 input-sm form-control m-input'
+                className='col-7 input-sm m-input'
                 placeholder='Select Options'
                 isClearable
                 defaultValue={dvalue}
@@ -868,14 +867,6 @@ export default function ComponentTypeComponent (props) {
           return false
         }
       })
-      // optionItems = SelectedData.map((option, index) =>
-      //   <option key={index} value={option.id}>{option.display_name}</option>
-      // )
-      // optionItems.unshift(<option key={-1} value={'-1'}>{'--Choose Relationship Type--'}</option>)
-      // selectComponentOptions = props.componentTypeComponents.resources.map((option, index) =>
-      //   <option key={index} value={index}>{option.name}</option>
-      // )
-      // selectComponentOptions.unshift(<option key={-1} value={'-1'}>{'--Search Server--'}</option>)
 
       selectComponentOptions1 = props.componentTypeComponents.resources.map((component, index) => {
         let option = {...component}
@@ -900,6 +891,18 @@ export default function ComponentTypeComponent (props) {
       componentTypeComponentDescription = props.componentTypeComponentData.resources[0].description
       startNode.name = props.componentTypeComponentData.resources[0].name
       startNode.title = props.componentTypeComponentData.resources[0].name
+    }
+
+    let toggleExpandIcon = function (index) {
+      // eslint-disable-next-line
+      let iconClass = $('#expandIcon' + index).attr('class')
+      if (iconClass === 'fa fa-plus') {
+        // eslint-disable-next-line
+        $('#expandIcon' + index).removeClass('fa-plus').addClass('fa-minus')
+      } else {
+        // eslint-disable-next-line
+        $('#expandIcon' + index).removeClass('fa-minus').addClass('fa-plus')
+      }
     }
 
     if (componentTypeComponentProperties !== '') {
@@ -962,7 +965,7 @@ export default function ComponentTypeComponent (props) {
             value = childProperty.value_set_value ? childProperty.value_set_value.name : null
             htmlElement = function () {
               return (<Select
-                className='col-7 input-sm form-control m-input'
+                className='col-7 input-sm m-input'
                 placeholder='Select Options'
                 isClearable
                 defaultValue={dvalue}
@@ -993,11 +996,17 @@ export default function ComponentTypeComponent (props) {
         })
         return (
           <tbody key={index} className={'col-6'}>
-            <tr>
-              <td><span className={styles.title}>Type</span></td>
+            <tr id={'property' + index} onClick={(event) => { event.preventDefault(); toggleExpandIcon(index) }} data-toggle='collapse' data-target={'#expand' + index} style={{cursor: 'pointer'}}>
+              <td><icon id={'expandIcon' + index} className={'fa fa-plus'} aria-hidden='true' />&nbsp;</td>
               <td><span className={styles.labelbold}>{property.name}</span></td>
             </tr>
-            {childProperties}
+            <tr className='collapse' id={'expand' + index}>
+              <td colSpan='2'>
+                <table>
+                  {childProperties}
+                </table>
+              </td>
+            </tr>
           </tbody>
         )
       })
@@ -1297,7 +1306,7 @@ export default function ComponentTypeComponent (props) {
                 </ul>
                 <div className='tab-content'>
                   <div className={'tab-pane' + showProperties} id='m_tabs_3_1' role='tabpanel'>
-                    <table className={'table ' + styles.borderless}>
+                    <table className={'table table-striped- table-bordered table-hover table-checkable dataTable dtr-inline collapsed ' + styles.borderless}>
                       {componentTypeComponentPropertiesList}
                     </table>
                   </div>
@@ -1318,7 +1327,7 @@ export default function ComponentTypeComponent (props) {
                 </div>
               </div>
             </div>
-            <div className='col-sm-12 col-md-6'>
+            <div className='col-sm-12 col-md-7'>
               <div className='m--space-10' />
               <div className={''}>
                 <h2>{componentTypeComponentName} Model Diagram</h2><br />
@@ -1387,7 +1396,7 @@ export default function ComponentTypeComponent (props) {
                         <label htmlFor='SelectRelationship' className='col-5 col-form-label'>Choose Relationship Type</label>
                         <div className='col-7'>
                           <Select
-                            className='input-sm form-control m-input'
+                            className='input-sm m-input'
                             placeholder='Choose Relationships Type'
                             isClearable
                             isOptionDisabled={(option) => { return (isParentSelected && option.isParent) }}
@@ -1411,7 +1420,7 @@ export default function ComponentTypeComponent (props) {
                             {/* <select className='form-control m-input' onBlur={handleSecondSelect} >{selectComponentOptions}</select> */}
                             <CreatableSelect
                               isClearable
-                              className='form-control m-input'
+                              className='input-sm m-input'
                               // name='component-select'
                               // value={props.addNewConnectionSettings.secondSelectboxValue}
                               onChange={handleSecondSelect}
@@ -1536,24 +1545,12 @@ export default function ComponentTypeComponent (props) {
             </ReactModal>
           </div>
         </div>
+        <Discussion type='Component' {...props} />
       </div>
     )
 }
 
 ComponentTypeComponent.propTypes = {
-  // setAddConnectionSettings: PropTypes.func,
-  // setRelationshipsValue: PropTypes.func,
-  // updateComponentTypeComponentRelationships: PropTypes.func,
-  // copyComponentProperties: PropTypes.func,
-  // copyComponentData: PropTypes.func,
-  // restoreComponentProperties: PropTypes.func,
-  // editComponentProperties: PropTypes.func,
-  // pushComponentPropertyPayload: PropTypes.func,
-  // updateComponentTypeComponentProperties: PropTypes.func,
-  // updateComponentTypeComponent: PropTypes.func,
-  // setConfirmationModalOpenStatus: PropTypes.func,
-  // relationshipProperty: PropTypes.any,
-  // viewRelationshipProperty: PropTypes.func,
   deleteRelationshipResponse: PropTypes.any,
   setRelationshipActionSettings: PropTypes.func,
   updateRelationshipPropertyResponse: PropTypes.any,

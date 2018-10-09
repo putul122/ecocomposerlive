@@ -62,7 +62,8 @@ export default compose(
           localStorage.setItem('isLoggedin', true)
           // eslint-disable-next-line
           toastr.success('you logged in successfully.')
-          this.props.history.push('/home')
+          window.location.href = window.location.origin + '/home'
+          // this.props.history.push('/home')
         } else {
           // error in login
         }

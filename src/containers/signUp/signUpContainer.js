@@ -3,6 +3,7 @@ import { compose, lifecycle } from 'recompose'
 import SignUp from '../../components/signUp/signUpComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators as signUpActionCreators } from '../../redux/reducers/signUpReducer/signUpReducerReducer'
+import { actionCreators as basicActionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
 // Global State
 export function mapStateToProps (state, props) {
   return {
@@ -17,7 +18,8 @@ export function mapStateToProps (state, props) {
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
   createUser: sagaActions.signUpActions.createUser,
-  setCreateUserProcessStatus: signUpActionCreators.setCreateUserProcessStatus
+  setCreateUserProcessStatus: signUpActionCreators.setCreateUserProcessStatus,
+  toggleFlipInX: basicActionCreators.toggleFlipInX
 }
 
 // If you want to use the function mapping

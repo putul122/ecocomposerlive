@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import styles from './signUpComponent.scss'
 
 export default function SignUp (props) {
+  console.log(props.client_secret)
+  console.log(props.client_id)
   let apiCalling = props.createUserProcess
   let FullNameBox
   let EmailBox
@@ -62,36 +64,34 @@ export default function SignUp (props) {
       messageBlock = ''
     }
   }
+
+  let handelClick = function (event) {
+    props.toggleFlipInX('m-login--signin')
+  }
     return (
       <div className='m-login__wrapper-1 m-portlet-full-height'>
         <div className='m-login__wrapper-1-1'>
           <div className='m-login__contanier'>
             <div className='m-login__content'>
-              <div className='m-login__logo'>
-                <a href=''>
-                  <img alt='' src='/assets/ECO Conductor.png' width='150px' height='150px' />
-                  {/* <img alt='' src='/assets/Telkom.png' width='170px' /> */}
-                </a>
-              </div>
-              <div className={styles.logintitle}>
-                <h3>JOIN OUR ECOCONDUCTOR COMMUNITY GET FREE ACCOUNT</h3>
-                {/* <h2>Welcome to TelkomECO Core</h2> */}
-                <p>Please complete details to register</p>
+              <div className='m-login__head'>
+                <h3 className='m-login__title'>Sign Up</h3>
+                <div className='m-login__desc'>Enter your details to create your account:</div>
               </div>
               <div className='m-login__form m-form'>
                 {messageBlock}
-                <div className=''>
-                  <input className={styles.customformcontrol} type='text' ref={input => (FullNameBox = input)} placeholder='Fullname' name='fullname' />
+                <div className='form-group m-form__group'>
+                  <input className={'form-control'} type='text' ref={input => (FullNameBox = input)} placeholder='Fullname' name='fullname' />
                 </div>
-                <div className=''>
-                  <input className={styles.customformcontrol} type='text' ref={input => (EmailBox = input)} placeholder='Email' name='email' autoComplete='off' />
+                <div className='form-group m-form__group'>
+                  <input className={'form-control'} type='text' ref={input => (EmailBox = input)} placeholder='Email' name='email' autoComplete='off' />
                 </div>
-                <div className=''>
-                  <input className={styles.customformcontrol} type='password' ref={input => (PasswordBox = input)} placeholder='Password' name='password' />
+                <div className='form-group m-form__group'>
+                  <input className={'form-control'} type='password' ref={input => (PasswordBox = input)} placeholder='Password' name='password' />
                 </div>
               </div>
               <div className='m-login__form-action'>
-                <button type='button' onClick={handleInput} id='m_login_signup' className={styles.buttonbg + ' ' + loadingClass}>Register</button>
+                <button type='button' onClick={handleInput} id='m_login_signup' className={styles.buttonbg + ' ' + loadingClass}>Register</button>&nbsp;&nbsp;
+                <button id='m_login_signup_cancel' onClick={handelClick} className='btn btn-outline-info m-btn m-btn--pill m-btn--custom'>Cancel</button>
               </div>
             </div>
           </div>
@@ -100,11 +100,11 @@ export default function SignUp (props) {
     )
   }
   SignUp.propTypes = {
-    // isLoggedin: PropTypes.any,
+    toggleFlipInX: PropTypes.func,
     client_id: PropTypes.any,
     client_secret: PropTypes.any,
-    createUser: PropTypes.func,
+    // createUser: PropTypes.func,
     createUserResponse: PropTypes.any,
-    createUserProcess: PropTypes.any,
-    setCreateUserProcessStatus: PropTypes.func
+    createUserProcess: PropTypes.any
+    // setCreateUserProcessStatus: PropTypes.func
   }
