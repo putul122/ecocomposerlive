@@ -34,6 +34,7 @@ export default compose(
   lifecycle({
     componentDidMount: function () {},
     componentWillReceiveProps (nextProps) {
+      console.log('next props', nextProps)
       if (nextProps.isLoggedin) {
         localStorage.setItem('isLoggedin', nextProps.isLoggedin)
       }

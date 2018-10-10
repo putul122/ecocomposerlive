@@ -48,7 +48,7 @@ export default function Discussion (props) {
           .replace(/<r ix=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
           .replace(/<r ix=1>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
           .replace(/<t>/g, ' #').replace(/<\/t>/g, '')
-          return (<li><img src={userIconlink} alt={cdata.author.name} />{ReactHtmlParser(messageContent)}</li>)
+          return (<li><img src={userIconlink} alt={cdata.author.name} />{ReactHtmlParser(messageContent)}<span className='pull-right' style={{cursor: 'pointer'}}><i className='fa fa-reply' /></span></li>)
         })
       }
       return (
@@ -60,9 +60,21 @@ export default function Discussion (props) {
           </a>
           <div className='m-accordion__item-body collapse' id={'m_accordion_7_item_1_body' + index} role='tabpanel' aria-labelledby={'m_accordion_7_item_1_head' + index} data-parent='#m_accordion_7'>
             <div className='m-accordion__item-content' >
-              <ul>
-                {childElement}
-              </ul>
+              <div className='m-messenger m-messenger--message-arrow m-messenger--skin-light'>
+                <br />
+                <div className='m-messenger__form'>
+                  <div className='m-messenger__form-controls'>
+                    <input type='text' name='' placeholder='New Messages' className='m-messenger__form-input' />
+                  </div>
+                  <div className='m-messenger__form-tools'>
+                    <a href='javascript:void(0);' className='btn btn-sm btn-metal'>Reply</a>
+                  </div>
+                </div>
+                <div className='m-messenger__seperator' />
+                <ul>
+                  {childElement}
+                </ul>
+              </div>
             </div>
           </div>
         </div>

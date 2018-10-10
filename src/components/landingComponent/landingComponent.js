@@ -48,10 +48,10 @@ export default function Landing (props) {
             <div className='m-login__wrapper-2 m-portlet-full-height'>
               <div className='m-login__contanier'>
                 <div className='m-login__signin animated flipInX'>
-                  <Login />
+                  <Login {...props} />
                 </div>
                 <div className='m-login__signup animated flipInX'>
-                  <SignUp />
+                  <SignUp {...props} />
                 </div>
               </div>
             </div>

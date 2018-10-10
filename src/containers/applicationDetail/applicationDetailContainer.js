@@ -68,7 +68,10 @@ export default compose(
       this.props.fetchComponentById && this.props.fetchComponentConstraint(payload)
       this.props.fetchComponentComponent && this.props.fetchComponentComponent(payload)
     },
-    componentDidMount: function () {},
+    componentDidMount: function () {
+      // eslint-disable-next-line
+      $('[data-toggle="tooltip"]').tooltip()
+    },
     componentWillReceiveProps: function (nextProps) {
       console.log('comp will receive props mountct', this.props)
       console.log('comp will receive props mountct', nextProps)
