@@ -13,7 +13,7 @@ export default function Landing (props) {
       if (props.flipInX === 'm-login--signin') {
         props.toggleFlipInX('m-login--signup')
       } else {
-        props.toggleFlipInX('m-login--signin')
+        // props.toggleFlipInX('m-login--signin')
       }
     }
     return (
