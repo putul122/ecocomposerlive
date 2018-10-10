@@ -65,10 +65,10 @@ export default function ApplicationDetail (props) {
       componentComponentsList = componentComponents.map(function (componentComponent, index) {
         return (
           <tr className='m-datatable__row m-datatable__row--even' key={index} style={{ 'left': '0px' }} >
-            <td className='m-datatable__cell--sorted m-datatable__cell' style={{ 'width': '142px' }} >
-              <span className='m-card-user m-card-user__details'><Link to={'/components/' + ComponentTypeId + '/' + componentComponent.id}>{ componentComponent.name }</Link></span>
+            <td className='m-datatable__cell--sorted m-datatable__cell' style={{ 'width': '142px' }} data-toggle='tooltip' data-placement='top' title='Horray' data-original-title='Tooltip title' >
+              <span className='m-card-user m-card-user__details'><Link to={'/components/' + ComponentTypeId + '/' + componentComponent.id}>{ componentComponent.name.length > 75 ? componentComponent.name.substring(0, 75) + ' ...' : componentComponent.name }</Link></span>
             </td>
-            <td className='m-datatable__cell--sorted m-datatable__cell'><span>{ componentComponent.description }</span></td>
+            <td className='m-datatable__cell--sorted m-datatable__cell'><span>{ componentComponent.description.length > 75 ? componentComponent.description.substring(0, 75) + ' ...' : componentComponent.description }</span></td>
           </tr>
         )
       })
