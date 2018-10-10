@@ -38,7 +38,7 @@ export default function Landing (props) {
                       Amazing Stuff is Lorem Here.Grownng Team
                     </div> */}
                     <div className='m-login__form-action'>
-                      <button onClick={handelClick} type='button' id='m_login_signup' className='btn btn-outline-accent m-btn--pill'>Get An Account</button>
+                      <button onClick={handelClick} type='button' id='m_login_signup' className='btn btn-outline-info m-btn--pill'>Get An Account</button>
                     </div>
                   </div>
                 </div>

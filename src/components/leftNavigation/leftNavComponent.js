@@ -18,7 +18,7 @@ class LeftNavigation extends React.Component {
         <img alt='' src='assets/ECO-Conductor.png' />
         </a> */}
         <a href='/'>
-          <img alt='' src='/assets/Telkom.png' width='100px' style={{marginTop: '13'}} />
+          <img alt='' src='/assets/ECO-Conductor.png' width='100px' style={{marginTop: '13'}} />
         </a>
       </div>
       {/* <!-- END: Brand --> */}
