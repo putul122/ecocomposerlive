@@ -57,9 +57,11 @@ const api = {
         return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentId + '/component_relationships/' + payload.relationshipId
     },
     getDiscussions: 'https://ecoconductor-dev-api-notification.azurewebsites.net/discussions',
-    getDiscussionMessages: function (payload) {
-        return 'https://ecoconductor-dev-api-notification.azurewebsites.net/discussions/' + payload.id + '/messages'
-    }
+    getDiscussionMessages: function (id) {
+        return 'https://ecoconductor-dev-api-notification.azurewebsites.net/discussions/' + id + '/messages'
+    },
+    getAccountArtefacts: 'https://account-eco-dev.ecoconductor.com/artefacts',
+    getModelArtefacts: 'https://model-eco-dev.ecoconductor.com/artefacts'
   }
 
 export default api

@@ -10,7 +10,14 @@ export function mapStateToProps (state, props) {
     hideSlideAction: state.discussionReducer.hideSlideAction,
     discussions: state.discussionReducer.discussions,
     discussionMessages: state.discussionReducer.discussionMessages,
-    discussionId: state.discussionReducer.discussionId
+    discussionId: state.discussionReducer.discussionId,
+    artefactAccounts: state.discussionReducer.artefactAccounts,
+    artefactModels: state.discussionReducer.artefactModels,
+    formattedAccounts: state.discussionReducer.formattedAccounts,
+    formattedModels: state.discussionReducer.formattedModels,
+    newMessage: state.discussionReducer.newMessage,
+    replySettings: state.discussionReducer.replySettings,
+    createMessageResponse: state.discussionReducer.createMessageResponse
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -18,7 +25,14 @@ export const propsMapping: Callbacks = {
   setQuickslideDiscussion: actionCreators.setQuickslideDiscussion,
   setDiscussionId: actionCreators.setDiscussionId,
   fetchDiscussions: sagaActions.discussionActions.fetchDiscussions,
-  fetchDiscussionMessages: sagaActions.discussionActions.fetchDiscussionMessages
+  fetchDiscussionMessages: sagaActions.discussionActions.fetchDiscussionMessages,
+  fetchAccountArtefacts: sagaActions.discussionActions.fetchAccountArtefacts,
+  fetchModelArtefacts: sagaActions.discussionActions.fetchModelArtefacts,
+  replyDiscussionMessages: sagaActions.discussionActions.replyDiscussionMessages,
+  setFormattedAccountData: actionCreators.setFormattedAccountData,
+  setFormattedModelData: actionCreators.setFormattedModelData,
+  setMessageData: actionCreators.setMessageData,
+  setReplySettings: actionCreators.setReplySettings
 }
 
 // If you want to use the function mapping
@@ -31,16 +45,57 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      console.log('component will mount Discussion', this.props)
-      console.log('component will mount Discussion', this.props.match)
+      let contextId = ''
+      if (this.props.type === 'ComponentType') {
+        contextId = this.props.match.params.id
+      } else {
+        contextId = this.props.match.params.componentId
+      }
       let payload = {
         'context_type_key': this.props.type,
-        'context_id': this.props.match.params.componentId
+        'context_id': contextId
+      }
+      let initialPayload = {
+        'search': ''
       }
       this.props.fetchDiscussions && this.props.fetchDiscussions(payload)
+      this.props.fetchAccountArtefacts && this.props.fetchAccountArtefacts(initialPayload)
+      this.props.fetchModelArtefacts && this.props.fetchModelArtefacts(initialPayload)
     },
     componentDidMount: function () {
         console.log('component did mount')
+    },
+    componentWillReceiveProps: function (nextProps) {
+      if (nextProps.artefactAccounts && nextProps.artefactAccounts !== this.props.artefactAccounts) {
+        if (nextProps.artefactAccounts.result_code === 0) {
+          let accountsData = nextProps.artefactAccounts.resources.map(function (account, index) {
+            let obj = {}
+            obj.id = account.id
+            obj.display = account.name
+            return obj
+          })
+          this.props.setFormattedAccountData && this.props.setFormattedAccountData(accountsData)
+        }
+      }
+      if (nextProps.artefactModels && nextProps.artefactModels !== this.props.artefactModels) {
+        if (nextProps.artefactModels.result_code === 0) {
+          let modelData = nextProps.artefactModels.resources.map(function (model, index) {
+            let obj = {}
+            obj.id = model.id
+            obj.display = model.name
+            return obj
+          })
+          this.props.setFormattedModelData && this.props.setFormattedModelData(modelData)
+        }
+      }
+      if (nextProps.createMessageResponse && nextProps.createMessageResponse !== this.props.createMessageResponse) {
+        if (nextProps.createMessageResponse.result_code === 0) {
+          let payload = {
+            id: this.props.discussionId
+          }
+          this.props.fetchDiscussionMessages && this.props.fetchDiscussionMessages(payload)
+        }
+      }
     }
   })
 )(Discusson)

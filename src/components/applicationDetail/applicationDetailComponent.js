@@ -2,6 +2,7 @@ import React from 'react'
 import styles from './applicationDetailComponent.scss'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
+import Discussion from '../../containers/discussion/discussionContainer'
 import debounce from 'lodash/debounce'
 import Modal from 'react-modal'
 // import ApplicationModelComponent for graph Model Visualization
@@ -410,6 +411,7 @@ export default function ApplicationDetail (props) {
           </div>
         </div>
       </div>
+      <Discussion name={ComponentName} type='ComponentType' {...props} />
       {/* <Route exact path={`/components/:componentTypeId/:componentTypeComponentId`} component={componentTypeComponentPageRoute} /> */}
     </div>
   )

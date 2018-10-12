@@ -1545,7 +1545,7 @@ export default function ComponentTypeComponent (props) {
             </ReactModal>
           </div>
         </div>
-        <Discussion type='Component' {...props} />
+        <Discussion name={componentTypeComponentName} type='Component' {...props} />
       </div>
     )
 }

@@ -1,23 +1,201 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ReactHtmlParser from 'react-html-parser'
+import { MentionsInput, Mention } from 'react-mentions'
+import defaultStyle from './defaultStyle.js'
+import defaultMentionStyle from './defaultMentionStyle.js'
+import styles from './discussionComponent.scss'
+import ReactModal from 'react-modal'
+ReactModal.setAppElement('#root')
 
 export default function Discussion (props) {
-  console.log('Discussion Components', props)
+  console.log('Discussion Components', props.newMessage, props.formattedAccounts, props.type, props)
   let discussionList = ''
+  let discussionReplyList = ''
   let getMessages = function (data) {
     console.log(data)
-    let payload = {
-      id: data.id
+    props.setMessageData('')
+    if (props.discussionId !== data.id) {
+      let payload = {
+        id: data.id
+      }
+      props.setDiscussionId(data.id)
+      props.fetchDiscussionMessages && props.fetchDiscussionMessages(payload)
     }
-    props.setDiscussionId(data.id)
-    props.fetchDiscussionMessages && props.fetchDiscussionMessages(payload)
   }
   let openSlide = function (event) {
     props.setQuickslideDiscussion('m-quick-sidebar--on')
   }
   let closeSlide = function (event) {
     props.setQuickslideDiscussion('m-quick-sidebar--off')
+  }
+  let openModal = function (message) {
+    props.setQuickslideDiscussion('m-quick-sidebar--off')
+    let payload = {...props.replySettings, 'isModalOpen': true, 'selectedMessage': message, 'messageReply': '@[' + message.author.name + ':User:' + message.author.id + ']'}
+    props.setReplySettings(payload)
+  }
+  let closeModal = function (event) {
+    let payload = {...props.replySettings, 'isModalOpen': false, 'selectedMessage': '', 'messageReply': ''}
+    props.setReplySettings(payload)
+  }
+  let handleChange = function (event) {
+    console.log(event)
+    props.setMessageData(event.target.value)
+  }
+  let handleMessageReply = function (event) {
+    let payload = {...props.replySettings, 'messageReply': event.target.value}
+    props.setReplySettings(payload)
+  }
+  let replyToMessage = function (event) {
+    let message = props.replySettings.messageReply
+    let mentionArray = message.match(/\[(.*?)\]/g)
+    let payload = {}
+    payload.id = props.discussionId
+    let dataPayload = {}
+    let mentions = []
+    let references = []
+    let tags = []
+    if (mentionArray) {
+      mentionArray.forEach(function (data, index) {
+        data = data.substring(1, data.length - 1)
+        let parts = data.toString().split(':')
+        if (parts[1] === 'User') {
+          let obj = {
+            'artefact_type': {
+              'key': 'User'
+            },
+            'id': parseInt(parts[2])
+          }
+          mentions.push(obj)
+        } else if (parts[1] === 'Model') {
+          let obj = {
+            'artefact_type': {
+              'key': props.type
+            },
+            'id': parseInt(parts[2])
+          }
+          references.push(obj)
+        }
+      })
+    }
+    dataPayload.name = message
+    dataPayload.mentions = mentions
+    dataPayload.references = references
+    dataPayload.tags = tags
+    payload.data = dataPayload
+    console.log(payload)
+    props.replyDiscussionMessages && props.replyDiscussionMessages(payload)
+    let replySettingPayload = {...props.replySettings, 'isModalOpen': true, 'selectedMessage': '', 'messageReply': ''}
+    props.setReplySettings(replySettingPayload)
+  }
+  let createNewMessage = function (event) {
+    let message = props.newMessage
+    let mentionArray = message.match(/\[(.*?)\]/g)
+    let payload = {}
+    payload.id = props.discussionId
+    let dataPayload = {}
+    let mentions = []
+    let references = []
+    let tags = []
+    if (mentionArray) {
+      mentionArray.forEach(function (data, index) {
+        data = data.substring(1, data.length - 1)
+        let parts = data.toString().split(':')
+        if (parts[1] === 'User') {
+          let obj = {
+            'artefact_type': {
+              'key': 'User'
+            },
+            'id': parseInt(parts[2])
+          }
+          mentions.push(obj)
+        } else if (parts[1] === 'Model') {
+          let obj = {
+            'artefact_type': {
+              'key': props.type
+            },
+            'id': parseInt(parts[2])
+          }
+          references.push(obj)
+        }
+      })
+    }
+    dataPayload.name = message
+    dataPayload.mentions = mentions
+    dataPayload.references = references
+    dataPayload.tags = tags
+    payload.data = dataPayload
+    console.log(payload)
+    props.replyDiscussionMessages && props.replyDiscussionMessages(payload)
+    props.setMessageData('')
+  }
+  if (props.replySettings.isModalOpen) {
+    discussionReplyList = props.discussions.resources.map(function (data, index) {
+      if (props.discussionId === data.id) {
+        let childElement = ''
+        // if (props.discussionId === data.id) {
+          childElement = props.discussionMessages.resources.map(function (cdata, cindex) {
+            let userIconlink = cdata.author.icon ? 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/' + cdata.author.icon : 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18'
+            let messageContent = cdata.name.replace(/<m ix=0>/g, '<a href="javascript:void(0);">@').replace(/<\/m>/g, '</a>')
+            .replace(/<r ix=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
+            .replace(/<r ix=1>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
+            .replace(/<t>/g, ' #').replace(/<\/t>/g, '')
+            let value = ''
+            let showReply = false
+            if (props.replySettings.selectedMessage.id && (cdata.id === props.replySettings.selectedMessage.id)) {
+              value = props.replySettings.messageReply
+            } else {
+              showReply = true
+            }
+            return (<li>
+              <div className='row'>
+                <div className='col-md-8'>
+                  <img src={userIconlink} alt={cdata.author.name} />{ReactHtmlParser(messageContent)}
+                </div>
+                <div className='col-md-4'>
+                  <span className=''>
+                    <a href='javascript:void(0);' ><i className='fa fa-thumbs-up' /></a>&nbsp;
+                    <a href='javascript:void(0);' ><i className='fa fa-thumbs-down' /></a>&nbsp;
+                    {showReply && (<a href='javascript:void(0);' onClick={(event) => { openModal(cdata) }} ><i className='fa fa-reply' /></a>)}
+                  </span>
+                </div>
+              </div>
+              {!showReply && (<div className='row'>
+                <div className='col-md-8'>
+                  <MentionsInput value={value} onChange={handleMessageReply} markup='@[__display__:__type__:__id__]' style={defaultStyle}>
+                    <Mention
+                      type='User'
+                      trigger='@'
+                      data={props.formattedAccounts}
+                      style={defaultMentionStyle}
+                    />
+                    <Mention
+                      type='Model'
+                      trigger='#'
+                      data={props.formattedModels}
+                      style={defaultMentionStyle}
+                    />
+                  </MentionsInput>
+                </div>
+                <div className='col-md-4'>
+                  <a href='javascript:void(0);' onClick={replyToMessage} className='btn btn-sm btn-metal'>Reply</a>
+                </div>
+              </div>)}
+            </li>)
+          })
+        // }
+        return (
+          <li className={styles.groupspace} key={index} >
+            <div>
+              <h4>{data.name}</h4>
+              <ul>
+                {childElement}
+              </ul>
+            </div>
+          </li>
+        )
+      }
+    })
   }
   if (props.discussions && props.discussions !== '') {
     if (props.discussions.resources.length > 0) {
@@ -48,7 +226,7 @@ export default function Discussion (props) {
           .replace(/<r ix=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
           .replace(/<r ix=1>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
           .replace(/<t>/g, ' #').replace(/<\/t>/g, '')
-          return (<li><img src={userIconlink} alt={cdata.author.name} />{ReactHtmlParser(messageContent)}<span className='pull-right' style={{cursor: 'pointer'}}><i className='fa fa-reply' /></span></li>)
+          return (<li><img src={userIconlink} alt={cdata.author.name} />{ReactHtmlParser(messageContent)}<span className='pull-right' style={{cursor: 'pointer'}}><a href='javascript:void(0);' onClick={(event) => { openModal(cdata) }} ><i className='fa fa-reply' /></a></span></li>)
         })
       }
       return (
@@ -64,10 +242,24 @@ export default function Discussion (props) {
                 <br />
                 <div className='m-messenger__form'>
                   <div className='m-messenger__form-controls'>
-                    <input type='text' name='' placeholder='New Messages' className='m-messenger__form-input' />
+                    {/* <input type='text' name='' placeholder='New Messages' className='m-messenger__form-input' /> */}
+                    <MentionsInput value={props.newMessage} onChange={handleChange} markup='@[__display__:__type__:__id__]' style={defaultStyle}>
+                      <Mention
+                        type='User'
+                        trigger='@'
+                        data={props.formattedAccounts}
+                        style={defaultMentionStyle}
+                      />
+                      <Mention
+                        type='Model'
+                        trigger='#'
+                        data={props.formattedModels}
+                        style={defaultMentionStyle}
+                      />
+                    </MentionsInput>
                   </div>
                   <div className='m-messenger__form-tools'>
-                    <a href='javascript:void(0);' className='btn btn-sm btn-metal'>Reply</a>
+                    <a href='javascript:void(0);' onClick={createNewMessage} className='btn btn-sm btn-metal'>Reply</a>
                   </div>
                 </div>
                 <div className='m-messenger__seperator' />
@@ -99,175 +291,6 @@ export default function Discussion (props) {
               <div className='m-accordion m-accordion--default m-accordion--solid m-accordion--section  m-accordion--toggle-arrow' id='m_accordion_7' role='tablist'>
                 {discussionList}
               </div>
-              {/* <div className='m-messenger m-messenger--message-arrow m-messenger--skin-light'>
-                <div className='m-messenger__messages m-scrollable m-scroller ps ps--active-y' style={{height: '342px', overflow: 'hidden'}}>
-                  <div className='m-messenger__wrapper'>
-                    <div className='m-messenger__message m-messenger__message--in'>
-                      <div className='m-messenger__message-pic'>
-                        <img src='./assets/app/media/img//users/user3.jpg' alt='' />
-                      </div>
-                      <div className='m-messenger__message-body'>
-                        <div className='m-messenger__message-arrow' />
-                        <div className='m-messenger__message-content'>
-                          <div className='m-messenger__message-username'>
-											Megan wrote
-										</div>
-                          <div className='m-messenger__message-text'>
-											Hi Bob. What time will be the meeting ?
-										</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='m-messenger__wrapper'>
-                    <div className='m-messenger__message m-messenger__message--out'>
-                      <div className='m-messenger__message-body'>
-                        <div className='m-messenger__message-arrow' />
-                        <div className='m-messenger__message-content'>
-                          <div className='m-messenger__message-text'>
-											Hi Megan. It's at 2.30PM
-										</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='m-messenger__wrapper'>
-                    <div className='m-messenger__message m-messenger__message--in'>
-                      <div className='m-messenger__message-pic'>
-                        <img src='./assets/app/media/img//users/user3.jpg' alt='' />
-                      </div>
-                      <div className='m-messenger__message-body'>
-                        <div className='m-messenger__message-arrow' />
-                        <div className='m-messenger__message-content'>
-                          <div className='m-messenger__message-username'>
-											Megan wrote
-										</div>
-                          <div className='m-messenger__message-text'>
-											Will the development team be joining ?
-										</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='m-messenger__wrapper'>
-                    <div className='m-messenger__message m-messenger__message--out'>
-                      <div className='m-messenger__message-body'>
-                        <div className='m-messenger__message-arrow' />
-                        <div className='m-messenger__message-content'>
-                          <div className='m-messenger__message-text'>
-											Yes sure. I invited them as well
-										</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='m-messenger__datetime'>2:30PM</div>
-                  <div className='m-messenger__wrapper'>
-                    <div className='m-messenger__message m-messenger__message--in'>
-                      <div className='m-messenger__message-pic'>
-                        <img src='./assets/app/media/img//users/user3.jpg' alt='' />
-                      </div>
-                      <div className='m-messenger__message-body'>
-                        <div className='m-messenger__message-arrow' />
-                        <div className='m-messenger__message-content'>
-                          <div className='m-messenger__message-username'>
-											Megan wrote
-										</div>
-                          <div className='m-messenger__message-text'>
-											Noted. For the Coca-Cola Mobile App project as well ?
-										</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='m-messenger__wrapper'>
-                    <div className='m-messenger__message m-messenger__message--out'>
-                      <div className='m-messenger__message-body'>
-                        <div className='m-messenger__message-arrow' />
-                        <div className='m-messenger__message-content'>
-                          <div className='m-messenger__message-text'>
-											Yes, sure.
-										</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='m-messenger__wrapper'>
-                    <div className='m-messenger__message m-messenger__message--out'>
-                      <div className='m-messenger__message-body'>
-                        <div className='m-messenger__message-arrow' />
-                        <div className='m-messenger__message-content'>
-                          <div className='m-messenger__message-text'>
-											Please also prepare the quotation for the Loop CRM project as well.
-										</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='m-messenger__datetime'>3:15PM</div>
-                  <div className='m-messenger__wrapper'>
-                    <div className='m-messenger__message m-messenger__message--in'>
-                      <div className='m-messenger__message-no-pic m--bg-fill-danger'>
-                        <span>M</span>
-                      </div>
-                      <div className='m-messenger__message-body'>
-                        <div className='m-messenger__message-arrow' />
-                        <div className='m-messenger__message-content'>
-                          <div className='m-messenger__message-username'>
-											Megan wrote
-										</div>
-                          <div className='m-messenger__message-text'>
-											Noted. I will prepare it.
-										</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='m-messenger__wrapper'>
-                    <div className='m-messenger__message m-messenger__message--out'>
-                      <div className='m-messenger__message-body'>
-                        <div className='m-messenger__message-arrow' />
-                        <div className='m-messenger__message-content'>
-                          <div className='m-messenger__message-text'>
-											Thanks Megan. I will see you later.
-										</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='m-messenger__wrapper'>
-                    <div className='m-messenger__message m-messenger__message--in'>
-                      <div className='m-messenger__message-pic'>
-                        <img src='./assets/app/media/img//users/user3.jpg' alt='' />
-                      </div>
-                      <div className='m-messenger__message-body'>
-                        <div className='m-messenger__message-arrow' />
-                        <div className='m-messenger__message-content'>
-                          <div className='m-messenger__message-username'>
-											Megan wrote
-										</div>
-                          <div className='m-messenger__message-text'>
-											Sure. See you in the meeting soon.
-										</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className='m-messenger__seperator' />
-
-                  <div className='m-messenger__form'>
-                    <div className='m-messenger__form-controls'>
-                      <input type='text' name='' placeholder='Type here...' className='m-messenger__form-input' />
-                    </div>
-                    <div className='m-messenger__form-tools'>
-                      <a href='' className='m-messenger__form-attachment'>
-                        <i className='la la-paperclip' />
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
             </div>
             <div className='tab-pane' id='m_quick_sidebar_tabs_logs' role='tabpanel'>
               <div className='m-list-timeline m-scrollable m-scroller ps' style={{height: '452px', overflow: 'hidden'}}>
@@ -424,12 +447,49 @@ export default function Discussion (props) {
           <a href='javsscript:void(0);' onClick={openSlide}><i className='la la-angle-double-left' /></a>
         </li>
       </ul>
+      <div>
+        <ReactModal isOpen={props.replySettings.isModalOpen}
+          // onRequestClose={closeModal}
+          shouldCloseOnOverlayClick={false}
+          className='modal-dialog modal-lg'
+          style={{'content': {'top': '20%'}}}
+          // className={''}
+          >
+          {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
+          <div>
+            <div>
+              <div className='modal-content'>
+                <div className='modal-header'>
+                  <h4 className='modal-title' id='exampleModalLabel'>{props.name + ' Discussion'}</h4>
+                  <button type='button' onClick={closeModal} className='close' data-dismiss='modal' aria-label='Close'>
+                    <span aria-hidden='true'>×</span>
+                  </button>
+                </div>
+                <div className='modal-body'>
+                  <ul>
+                    {discussionReplyList}
+                  </ul>
+                </div>
+                <div className='modal-footer'>
+                  <button onClick={closeModal} className='btn btn-sm btn-outline-info'>Cancel</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ReactModal>
+      </div>
     </div>
   )
 }
 Discussion.propTypes = {
+  type: PropTypes.any,
+  name: PropTypes.any,
   discussionSlide: PropTypes.any,
   discussions: PropTypes.any,
   discussionMessages: PropTypes.any,
-  discussionId: PropTypes.any
+  formattedAccounts: PropTypes.any,
+  formattedModels: PropTypes.any,
+  discussionId: PropTypes.any,
+  newMessage: PropTypes.any,
+  replySettings: PropTypes.any
 }
