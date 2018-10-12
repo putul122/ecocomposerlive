@@ -44,7 +44,7 @@ export default compose(
         }
       }
       if (nextProps.updateNotificationViewStatusResponse && nextProps.updateNotificationViewStatusResponse !== '') {
-        if (nextProps.updateNotificationViewStatusResponse) {
+        if (nextProps.updateNotificationViewStatusResponse.result_code === 0) {
           this.props.setNotificationFlag && this.props.setNotificationFlag(false)
           this.props.resetResponse && this.props.resetResponse()
         }
