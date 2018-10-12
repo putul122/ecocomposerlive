@@ -1,5 +1,5 @@
 import { createAction, handleActions } from 'redux-actions'
-import { FETCH_CLIENT_ACCESS_TOKEN_SUCCESS, FETCH_USER_AUTHENTICATION_SUCCESS } from '../../sagas/basic/basicSaga'
+import { FETCH_CLIENT_ACCESS_TOKEN_SUCCESS, FETCH_USER_AUTHENTICATION_SUCCESS, UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS } from '../../sagas/basic/basicSaga'
 // Name Spaced Action Types
 const INCREMENT = 'BasicReducer/INCREMENT'
 const DECREMENT = 'BasicReducer/DECREMENT'
@@ -17,6 +17,7 @@ const SET_REDIRECT_FLAG = 'BasicReducer/SET_REDIRECT_FLAG'
 const SET_ADD_REDIRECT_FLAG = 'BasicReducer/SET_ADD_REDIRECT_FLAG'
 const SET_NOTIFICATION_FLAG = 'BasicReducer/SET_NOTIFICATION_FLAG'
 const TOGGLE_FLIPIN_X = 'BasicReducer/TOGGLE_FLIPIN_X'
+const RESET_RESPONSE = 'BasicReducer/RESET_RESPONSE'
 
 export const actions = {
   INCREMENT,
@@ -35,7 +36,9 @@ export const actions = {
   SET_ADD_REDIRECT_FLAG,
   SET_DELETE_MODAL_OPEN_STATUS,
   SET_NOTIFICATION_FLAG,
-  TOGGLE_FLIPIN_X
+  TOGGLE_FLIPIN_X,
+  UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS,
+  RESET_RESPONSE
   }
 
 export const actionCreators = {
@@ -54,7 +57,8 @@ export const actionCreators = {
   setRedirectFlag: createAction(SET_REDIRECT_FLAG),
   setAddRedirectFlag: createAction(SET_ADD_REDIRECT_FLAG),
   setNotificationFlag: createAction(SET_NOTIFICATION_FLAG),
-  toggleFlipInX: createAction(TOGGLE_FLIPIN_X)
+  toggleFlipInX: createAction(TOGGLE_FLIPIN_X),
+  resetResponse: createAction(RESET_RESPONSE)
 }
 
 export const initialState = {
@@ -78,7 +82,8 @@ export const initialState = {
   authenticateUser: '',
   isDropDownOpen: false,
   notificationFlag: false,
-  flipInX: 'm-login--signin'
+  flipInX: 'm-login--signin',
+  updateNotificationViewStatusResponse: ''
 }
 
 export default handleActions(
@@ -147,6 +152,12 @@ export default handleActions(
     }),
     [TOGGLE_FLIPIN_X]: (state, action) => ({ ...state,
       flipInX: action.payload
+    }),
+    [UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS]: (state, action) => ({ ...state,
+      updateNotificationViewStatusResponse: action.payload
+    }),
+    [RESET_RESPONSE]: (state, action) => ({ ...state,
+      updateNotificationViewStatusResponse: ''
     })
   },
   initialState

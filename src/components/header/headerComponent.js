@@ -4,13 +4,21 @@ import ApplicationActivity from '../../containers/applicationActivity/applicatio
 import * as signalR from '@aspnet/signalr'
 // import { Redirect } from 'react-router-dom'
 let userToken = localStorage.getItem('userAccessToken')
-const connection = new signalR.HubConnectionBuilder()
-          .withUrl(' https://ecoconductor-push-notification-test.azurewebsites.net/notify')
+var connection = new signalR.HubConnectionBuilder()
+          .withUrl('https://notification-eco-dev.ecoconductor.com/notification', {
+            accessTokenFactory: () => {
+              return userToken
+            }
+          })
           .configureLogging(signalR.LogLevel.Information)
           .build()
+console.log(connection)
+// connection.qs = {'access_token': userToken}
+// connection.Headers['Authentication'] = 'Bearer ' + userToken
 connection.start().then(function () {
   console.log('Connection Started---- >', connection)
-  connection.invoke('SendUserToken', userToken).catch(err => console.error('Call SendUserToken method---', err))
+  // connection.invoke('SendUserToken', userToken).catch(err => console.error('Call SendUserToken method---', err))
+  connection.invoke('GetNotificationStatus').catch(err => console.error('Call GetNotificationStatus method---', err))
 }).catch(err => console.error('connection error --------------', err))
 
 export default function HeaderComponent (props) {
@@ -20,8 +28,10 @@ export default function HeaderComponent (props) {
   let loginSlideClass = 'm-dropdown--close'
 
   connection.on('ReceiveMessage', (payload) => {
-    console.log('ReceiveMessage', payload)
-    if (payload.notificationFlag === 'true') {
+    console.log('1111111111111111111111111111111111111110000000000000000000000000000000000')
+    payload = JSON.parse(payload)
+    console.log('ReceiveMessage -----------------------', payload)
+    if (payload.notify) {
       props.setNotificationFlag(true)
     } else {
       props.setNotificationFlag(false)
@@ -30,6 +40,7 @@ export default function HeaderComponent (props) {
 
   if (isQuickSlideOpen) {
     quickSlideClass = 'm-quick-sidebar--on'
+    props.updateNotificationViewStatus && props.updateNotificationViewStatus()
   } else {
     quickSlideClass = 'm-quick-sidebar--off'
   }
@@ -37,9 +48,6 @@ export default function HeaderComponent (props) {
     event.preventDefault()
     quickSlideClass = 'm-quick-sidebar--on'
     props.setQuickslideFlag(true)
-    if (props.notificationFlag) {
-      connection.invoke('RecievedNotification', userToken).catch(err => console.error('Call RecievedNotification method---', err))
-    }
   }
 
   let closeQuickSlide = function (event) {
@@ -156,46 +164,6 @@ export default function HeaderComponent (props) {
                           <div className='m-dropdown__body'>
                             <div className='m-dropdown__content'>
                               <ul className='m-nav m-nav--skin-light'>
-                                {/* <li className='m-nav__section m--hide'>
-                                  <span className='m-nav__section-text'>Section</span>
-                                </li>
-                                <li className='m-nav__item'>
-                                  <a href='profile.html' className='m-nav__link'>
-                                    <i className='m-nav__link-icon flaticon-profile-1' />
-                                    <span className='m-nav__link-title'>
-                                      <span className='m-nav__link-wrap'>
-                                        <span className='m-nav__link-text'>My Profile</span>
-                                        <span className='m-nav__link-badge'><span className='m-badge m-badge--success'>2</span></span>
-                                      </span>
-                                    </span>
-                                  </a>
-                                </li>
-                                <li className='m-nav__item'>
-                                  <a href='profile.html' className='m-nav__link'>
-                                    <i className='m-nav__link-icon flaticon-share' />
-                                    <span className='m-nav__link-text'>Activity</span>
-                                  </a>
-                                </li>
-                                <li className='m-nav__item'>
-                                  <a href='profile.html' className='m-nav__link'>
-                                    <i className='m-nav__link-icon flaticon-chat-1' />
-                                    <span className='m-nav__link-text'>Messages</span>
-                                  </a>
-                                </li>
-                                <li className='m-nav__separator m-nav__separator--fit' />
-                                <li className='m-nav__item'>
-                                  <a href='profile.html' className='m-nav__link'>
-                                    <i className='m-nav__link-icon flaticon-info' />
-                                    <span className='m-nav__link-text'>FAQ</span>
-                                  </a>
-                                </li>
-                                <li className='m-nav__item'>
-                                  <a href='profile.html' className='m-nav__link'>
-                                    <i className='m-nav__link-icon flaticon-lifebuoy' />
-                                    <span className='m-nav__link-text'>Support</span>
-                                  </a>
-                                </li>
-                                <li className='m-nav__separator m-nav__separator--fit' /> */}
                                 <li className='m-nav__item'>
                                   <a href='javascript:void(0);' onClick={logOut} className='btn m-btn--pill    btn-secondary m-btn m-btn--custom m-btn--label-brand m-btn--bolder'>Logout</a>
                                 </li>
@@ -225,36 +193,7 @@ export default function HeaderComponent (props) {
               <a className='nav-link m-tabs__link' 		data-toggle='tab' href='#m_quick_sidebar_tabs_settings' role='tab'>Settings</a>
             </li> */}
           </ul>
-          <ApplicationActivity />
-          {/* <div className='tab-content'>
-            <div className='tab-pane active' id='m_quick_sidebar_tabs_messenger' role='tabpanel'>
-              <div className='m-messenger m-messenger--message-arrow m-messenger--skin-light'>
-                <div className='m-messenger__messages m-scrollable'>
-                  <ApplicationActivity />
-                  <div className='m-messenger__wrapper'>
-                    <div className='m-messenger__message m-messenger__message--in'>
-                      <div className='m-messenger__message-pic'>
-                        <img src='assets/app/media/img//users/user3.jpg' alt='' />
-                      </div>
-                      <div className='m-messenger__message-body'>
-                        <div className='m-messenger__message-arrow' />
-                        <div className='m-messenger__message-content'>
-                          <div className='m-messenger__message-username'>
-                           Megan wrote
-                         </div>
-                          <div className='m-messenger__message-text'>
-                           Hi Bob. What time will be the meeting ?
-                         </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='m-messenger__datetime'>2:30PM</div>
-                </div>
-                <div className='m-messenger__seperator' />
-              </div>
-            </div>
-          </div> */}
+          <ApplicationActivity notificationReceived={props.notificationFlag} />
         </div>
       </div>
       {/* <!-- end::Quick Sidebar -->		  */}
@@ -264,8 +203,8 @@ export default function HeaderComponent (props) {
 
 HeaderComponent.propTypes = {
   isLoggedin: PropTypes.any,
-  // modalIsOpen: PropTypes.any,
   // setNotificationFlag: PropTypes.func,
+  updateNotificationViewStatus: PropTypes.func,
   isQuickSlideOpen: PropTypes.any,
   isLoginSlideOpen: PropTypes.any,
   notificationFlag: PropTypes.any,

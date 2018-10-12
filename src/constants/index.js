@@ -61,7 +61,8 @@ const api = {
         return 'https://ecoconductor-dev-api-notification.azurewebsites.net/discussions/' + id + '/messages'
     },
     getAccountArtefacts: 'https://account-eco-dev.ecoconductor.com/artefacts',
-    getModelArtefacts: 'https://model-eco-dev.ecoconductor.com/artefacts'
+    getModelArtefacts: 'https://model-eco-dev.ecoconductor.com/artefacts',
+    updateNotificationViewStatus: 'https://notification-eco-dev.ecoconductor.com/notification_view_status'
   }
 
 export default api

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import ReactHtmlParser from 'react-html-parser'
 // import messageData from './GetMessages'
 export default function ApplicationActivity (props) {
-  console.log('activity message props', props.activityMessages, props)
+  console.log('activity message props', props.activityMessages, props.notificationReceived, props)
   let activityMessages = props.activityMessages.resources ? props.activityMessages.resources : ''
   let activityMessagesList = ''
   // if (activityMessages !== '') {
@@ -60,7 +60,8 @@ export default function ApplicationActivity (props) {
         } else {
           result.push(temp)
           temp = []
-          result.push(activityMessages[i])
+          temp.push(activityMessages[i])
+          result.push(temp)
         }
       }
 
@@ -69,9 +70,9 @@ export default function ApplicationActivity (props) {
           result.push(temp)
         }
         if (result.length > 0) {
-          // console.log('------>messag full', result)
+          console.log('------>messag full', result)
           activityMessagesList = result.map(function (messageGroup, index) {
-            // console.log('------>messag ', index, messageGroup)
+            console.log('------>messag ', index, messageGroup)
             let contextIconlink = messageGroup[0].discussion.context.icon ? 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/' + messageGroup[0].discussion.context.icon : 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/1'
             console.log('context icon link', contextIconlink)
             //   // let contextIconlink = messageGroup[0].links.find(function (link) { console.log(link); return link.rel === 'context_icon' })
@@ -86,7 +87,10 @@ export default function ApplicationActivity (props) {
                 .replace(/<r ix=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
                 .replace(/<r ix=1>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
                 .replace(/<t>/g, ' #').replace(/<\/t>/g, '')
-                return (<li><img src={userIconlink} alt={message.author.name} />{ReactHtmlParser(messageContent)}</li>)
+                return (<li>
+                  <img src={userIconlink} alt={message.author.name} />{ReactHtmlParser(messageContent)}
+                  {props.notificationReceived && message.new && (<span className='m-nav__link-badge m-badge m-badge--dot m-badge--dot-small m-badge--danger pull-right' />)}
+                </li>)
               })
             return (
               <li key={index} >
@@ -114,5 +118,6 @@ export default function ApplicationActivity (props) {
   )
 }
 ApplicationActivity.propTypes = {
-  activityMessages: PropTypes.any
+  activityMessages: PropTypes.any,
+  notificationReceived: PropTypes.any
 }
