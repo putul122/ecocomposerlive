@@ -70,6 +70,7 @@ export default function ApplicationActivity (props) {
           result.push(temp)
         }
         if (result.length > 0) {
+          result = result.reverse()
           console.log('------>messag full', result)
           activityMessagesList = result.map(function (messageGroup, index) {
             console.log('------>messag ', index, messageGroup)

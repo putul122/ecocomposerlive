@@ -66,10 +66,10 @@ export default function ApplicationDetail (props) {
       componentComponentsList = componentComponents.map(function (componentComponent, index) {
         return (
           <tr className='m-datatable__row m-datatable__row--even' key={index} style={{ 'left': '0px' }} >
-            <td className='m-datatable__cell--sorted m-datatable__cell' style={{ 'width': '142px' }} data-toggle='tooltip' data-placement='top' title='Horray' data-original-title='Tooltip title' >
+            <td className='m-datatable__cell--sorted m-datatable__cell' style={{ 'width': '142px' }} data-toggle='tooltip' data-placement='top' title={componentComponent.name} data-original-title={componentComponent.name} >
               <span className='m-card-user m-card-user__details'><Link to={'/components/' + ComponentTypeId + '/' + componentComponent.id}>{ componentComponent.name.length > 75 ? componentComponent.name.substring(0, 75) + ' ...' : componentComponent.name }</Link></span>
             </td>
-            <td className='m-datatable__cell--sorted m-datatable__cell'><span>{ componentComponent.description.length > 75 ? componentComponent.description.substring(0, 75) + ' ...' : componentComponent.description }</span></td>
+            <td className='m-datatable__cell--sorted m-datatable__cell'><span style={{pointer: 'cursor'}} data-toggle='tooltip' data-placement='top' title={componentComponent.description} data-original-title={componentComponent.description} >{ componentComponent.description.length > 75 ? componentComponent.description.substring(0, 75) + ' ...' : componentComponent.description }</span></td>
           </tr>
         )
       })
@@ -340,7 +340,7 @@ export default function ApplicationDetail (props) {
             <div className='col-sm-12 col-md-12'>
               <div className='m_datatable' id='scrolling_vertical'>
                 <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{ 'display': 'block', 'min-height': '500px', 'max-height': '550px' }}>
-                  <div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '50vh'}}>
+                  <div className='dataTables_scrollBody' style={{position: 'relative', overflow: 'auto', width: '100%', 'maxHeight': '80vh'}}>
                     <table className='table table-striped- table-bordered table-hover table-checkable dataTable no-footer' >
                       <thead className='m-datatable__head'>
                         <tr className='m-datatable__row' style={{ 'left': '0px;' }}>
@@ -360,18 +360,22 @@ export default function ApplicationDetail (props) {
                       </tbody>
                     </table>
                   </div>
-                  <div className='col-sm-12 col-md-6'>
-                    <div className='dataTables_length' id='m_table_1_length'>
-                      <label htmlFor='page_no'>Show<select value={props.perPage} onBlur={handleBlurChange} onChange={handleChange} name='m_table_1_length' aria-controls='m_table_1' className='custom-select custom-select-sm form-control form-control-sm'>
-                        <option value={10}>10</option>
-                        <option value={25}>25</option>
-                        <option value={50}>50</option>
-                        <option value={100}>100</option>
-                      </select> entries</label>
+                  <br />
+                  <div className='row' style={{ 'textAlign': 'center' }}>
+                    <div className='col-sm-12 col-md-6'>
+                      <div className='dataTables_length' id='m_table_1_length'>
+                        <label className='col-5' htmlFor='page_no' >Show </label>
+                        <select value={props.perPage} onBlur={handleBlurChange} onChange={handleChange} name='m_table_1_length' aria-controls='m_table_1' className='col-4 custom-select custom-select-sm form-control form-control-sm'>
+                          <option value={10}>10</option>
+                          <option value={25}>25</option>
+                          <option value={50}>50</option>
+                          <option value={100}>100</option>
+                        </select><label className='col-3' htmlFor='page_no' >entries</label>
+                      </div>
                     </div>
                   </div>
                   <div className='col-sm-12 col-md-6' />
-                  <div className='m-datatable__pager m-datatable--paging-loaded pull-left' style={{ 'text-align': 'center' }}>
+                  <div className='m-datatable__pager m-datatable--paging-loaded pull-left' style={{ 'textAlign': 'center' }}>
                     <ul className='m-datatable__pager-nav'>
                       {/* <li><a href='' title='First' className='m-datatable__pager-link m-datatable__pager-link--first' data-page={1}><i className='la la-angle-double-left' /></a></li> */}
                       <li><a href='' title='Previous' className={'m-datatable__pager-link m-datatable__pager-link--prev ' + previousClass} onClick={handlePrevious} data-page='4'><i className='la la-angle-left' /></a></li>
