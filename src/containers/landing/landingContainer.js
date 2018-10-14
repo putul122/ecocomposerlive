@@ -15,7 +15,7 @@ export function mapStateToProps (state, props) {
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
-  fetchClientAccessToken: sagaActions.basicActions.fetchClientAccessTokenl,
+  fetchClientAccessToken: sagaActions.basicActions.fetchClientAccessToken,
   toggleFlipInX: actionCreators.toggleFlipInX
 }
 
@@ -30,6 +30,7 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
+      console.log('landing will mount', this.props)
       let payload = {
         'client_id': this.props.client_id,
         'client_secret': this.props.client_secret
