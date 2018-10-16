@@ -40,7 +40,9 @@ export default function HeaderComponent (props) {
 
   if (isQuickSlideOpen) {
     quickSlideClass = 'm-quick-sidebar--on'
-    props.updateNotificationViewStatus && props.updateNotificationViewStatus()
+    if (props.notificationFlag) {
+      props.updateNotificationViewStatus && props.updateNotificationViewStatus()
+    }
   } else {
     quickSlideClass = 'm-quick-sidebar--off'
   }

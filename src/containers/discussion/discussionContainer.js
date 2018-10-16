@@ -15,6 +15,7 @@ export function mapStateToProps (state, props) {
     artefactModels: state.discussionReducer.artefactModels,
     formattedAccounts: state.discussionReducer.formattedAccounts,
     formattedModels: state.discussionReducer.formattedModels,
+    formattedTags: state.discussionReducer.formattedTags,
     newMessage: state.discussionReducer.newMessage,
     replySettings: state.discussionReducer.replySettings,
     createMessageResponse: state.discussionReducer.createMessageResponse
@@ -72,6 +73,8 @@ export default compose(
             let obj = {}
             obj.id = account.id
             obj.display = account.name
+            obj.artefactId = account.artefact_type.id
+            obj.artefactKey = account.artefact_type.key
             return obj
           })
           this.props.setFormattedAccountData && this.props.setFormattedAccountData(accountsData)
@@ -83,6 +86,8 @@ export default compose(
             let obj = {}
             obj.id = model.id
             obj.display = model.name
+            obj.artefactId = model.artefact_type.id
+            obj.artefactKey = model.artefact_type.key
             return obj
           })
           this.props.setFormattedModelData && this.props.setFormattedModelData(modelData)

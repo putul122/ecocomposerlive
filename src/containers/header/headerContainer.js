@@ -20,7 +20,7 @@ export const propsMapping: Callbacks = {
     setQuickslideFlag: actionCreators.setQuickslideFlag,
     setLoginslideFlag: actionCreators.setLoginslideFlag,
     setNotificationFlag: actionCreators.setNotificationFlag,
-    resetResponse: actionCreators.resetResponse,
+    resetNotificationResponse: actionCreators.resetNotificationResponse,
     updateNotificationViewStatus: sagaActions.basicActions.updateNotificationViewStatus
 }
 
@@ -43,10 +43,12 @@ export default compose(
           }
         }
       }
-      if (nextProps.updateNotificationViewStatusResponse && nextProps.updateNotificationViewStatusResponse !== '') {
+      if (nextProps.updateNotificationViewStatusResponse && nextProps.updateNotificationViewStatusResponse !== '' && nextProps.updateNotificationViewStatusResponse !== this.props.updateNotificationViewStatusResponse) {
         if (nextProps.updateNotificationViewStatusResponse.result_code === 0) {
+          console.log('call me')
+          console.log(nextProps)
+          // this.props.resetNotificationResponse()
           this.props.setNotificationFlag && this.props.setNotificationFlag(false)
-          this.props.resetResponse && this.props.resetResponse()
         }
       }
     }

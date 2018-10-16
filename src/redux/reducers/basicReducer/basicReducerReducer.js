@@ -17,7 +17,7 @@ const SET_REDIRECT_FLAG = 'BasicReducer/SET_REDIRECT_FLAG'
 const SET_ADD_REDIRECT_FLAG = 'BasicReducer/SET_ADD_REDIRECT_FLAG'
 const SET_NOTIFICATION_FLAG = 'BasicReducer/SET_NOTIFICATION_FLAG'
 const TOGGLE_FLIPIN_X = 'BasicReducer/TOGGLE_FLIPIN_X'
-const RESET_RESPONSE = 'BasicReducer/RESET_RESPONSE'
+const RESET_NOTIFICATION_RESPONSE = 'BasicReducer/RESET_NOTIFICATION_RESPONSE'
 
 export const actions = {
   INCREMENT,
@@ -38,7 +38,7 @@ export const actions = {
   SET_NOTIFICATION_FLAG,
   TOGGLE_FLIPIN_X,
   UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS,
-  RESET_RESPONSE
+  RESET_NOTIFICATION_RESPONSE
   }
 
 export const actionCreators = {
@@ -58,7 +58,7 @@ export const actionCreators = {
   setAddRedirectFlag: createAction(SET_ADD_REDIRECT_FLAG),
   setNotificationFlag: createAction(SET_NOTIFICATION_FLAG),
   toggleFlipInX: createAction(TOGGLE_FLIPIN_X),
-  resetResponse: createAction(RESET_RESPONSE)
+  resetNotificationResponse: createAction(RESET_NOTIFICATION_RESPONSE)
 }
 
 export const initialState = {
@@ -148,7 +148,8 @@ export default handleActions(
       isDropDownOpen: action.payload
     }),
     [SET_NOTIFICATION_FLAG]: (state, action) => ({ ...state,
-      notificationFlag: action.payload
+      notificationFlag: action.payload,
+      updateNotificationViewStatusResponse: ''
     }),
     [TOGGLE_FLIPIN_X]: (state, action) => ({ ...state,
       flipInX: action.payload
@@ -156,7 +157,7 @@ export default handleActions(
     [UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS]: (state, action) => ({ ...state,
       updateNotificationViewStatusResponse: action.payload
     }),
-    [RESET_RESPONSE]: (state, action) => ({ ...state,
+    [RESET_NOTIFICATION_RESPONSE]: (state, action) => ({ ...state,
       updateNotificationViewStatusResponse: ''
     })
   },

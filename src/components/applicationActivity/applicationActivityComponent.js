@@ -3,39 +3,10 @@ import styles from './applicationActivityComponent.scss'
 import PropTypes from 'prop-types'
 // import _ from 'lodash'
 import ReactHtmlParser from 'react-html-parser'
-// import messageData from './GetMessages'
 export default function ApplicationActivity (props) {
   console.log('activity message props', props.activityMessages, props.notificationReceived, props)
   let activityMessages = props.activityMessages.resources ? props.activityMessages.resources : ''
   let activityMessagesList = ''
-  // if (activityMessages !== '') {
-  //   activityMessagesList = activityMessages.map(function (messageGroup, index) {
-  //     // let contextIconlink = messageGroup.links.find(function (link) { return link.rel === 'context_icon' })
-  //     let contextIconlink = 'https://ecocomposermockapis.azurewebsites.net/ecocomposer-resources/icons/6'
-  //     let context = messageGroup.discussion.context.name
-  //     let discussion = messageGroup.discussion.name
-  //     // let messageList = messageGroup.map(function (message, i) {
-  //     // let userIconlink = messageGroup.links.find(function (link) { return link.rel === 'author_avatar' })
-  //     let userIconlink = 'https://ecocomposermockapis.azurewebsites.net/ecocomposer-resources/icons/10'
-  //     let messageContent = messageGroup.name.replace(/<m ix=0>/g, '<a href="javascript:void(0);">@').replace(/<\/m>/g, '</a>')
-  //     .replace(/<r ix=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
-  //     .replace(/<r ix=1>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
-  //     .replace(/<t>/g, ' #').replace(/<\/t>/g, '')
-  //       // return (<li><img src={userIconlink.href} alt={message.user} />{ReactHtmlParser(messageContent)}</li>)
-  //     // })
-  //     return (
-  //       <li key={index} >
-  //         <div className={styles.groupspace}>
-  //           <img src={contextIconlink} alt={context} /><div className={styles.tooltip}><a href=''>{context}</a><span className={styles.tooltiptext}>{discussion}</span></div>::<a href='javascript:void(0);'>{discussion}</a>
-  //           <ul>
-  //             <li><img src={userIconlink} alt={messageGroup.author.name} />{ReactHtmlParser(messageContent)}</li>
-  //           </ul>
-  //         </div>
-  //       </li>
-  //     )
-  //   })
-  // }
-
   if (activityMessages !== '') {
     let result = []
     let temp = []
@@ -88,6 +59,32 @@ export default function ApplicationActivity (props) {
                 .replace(/<r ix=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
                 .replace(/<r ix=1>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
                 .replace(/<t>/g, ' #').replace(/<\/t>/g, '')
+                let mentionArray = message.name.match(/\[(.*?)\]/g)
+                if (mentionArray) {
+                  mentionArray.forEach(function (data, index) {
+                    data = data.substring(1, data.length - 1)
+                    let parts = data.toString().split(':')
+                    // eslint-disable-next-line
+                    let str = `\\@\\[${data}\\]`
+                    console.log('str replace', str)
+                    let reg = new RegExp(str, 'g')
+                    console.log('message content', messageContent)
+                    console.log('reg', reg)
+                    if (parts[1] === 'Mention') {
+                      console.log('Mention string', data)
+                      messageContent = messageContent.replace(reg, '<a href="javascript:void(0);">@' + parts[0] + '</a>')
+                      console.log('Mention string', messageContent)
+                    } else if (parts[1] === 'Reference') {
+                      console.log('Reference string', data)
+                      messageContent = messageContent.replace(reg, '<a href="javascript:void(0);">#' + parts[0] + '</a>')
+                      console.log('Reference string', messageContent)
+                    } else if (parts[1] === 'Tag') {
+                      console.log('tag string', data)
+                      messageContent = messageContent.replace(reg, '#' + parts[0] + '')
+                      console.log('tag string', messageContent)
+                    }
+                  })
+                }
                 return (<li>
                   <img src={userIconlink} alt={message.author.name} />{ReactHtmlParser(messageContent)}
                   {props.notificationReceived && message.new && (<span className='m-nav__link-badge m-badge m-badge--dot m-badge--dot-small m-badge--danger pull-right' />)}

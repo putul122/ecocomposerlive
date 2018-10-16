@@ -9,7 +9,7 @@ import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
 
 export default function Discussion (props) {
-  console.log('Discussion Components', props.newMessage, props.formattedAccounts, props.type, props)
+  // console.log('Discussion Components', props.newMessage, props.formattedAccounts, props.type, props.formattedModels, props)
   let discussionList = ''
   let discussionReplyList = ''
   let getMessages = function (data) {
@@ -31,7 +31,7 @@ export default function Discussion (props) {
   }
   let openModal = function (message) {
     props.setQuickslideDiscussion('m-quick-sidebar--off')
-    let payload = {...props.replySettings, 'isModalOpen': true, 'selectedMessage': message, 'messageReply': '@[' + message.author.name + ':User:' + message.author.id + ']'}
+    let payload = {...props.replySettings, 'isModalOpen': true, 'selectedMessage': message, 'messageReply': '@[' + message.author.name + ':Mention:' + message.author.id + ']'}
     props.setReplySettings(payload)
   }
   let closeModal = function (event) {
@@ -39,11 +39,45 @@ export default function Discussion (props) {
     props.setReplySettings(payload)
   }
   let handleChange = function (event) {
-    console.log(event)
-    props.setMessageData(event.target.value)
+    console.log(props)
+    console.log(event.target.value)
+    let str = event.target.value
+    let matches = str.match(/[^@!a-z$]\$[a-z]+/gi)
+    let tags = []
+    if (matches !== null) {
+      matches.forEach(function (data, index) {
+        let obj = {}
+        obj.id = ++index
+        obj.display = data.trim().substring(1, data.trim().length)
+        console.log('inside for', obj)
+        tags.push(obj)
+      })
+    } else {
+      tags.push({id: 1, display: '...'})
+    }
+    console.log('payload matches', matches)
+    let payload = {}
+    payload.message = str
+    payload.tags = tags
+    console.log('payload', payload)
+    props.setMessageData(payload)
   }
   let handleMessageReply = function (event) {
-    let payload = {...props.replySettings, 'messageReply': event.target.value}
+    let str = event.target.value
+    let matches = str.match(/[^@!a-z$]\$[a-z]+/gi)
+    let tags = []
+    if (matches !== null) {
+      matches.forEach(function (data, index) {
+        let obj = {}
+        obj.id = ++index
+        obj.display = data.trim().substring(1, data.trim().length)
+        console.log('inside for', obj)
+        tags.push(obj)
+      })
+    } else {
+      tags.push({id: 1, display: '...'})
+    }
+    let payload = {...props.replySettings, 'messageReply': str, 'tags': tags}
     props.setReplySettings(payload)
   }
   let replyToMessage = function (event) {
@@ -59,7 +93,7 @@ export default function Discussion (props) {
       mentionArray.forEach(function (data, index) {
         data = data.substring(1, data.length - 1)
         let parts = data.toString().split(':')
-        if (parts[1] === 'User') {
+        if (parts[1] === 'Mention') {
           let obj = {
             'artefact_type': {
               'key': 'User'
@@ -67,7 +101,7 @@ export default function Discussion (props) {
             'id': parseInt(parts[2])
           }
           mentions.push(obj)
-        } else if (parts[1] === 'Model') {
+        } else if (parts[1] === 'Reference') {
           let obj = {
             'artefact_type': {
               'key': props.type
@@ -75,6 +109,8 @@ export default function Discussion (props) {
             'id': parseInt(parts[2])
           }
           references.push(obj)
+        } else if (parts[1] === 'Tag') {
+          tags.push(parts[0])
         }
       })
     }
@@ -85,7 +121,7 @@ export default function Discussion (props) {
     payload.data = dataPayload
     console.log(payload)
     props.replyDiscussionMessages && props.replyDiscussionMessages(payload)
-    let replySettingPayload = {...props.replySettings, 'isModalOpen': true, 'selectedMessage': '', 'messageReply': ''}
+    let replySettingPayload = {...props.replySettings, 'isModalOpen': true, 'selectedMessage': '', 'messageReply': '', 'tags': [{id: 1, display: '...'}]}
     props.setReplySettings(replySettingPayload)
   }
   let createNewMessage = function (event) {
@@ -101,7 +137,7 @@ export default function Discussion (props) {
       mentionArray.forEach(function (data, index) {
         data = data.substring(1, data.length - 1)
         let parts = data.toString().split(':')
-        if (parts[1] === 'User') {
+        if (parts[1] === 'Mention') {
           let obj = {
             'artefact_type': {
               'key': 'User'
@@ -109,7 +145,7 @@ export default function Discussion (props) {
             'id': parseInt(parts[2])
           }
           mentions.push(obj)
-        } else if (parts[1] === 'Model') {
+        } else if (parts[1] === 'Reference') {
           let obj = {
             'artefact_type': {
               'key': props.type
@@ -117,6 +153,8 @@ export default function Discussion (props) {
             'id': parseInt(parts[2])
           }
           references.push(obj)
+        } else if (parts[1] === 'Tag') {
+          tags.push(parts[0])
         }
       })
     }
@@ -127,7 +165,10 @@ export default function Discussion (props) {
     payload.data = dataPayload
     console.log(payload)
     props.replyDiscussionMessages && props.replyDiscussionMessages(payload)
-    props.setMessageData('')
+    let resetPayload = {}
+    resetPayload.message = ''
+    resetPayload.tags = [{id: 1, display: '...'}]
+    props.setMessageData(resetPayload)
   }
   if (props.replySettings.isModalOpen) {
     discussionReplyList = props.discussions.resources.map(function (data, index) {
@@ -140,6 +181,32 @@ export default function Discussion (props) {
             .replace(/<r ix=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
             .replace(/<r ix=1>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
             .replace(/<t>/g, ' #').replace(/<\/t>/g, '')
+            let mentionArray = cdata.name.match(/\[(.*?)\]/g)
+            if (mentionArray) {
+              mentionArray.forEach(function (data, index) {
+                data = data.substring(1, data.length - 1)
+                let parts = data.toString().split(':')
+                // eslint-disable-next-line
+                let str = `\\@\\[${data}\\]`
+                console.log('str replace', str)
+                let reg = new RegExp(str, 'g')
+                console.log('message content', messageContent)
+                console.log('reg', reg)
+                if (parts[1] === 'Mention') {
+                  console.log('Mention string', data)
+                  messageContent = messageContent.replace(reg, '<a href="javascript:void(0);">@' + parts[0] + '</a>')
+                  console.log('Mention string', messageContent)
+                } else if (parts[1] === 'Reference') {
+                  console.log('Reference string', data)
+                  messageContent = messageContent.replace(reg, '<a href="javascript:void(0);">#' + parts[0] + '</a>')
+                  console.log('Reference string', messageContent)
+                } else if (parts[1] === 'Tag') {
+                  console.log('tag string', data)
+                  messageContent = messageContent.replace(reg, '#' + parts[0] + '')
+                  console.log('tag string', messageContent)
+                }
+              })
+            }
             let value = ''
             let showReply = false
             if (props.replySettings.selectedMessage.id && (cdata.id === props.replySettings.selectedMessage.id)) {
@@ -162,17 +229,23 @@ export default function Discussion (props) {
               </div>
               {!showReply && (<div className='row'>
                 <div className='col-md-8'>
-                  <MentionsInput value={value} onChange={handleMessageReply} markup='@[__display__:__type__:__id__]' style={defaultStyle}>
+                  <MentionsInput value={value} placeholder={'for mentions use \'@\', for references use \'#\' and for tags use \'$\''} onChange={handleMessageReply} markup='@[__display__:__type__:__id__]' style={defaultStyle}>
                     <Mention
-                      type='User'
+                      type='Mention'
                       trigger='@'
                       data={props.formattedAccounts}
                       style={defaultMentionStyle}
                     />
                     <Mention
-                      type='Model'
+                      type='Reference'
                       trigger='#'
                       data={props.formattedModels}
+                      style={defaultMentionStyle}
+                    />
+                    <Mention
+                      type='Tag'
+                      trigger='$'
+                      data={props.replySettings.tags}
                       style={defaultMentionStyle}
                     />
                   </MentionsInput>
@@ -226,6 +299,32 @@ export default function Discussion (props) {
           .replace(/<r ix=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
           .replace(/<r ix=1>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
           .replace(/<t>/g, ' #').replace(/<\/t>/g, '')
+          let mentionArray = cdata.name.match(/\[(.*?)\]/g)
+          if (mentionArray) {
+            mentionArray.forEach(function (data, index) {
+              data = data.substring(1, data.length - 1)
+              let parts = data.toString().split(':')
+              // eslint-disable-next-line
+              let str = `\\@\\[${data}\\]`
+              console.log('str replace', str)
+              let reg = new RegExp(str, 'g')
+              console.log('message content', messageContent)
+              console.log('reg', reg)
+              if (parts[1] === 'Mention') {
+                console.log('Mention string', data)
+                messageContent = messageContent.replace(reg, '<a href="javascript:void(0);">@' + parts[0] + '</a>')
+                console.log('Mention string', messageContent)
+              } else if (parts[1] === 'Reference') {
+                console.log('Reference string', data)
+                messageContent = messageContent.replace(reg, '<a href="javascript:void(0);">#' + parts[0] + '</a>')
+                console.log('Reference string', messageContent)
+              } else if (parts[1] === 'Tag') {
+                console.log('tag string', data)
+                messageContent = messageContent.replace(reg, '#' + parts[0] + '')
+                console.log('tag string', messageContent)
+              }
+            })
+          }
           return (<li><img src={userIconlink} alt={cdata.author.name} />{ReactHtmlParser(messageContent)}<span className='pull-right' style={{cursor: 'pointer'}}><a href='javascript:void(0);' onClick={(event) => { openModal(cdata) }} ><i className='fa fa-reply' /></a></span></li>)
         })
       }
@@ -243,17 +342,23 @@ export default function Discussion (props) {
                 <div className='m-messenger__form'>
                   <div className='m-messenger__form-controls'>
                     {/* <input type='text' name='' placeholder='New Messages' className='m-messenger__form-input' /> */}
-                    <MentionsInput value={props.newMessage} onChange={handleChange} markup='@[__display__:__type__:__id__]' style={defaultStyle}>
+                    <MentionsInput value={props.newMessage} placeholder={'for mentions use \'@\', for references use \'#\' and for tags use \'$\''} onChange={handleChange} markup='@[__display__:__type__:__id__]' style={defaultStyle}>
                       <Mention
-                        type='User'
+                        type='Mention'
                         trigger='@'
                         data={props.formattedAccounts}
                         style={defaultMentionStyle}
                       />
                       <Mention
-                        type='Model'
+                        type='Reference'
                         trigger='#'
                         data={props.formattedModels}
+                        style={defaultMentionStyle}
+                      />
+                      <Mention
+                        type='Tag'
+                        trigger='$'
+                        data={props.formattedTags}
                         style={defaultMentionStyle}
                       />
                     </MentionsInput>
@@ -482,14 +587,20 @@ export default function Discussion (props) {
   )
 }
 Discussion.propTypes = {
+  // eslint-disable-next-line
   type: PropTypes.any,
   name: PropTypes.any,
   discussionSlide: PropTypes.any,
   discussions: PropTypes.any,
   discussionMessages: PropTypes.any,
+  // eslint-disable-next-line
   formattedAccounts: PropTypes.any,
+  // eslint-disable-next-line
   formattedModels: PropTypes.any,
+  // eslint-disable-next-line
+  formattedTags: PropTypes.any,
   discussionId: PropTypes.any,
+  // eslint-disable-next-line
   newMessage: PropTypes.any,
   replySettings: PropTypes.any
 }

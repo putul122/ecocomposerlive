@@ -46,11 +46,13 @@ export const initialState = {
   artefactModels: '',
   formattedAccounts: '',
   formattedModels: '',
+  formattedTags: [{id: 1, display: '...'}],
   newMessage: '',
   replySettings: {
     isModalOpen: false,
     selectedMessage: '',
-    messageReply: ''
+    messageReply: '',
+    tags: [{id: 1, display: '...'}]
   },
   createMessageResponse: ''
 }
@@ -91,7 +93,8 @@ export default handleActions(
     }),
     [SET_MESSAGE_DATA]: (state, action) => ({
       ...state,
-      newMessage: action.payload
+      newMessage: action.payload.message,
+      formattedTags: action.payload.tags
     }),
     [SET_REPLY_SETTINGS]: (state, action) => ({
       ...state,
