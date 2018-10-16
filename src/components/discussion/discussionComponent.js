@@ -55,7 +55,7 @@ export default function Discussion (props) {
     } else {
       tags.push({id: 1, display: '...'})
     }
-    console.log('payload matches', matches)
+    console.log('payload matches', matches, tags)
     let payload = {}
     payload.message = str
     payload.tags = tags
@@ -306,22 +306,13 @@ export default function Discussion (props) {
               let parts = data.toString().split(':')
               // eslint-disable-next-line
               let str = `\\@\\[${data}\\]`
-              console.log('str replace', str)
               let reg = new RegExp(str, 'g')
-              console.log('message content', messageContent)
-              console.log('reg', reg)
               if (parts[1] === 'Mention') {
-                console.log('Mention string', data)
                 messageContent = messageContent.replace(reg, '<a href="javascript:void(0);">@' + parts[0] + '</a>')
-                console.log('Mention string', messageContent)
               } else if (parts[1] === 'Reference') {
-                console.log('Reference string', data)
                 messageContent = messageContent.replace(reg, '<a href="javascript:void(0);">#' + parts[0] + '</a>')
-                console.log('Reference string', messageContent)
               } else if (parts[1] === 'Tag') {
-                console.log('tag string', data)
                 messageContent = messageContent.replace(reg, '#' + parts[0] + '')
-                console.log('tag string', messageContent)
               }
             })
           }

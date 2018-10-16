@@ -25,26 +25,27 @@ export default function ApplicationActivity (props) {
         }
         if (i + 1 < activityMessages.length) {
           temp.push(activityMessages[i])
-      } else {
-        if (equal) {
-          temp.push(activityMessages[i])
         } else {
-          result.push(temp)
-          temp = []
-          temp.push(activityMessages[i])
-          result.push(temp)
+          if (equal) {
+            temp.push(activityMessages[i])
+          } else {
+            result.push(temp)
+            temp = []
+            temp.push(activityMessages[i])
+            result.push(temp)
+          }
         }
-      }
 
       if (i + 1 === activityMessages.length) {
-        if (temp.length) {
-          result.push(temp)
-        }
+        // if (temp.length) {
+        //   result.push(temp)
+        // }
         if (result.length > 0) {
           result = result.reverse()
           console.log('------>messag full', result)
           activityMessagesList = result.map(function (messageGroup, index) {
             console.log('------>messag ', index, messageGroup)
+            messageGroup = messageGroup.reverse()
             let contextIconlink = messageGroup[0].discussion.context.icon ? 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/' + messageGroup[0].discussion.context.icon : 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/1'
             console.log('context icon link', contextIconlink)
             //   // let contextIconlink = messageGroup[0].links.find(function (link) { console.log(link); return link.rel === 'context_icon' })
@@ -66,22 +67,13 @@ export default function ApplicationActivity (props) {
                     let parts = data.toString().split(':')
                     // eslint-disable-next-line
                     let str = `\\@\\[${data}\\]`
-                    console.log('str replace', str)
                     let reg = new RegExp(str, 'g')
-                    console.log('message content', messageContent)
-                    console.log('reg', reg)
                     if (parts[1] === 'Mention') {
-                      console.log('Mention string', data)
                       messageContent = messageContent.replace(reg, '<a href="javascript:void(0);">@' + parts[0] + '</a>')
-                      console.log('Mention string', messageContent)
                     } else if (parts[1] === 'Reference') {
-                      console.log('Reference string', data)
                       messageContent = messageContent.replace(reg, '<a href="javascript:void(0);">#' + parts[0] + '</a>')
-                      console.log('Reference string', messageContent)
                     } else if (parts[1] === 'Tag') {
-                      console.log('tag string', data)
                       messageContent = messageContent.replace(reg, '#' + parts[0] + '')
-                      console.log('tag string', messageContent)
                     }
                   })
                 }
