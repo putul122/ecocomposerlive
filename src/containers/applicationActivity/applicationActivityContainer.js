@@ -7,7 +7,6 @@ export function mapStateToProps (state, props) {
   return {
     isLoggedin: state.loginReducer.isLoggedin,
     activityMessages: state.applicationActivityReducer.activityMessages
-    // selectedComponentType: state.applicationDetailReducer.selectedComponentType
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -30,7 +29,7 @@ export default compose(
       this.props.activityMessage && this.props.activityMessage()
     },
     componentWillReceiveProps: function (nextProps) {
-      if (nextProps.notificationReceived) {
+      if (nextProps.notificationReceived && nextProps.isMessageSlideOpen) {
         this.props.activityMessage && this.props.activityMessage()
       }
     }

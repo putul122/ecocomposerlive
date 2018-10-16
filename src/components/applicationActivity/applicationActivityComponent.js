@@ -12,6 +12,7 @@ export default function ApplicationActivity (props) {
     let temp = []
     let equal
     for (var i = 0; i < activityMessages.length; i += 1) {
+      if (activityMessages[i].discussion.context !== null && activityMessages[i + 1].discussion.context !== null) {
         if (equal !== ((activityMessages[i] && activityMessages[i + 1] && activityMessages[i].discussion.context.name === activityMessages[i + 1].discussion.context.name) && (activityMessages[i] && activityMessages[i + 1] && activityMessages[i].discussion.name === activityMessages[i + 1].discussion.name))) {
           if (activityMessages[i + 1]) {
             if (equal !== undefined && !equal) {
@@ -35,19 +36,19 @@ export default function ApplicationActivity (props) {
             result.push(temp)
           }
         }
-
+      }
       if (i + 1 === activityMessages.length) {
         // if (temp.length) {
         //   result.push(temp)
         // }
         if (result.length > 0) {
           result = result.reverse()
-          console.log('------>messag full', result)
+          // console.log('------>messag full', result)
           activityMessagesList = result.map(function (messageGroup, index) {
-            console.log('------>messag ', index, messageGroup)
+            // console.log('------>messag ', index, messageGroup)
             messageGroup = messageGroup.reverse()
             let contextIconlink = messageGroup[0].discussion.context.icon ? 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/' + messageGroup[0].discussion.context.icon : 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/1'
-            console.log('context icon link', contextIconlink)
+            // console.log('context icon link', contextIconlink)
             //   // let contextIconlink = messageGroup[0].links.find(function (link) { console.log(link); return link.rel === 'context_icon' })
           //   console.log(contextIconlink)
               let context = messageGroup[0].discussion.context.name
@@ -100,7 +101,7 @@ export default function ApplicationActivity (props) {
 
   return (
     <div className={styles.activityline}>
-      <h2>Activity Feed </h2>
+      {/* <h2>Activity Feed </h2> */}
       <ul>
         {activityMessagesList}
       </ul>

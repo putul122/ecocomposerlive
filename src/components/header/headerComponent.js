@@ -74,7 +74,6 @@ export default function HeaderComponent (props) {
     localStorage.removeItem('showToasterSuccess')
     localStorage.removeItem('userAccessToken')
     props.setLoginslideFlag(false)
-    // localStorage.clear()
     props.history.push('/')
   }
 
@@ -188,14 +187,20 @@ export default function HeaderComponent (props) {
         <div className='m-quick-sidebar__content'>
           <span id='m_quick_sidebar_close' className='m-quick-sidebar__close'><a href='' onClick={closeQuickSlide} ><i className='la la-close' /></a></span>
           <ul id='m_quick_sidebar_tabs' className='nav nav-tabs m-tabs m-tabs-line m-tabs-line--brand' role='tablist'>
-            {/* <li className='nav-item m-tabs__item'>
-              <a className='nav-link m-tabs__link active' data-toggle='tab' href='#m_quick_sidebar_tabs_messenger' role='tab'>Activity Feeds</a>
-            </li>
             <li className='nav-item m-tabs__item'>
+              <a className='nav-link m-tabs__link active' data-toggle='tab' href='#m_quick_sidebar_tabs_messenger_notification' role='tab'>Activity Feeds</a>
+            </li>
+            {/* <li className='nav-item m-tabs__item'>
               <a className='nav-link m-tabs__link' 		data-toggle='tab' href='#m_quick_sidebar_tabs_settings' role='tab'>Settings</a>
             </li> */}
           </ul>
-          <ApplicationActivity notificationReceived={props.notificationFlag} />
+          <div className='tab-content'>
+            <div className='tab-pane active show' id='m_quick_sidebar_tabs_messenger_notification' role='tabpanel'>
+              <div className='m-accordion m-accordion--default m-accordion--solid m-accordion--section  m-accordion--toggle-arrow' id='m_accordion_7' role='tablist'>
+                <ApplicationActivity isMessageSlideOpen={isQuickSlideOpen} notificationReceived={props.notificationFlag} />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       {/* <!-- end::Quick Sidebar -->		  */}
