@@ -39,8 +39,6 @@ export default function Discussion (props) {
     props.setReplySettings(payload)
   }
   let handleChange = function (event) {
-    console.log(props)
-    console.log(event.target.value)
     let str = event.target.value
     let matches = str.match(/[^@!a-z$]\$[a-z]+/gi)
     let tags = []
@@ -49,7 +47,6 @@ export default function Discussion (props) {
         let obj = {}
         obj.id = ++index
         obj.display = data.trim().substring(1, data.trim().length)
-        console.log('inside for', obj)
         tags.push(obj)
       })
     } else {

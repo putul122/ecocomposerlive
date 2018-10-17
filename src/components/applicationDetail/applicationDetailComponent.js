@@ -3,6 +3,7 @@ import styles from './applicationDetailComponent.scss'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import Discussion from '../../containers/discussion/discussionContainer'
+import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import debounce from 'lodash/debounce'
 import Modal from 'react-modal'
 // import ApplicationModelComponent for graph Model Visualization
@@ -53,6 +54,10 @@ export default function ApplicationDetail (props) {
   let handleChange = function (event) {
     console.log('handle change', event.target.value, typeof event.target.value)
     props.setPerPage(parseInt(event.target.value))
+  }
+  let openDiscussionModal = function (event) {
+    event.preventDefault()
+    props.setDiscussionModalOpenStatus(true)
   }
   if (props.componentDetail !== '') {
     ComponentName = props.componentDetail.resources[0].name
@@ -244,6 +249,9 @@ export default function ApplicationDetail (props) {
         <div className='m-alert__text'>
           { ComponentDescription }
         </div>
+        <div className='pull-right' style={{'margin': '13px'}}>
+          <button type='button' onClick={openDiscussionModal} className='btn btn-outline-info btn-sm m-btn m-btn--custom'> Add Discussion </button>
+        </div>
       </div>
       <div className={styles.borderline}>
         <div className={'row'}>
@@ -416,12 +424,14 @@ export default function ApplicationDetail (props) {
         </div>
       </div>
       <Discussion name={ComponentName} type='ComponentType' {...props} />
+      <NewDiscussion contextId={props.match.params.id} name={ComponentName} type='ComponentType' {...props} />
       {/* <Route exact path={`/components/:componentTypeId/:componentTypeComponentId`} component={componentTypeComponentPageRoute} /> */}
     </div>
   )
 }
 
 ApplicationDetail.propTypes = {
+  match: PropTypes.any,
   componentDetail: PropTypes.any,
   componentComponents: PropTypes.any,
   modalIsOpen: PropTypes.any,

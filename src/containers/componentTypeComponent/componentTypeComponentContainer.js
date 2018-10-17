@@ -4,6 +4,8 @@ import componentTypeComponent from '../../components/componentTypeComponent/comp
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators as basicActionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
 import { actionCreators as componentTypeComponentActionCreators } from '../../redux/reducers/componentTypeComponentReducer/componentTypeComponentReducerReducer'
+import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
+
 // Global State
 export function mapStateToProps (state, props) {
   return {
@@ -30,7 +32,9 @@ export function mapStateToProps (state, props) {
     relationshipProperty: state.componentTypeComponentReducer.relationshipProperty,
     relationshipPropertyPayload: state.componentTypeComponentReducer.relationshipPropertyPayload,
     updateRelationshipPropertyResponse: state.componentTypeComponentReducer.updateRelationshipPropertyResponse,
-    deleteRelationshipResponse: state.componentTypeComponentReducer.deleteRelationshipResponse
+    deleteRelationshipResponse: state.componentTypeComponentReducer.deleteRelationshipResponse,
+    updateComponentPropertyResponse: state.componentTypeComponentReducer.updateComponentPropertyResponse,
+    isDiscussionModalOpen: state.componentTypeComponentReducer.isDiscussionModalOpen
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -67,6 +71,8 @@ export const propsMapping: Callbacks = {
   resetComponentRelationshipProperties: componentTypeComponentActionCreators.resetComponentRelationshipProperties,
   editComponentRelationshipProperties: componentTypeComponentActionCreators.editComponentRelationshipProperties,
   editComponentRelationshipPropertyPayload: componentTypeComponentActionCreators.editComponentRelationshipPropertyPayload,
+  resetResponse: componentTypeComponentActionCreators.resetResponse,
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus,
   viewRelationshipProperty: sagaActions.componentTypeComponentActions.viewRelationshipProperty,
   updateRelationshipProperty: sagaActions.componentTypeComponentActions.updateRelationshipProperty,
   deleteComponentRelationship: sagaActions.componentTypeComponentActions.deleteComponentRelationship
@@ -78,6 +84,24 @@ export const propsMapping: Callbacks = {
 //     onClick: () => dispatch(actions.starsActions.FETCH_STARS)
 //   }
 // }
+// eslint-disable-next-line
+toastr.options = {
+  'closeButton': false,
+  'debug': false,
+  'newestOnTop': false,
+  'progressBar': false,
+  'positionClass': 'toast-bottom-full-width',
+  'preventDuplicates': false,
+  'onclick': null,
+  'showDuration': '300',
+  'hideDuration': '1000',
+  'timeOut': '4000',
+  'extendedTimeOut': '1000',
+  'showEasing': 'swing',
+  'hideEasing': 'linear',
+  'showMethod': 'fadeIn',
+  'hideMethod': 'fadeOut'
+}
 
 export default compose(
   connect(mapStateToProps, propsMapping),
@@ -91,6 +115,8 @@ export default compose(
         'componentTypeComponentId': componentTypeComponentId,
         'id': componentTypeComponentId
       }
+      // eslint-disable-next-line
+      mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
       this.props.fetchComponentById && this.props.fetchComponentById({id: componentTypeId})
       this.props.fetchComponentTypeComponent && this.props.fetchComponentTypeComponent(payload)
       this.props.fetchcomponentTypeComponentProperties && this.props.fetchcomponentTypeComponentProperties(payload)
@@ -112,12 +138,22 @@ export default compose(
           this.props.history.push('/')
         }
       }
+      if (nextProps.updateComponentPropertyResponse && nextProps.updateComponentPropertyResponse !== '') {
+        if (nextProps.updateComponentPropertyResponse.error_code === null) {
+          this.props.fetchComponentTypeComponent && this.props.fetchComponentTypeComponent(payload)
+          // eslint-disable-next-line
+          toastr.success('The ' + this.props.componentTypeComponentData.resources[0].name + ' was successfully updated', 'Good Stuff!')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.updateComponentPropertyResponse.error_message, nextProps.updateComponentPropertyResponse.error_code)
+        }
+        this.props.resetResponse()
+      }
       if (nextProps.componentTypeComponentData && nextProps.componentTypeComponentData !== this.props.componentTypeComponentData) {
-        // let deletecomponentid = nextProps.match.params.componentTypeId
-        if (nextProps.componentTypeComponentData.error_code === 'SHARED-001') {
-        // eslint-disable-next-line
-        toastr.error(nextProps.componentTypeComponentData.error_message, nextProps.componentTypeComponentData.error_code)
-        this.props.history.push('/components')
+        if (nextProps.componentTypeComponentData.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.componentTypeComponentData.error_message, nextProps.componentTypeComponentData.error_code)
+          this.props.history.push('/components')
         }
       }
       if (nextProps.componentTypeComponents && nextProps.componentTypeComponents !== this.props.componentTypeComponents) {
@@ -125,23 +161,27 @@ export default compose(
         this.props.setAddConnectionSettings(settingPayload)
       }
       if (nextProps.deleteComponent && nextProps.deleteComponent !== '') {
-        // let deletecomponentid = nextProps.componentDetail.resources[0].id
         if (nextProps.deleteComponent.error_code === null) {
-        let deletecomponentid = nextProps.match.params.componentTypeId
-        this.props.history.push('/components/' + deletecomponentid)
-        // this.props.history.push('/components/' + compid)
-        // this.props.history.go('/components/' + deletecomponentid)
-        // nextProps.setRedirectFlag(false)
-        // nextProps.setAddRedirectFlag(false)
-        nextProps.setDeleteModalOpenStatus(false)
-        // eslint-disable-next-line
-        location.reload()
-      }
-    }
-      if (nextProps.updateRelationshipResponse && nextProps.updateRelationshipResponse !== '') {
-        if (!nextProps.updateRelationshipResponse.error_code) {
-          this.props.fetchcomponentTypeComponentRelationships && this.props.fetchcomponentTypeComponentRelationships(payload)
+          // eslint-disable-next-line
+          toastr.success('The ' + this.props.componentTypeComponentData.resources[0].name + ' ' + this.props.componentTypeComponentData.resources[0].component_type.name + ' was successfully deleted', 'Zapped!')
+          // eslint-disable-next-line
+          window.location.href = window.location.origin + '/components/' + nextProps.match.params.componentTypeId
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.deleteComponent.error_message, nextProps.deleteComponent.error_code)
         }
+        this.props.resetResponse()
+      }
+      if (nextProps.updateRelationshipResponse && nextProps.updateRelationshipResponse !== '') {
+        if (nextProps.updateRelationshipResponse.error_code === null) {
+          this.props.fetchcomponentTypeComponentRelationships && this.props.fetchcomponentTypeComponentRelationships(payload)
+          // eslint-disable-next-line
+          toastr.success('We\'ve added the new relationships to the ' + this.props.componentTypeComponentData.resources[0].name + '', 'Connecting the dots!')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.updateRelationshipResponse.error_message, nextProps.updateRelationshipResponse.error_code)
+        }
+        this.props.resetUpdateRelationshipResponse()
       }
       if (nextProps.relationshipActionSettings && nextProps.relationshipActionSettings !== this.props.relationshipActionSettings) {
         if (nextProps.relationshipActionSettings.isModalOpen) {
@@ -161,6 +201,37 @@ export default compose(
           this.props.fetchcomponentTypeComponentRelationships && this.props.fetchcomponentTypeComponentRelationships(payload)
         }
       }
+      if (nextProps.deleteRelationshipResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.deleteRelationshipResponse.error_code === null) {
+          if (nextProps.relationshipActionSettings.actionType === 'delete' && nextProps.deleteRelationshipResponse.result_code === 0) {
+            this.props.fetchcomponentTypeComponentRelationships && this.props.fetchcomponentTypeComponentRelationships(payload)
+          }
+          // eslint-disable-next-line
+          toastr.success('Successfully deleted relationship ' + this.props.relationshipActionSettings.relationshipText + ': ' + this.props.relationshipActionSettings.componentName + '', 'Disconnected')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.deleteRelationshipResponse.error_message, nextProps.deleteRelationshipResponse.error_code)
+        }
+        this.props.resetUpdateRelationshipResponse()
+        let settingPayload = {...this.props.relationshipActionSettings, 'isModalOpen': false}
+        this.props.setRelationshipActionSettings(settingPayload)
+      }
+      if (nextProps.updateRelationshipPropertyResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        this.props.resetUpdateRelationshipResponse()
+        if (nextProps.updateRelationshipPropertyResponse.error_code === null) {
+          // eslint-disable-next-line
+          toastr.success('Successfully updated relationship ' + this.props.relationshipActionSettings.relationshipText + ': ' + this.props.relationshipActionSettings.componentName, 'Updated!')
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.updateRelationshipPropertyResponse.error_message, nextProps.updateRelationshipPropertyResponse.error_code)
+        }
+        let settingPayload = {...this.props.relationshipActionSettings, 'isModalOpen': false}
+        this.props.setRelationshipActionSettings(settingPayload)
+      }
       if (nextProps.relationshipProperty && nextProps.relationshipProperty !== this.props.relationshipProperty) {
         if (nextProps.relationshipProperty !== '') {
           // eslint-disable-next-line
@@ -168,7 +239,8 @@ export default compose(
         }
       }
       if (nextProps.componentDetail && nextProps.componentTypeComponentData && (nextProps.componentTypeComponentData !== '') && nextProps.componentTypeComponentData.resources) {
-        console.log('inside com Xxxxxxxxxxxxxxxxxxxxx', this.props, nextProps)
+        // eslint-disable-next-line
+        mApp.unblockPage()
         let breadcrumb = {
           title: '',
           items: [

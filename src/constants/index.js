@@ -62,7 +62,8 @@ const api = {
     },
     getAccountArtefacts: 'https://account-eco-dev.ecoconductor.com/artefacts',
     getModelArtefacts: 'https://model-eco-dev.ecoconductor.com/artefacts',
-    updateNotificationViewStatus: 'https://notification-eco-dev.ecoconductor.com/notification_view_status'
+    updateNotificationViewStatus: 'https://notification-eco-dev.ecoconductor.com/notification_view_status',
+    createDiscussion: 'https://notification-eco-dev.ecoconductor.com/discussions'
   }
 
 export default api

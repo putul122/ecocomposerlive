@@ -4,6 +4,7 @@ import ApplicationDetail from '../../components/applicationDetail/applicationDet
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators as applicationDetailActionCreators } from '../../redux/reducers/applicationDetailReducer/applicationDetailReducerReducer'
 import { actionCreators as basicActionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
+import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 
 // Global State
 export function mapStateToProps (state, props) {
@@ -35,7 +36,8 @@ export const propsMapping: Callbacks = {
   setRedirectFlag: basicActionCreators.setRedirectFlag,
   setBreadcrumb: basicActionCreators.setBreadcrumb,
   setModalOpenStatus: basicActionCreators.setModalOpenStatus,
-  setConfirmationModalOpenStatus: basicActionCreators.setConfirmationModalOpenStatus
+  setConfirmationModalOpenStatus: basicActionCreators.setConfirmationModalOpenStatus,
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
 }
 
 // If you want to use the function mapping

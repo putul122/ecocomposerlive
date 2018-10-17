@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import _ from 'lodash'
 import ComponentModelComponent from '../componentModel/componentModelComponent'
 import Discussion from '../../containers/discussion/discussionContainer'
+import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Select from 'react-select'
 import CreatableSelect from 'react-select/lib/Creatable'
 import moment from 'moment'
@@ -57,38 +58,19 @@ export default function ComponentTypeComponent (props) {
     let showProperties = props.showTabs.showProperty
     let showRelationships = props.showTabs.showRelationship
     let childrenList
-    // Code for setting toaster options
-    // eslint-disable-next-line
-    toastr.options = {
-      'closeButton': false,
-      'debug': false,
-      'newestOnTop': false,
-      'progressBar': false,
-      'positionClass': 'toast-bottom-full-width',
-      'preventDuplicates': false,
-      'onclick': null,
-      'showDuration': '300',
-      'hideDuration': '1000',
-      'timeOut': '4000',
-      'extendedTimeOut': '1000',
-      'showEasing': 'swing',
-      'hideEasing': 'linear',
-      'showMethod': 'fadeIn',
-      'hideMethod': 'fadeOut'
+    let openDiscussionModal = function (event) {
+      event.preventDefault()
+      props.setDiscussionModalOpenStatus(true)
+      props.setDropdownFlag(false)
     }
     // Code for Delete Modal begins
-    let showToasterfordelete = function () {
-      // eslint-disable-next-line
-      toastr.success('The ' + componentTypeComponentName + ' ' + ComponentTypeName + ' was successfully deleted', 'Zapped!')
-    }
     let removeComponent = function (event) {
       event.preventDefault()
       let payload = {
          'id': props.match.params.componentId
         }
         props.deletecomponentTypeComponent(payload)
-        showToasterfordelete()
-        props.resetUpdateRelationshipResponse()
+        props.setDeleteModalOpenStatus(false)
       }
     let openDeleteModal = function (event) {
       event.preventDefault()
@@ -163,8 +145,6 @@ export default function ComponentTypeComponent (props) {
       props.updateComponentTypeComponentProperties(payload)
       props.updateComponentTypeComponent(payload)
       props.setConfirmationModalOpenStatus(false)
-      // eslint-disable-next-line
-      toastr.success('The ' + componentTypeComponentName + ' was successfully updated', 'Good Stuff!')
     }
     let handlePropertySelect = function (index, childIndex) {
       return function (newValue: any, actionMeta: any) {
@@ -358,18 +338,6 @@ export default function ComponentTypeComponent (props) {
       }
       props.deleteComponentRelationship(payload)
     }
-    if (props.deleteRelationshipResponse !== '') {
-      if (props.updateRelationshipPropertyResponse.result_code !== 1) {
-        // eslint-disable-next-line
-        toastr.success('Successfully deleted relationship ' + props.relationshipActionSettings.relationshipText + ': ' + props.relationshipActionSettings.componentName + '', 'Disconnected')
-      } else {
-        // eslint-disable-next-line
-        toastr.error(props.updateRelationshipResponse.error_message, props.updateRelationshipResponse.error_code)
-      }
-      props.resetUpdateRelationshipResponse()
-      let settingPayload = {...props.relationshipActionSettings, 'isModalOpen': false}
-      props.setRelationshipActionSettings(settingPayload)
-    }
     // Code for Delete relationship ends here
     let componentRelationshipPropertiesList = ''
     // let relationshipPropertyPayload = JSON.parse(JSON.stringify(props.relationshipPropertyPayload))
@@ -382,18 +350,6 @@ export default function ComponentTypeComponent (props) {
       payload.relationshipId = props.relationshipActionSettings.relationshipId
       payload.payloadData = relationshipPropertyPayload
       props.updateRelationshipProperty(payload)
-    }
-    if (props.updateRelationshipPropertyResponse !== '') {
-      if (props.updateRelationshipPropertyResponse.result_code !== 1) {
-        // eslint-disable-next-line
-        toastr.success('Successfully updated relationship ' + props.relationshipActionSettings.relationshipText + ': ' + props.relationshipActionSettings.componentName, 'Updated!')
-      } else {
-        // eslint-disable-next-line
-        toastr.error(props.updateRelationshipResponse.error_message, props.updateRelationshipResponse.error_code)
-      }
-      props.resetUpdateRelationshipResponse()
-      let settingPayload = {...props.relationshipActionSettings, 'isModalOpen': false}
-      props.setRelationshipActionSettings(settingPayload)
     }
     let handleRelationshipPropertySelect = function (index, childIndex) {
       return function (newValue: any, actionMeta: any) {
@@ -744,16 +700,6 @@ export default function ComponentTypeComponent (props) {
       props.updateComponentTypeComponentRelationships(payload)
       // showToaster()
       closeModal()
-    }
-    if (props.updateRelationshipResponse !== '') {
-      if (props.updateRelationshipResponse.result_code !== 1) {
-        // eslint-disable-next-line
-        toastr.success('We\'ve added the new relationships to the ' + props.componentTypeComponentData.resources[0].name + '', 'Connecting the dots!')
-      } else {
-        // eslint-disable-next-line
-        toastr.error(props.updateRelationshipResponse.error_message, props.updateRelationshipResponse.error_code)
-      }
-      props.resetUpdateRelationshipResponse()
     }
     let handleSecondSelect = function (newValue: any, actionMeta: any) {
       console.group('Value Changed')
@@ -1265,6 +1211,12 @@ export default function ComponentTypeComponent (props) {
                             </a>
                           </li>
                           <li className='m-nav__item'>
+                            <a href='javascript:void(0);' onClick={openDiscussionModal} className='m-nav__link'>
+                              <i className='m-nav__link-icon 	flaticon-users' />
+                              <span className='m-nav__link-text'>Start new discussion</span>
+                            </a>
+                          </li>
+                          <li className='m-nav__item'>
                             <a href='' className='m-nav__link' onClick={openDeleteModal}>
                               <i className='m-nav__link-icon flaticon-delete-1' />
                               <span className='m-nav__link-text'>Delete</span>
@@ -1546,19 +1498,20 @@ export default function ComponentTypeComponent (props) {
           </div>
         </div>
         <Discussion name={componentTypeComponentName} type='Component' {...props} />
+        <NewDiscussion contextId={props.match.params.componentId} name={componentTypeComponentName} type='Component' {...props} />
       </div>
     )
 }
 
 ComponentTypeComponent.propTypes = {
-  deleteRelationshipResponse: PropTypes.any,
-  setRelationshipActionSettings: PropTypes.func,
-  updateRelationshipPropertyResponse: PropTypes.any,
+  // deleteRelationshipResponse: PropTypes.any,
+  // setRelationshipActionSettings: PropTypes.func,
+  match: PropTypes.any,
   relationshipPropertyPayload: PropTypes.any,
   relationshipActionSettings: PropTypes.any,
   relationshipProperty: PropTypes.any,
-  resetUpdateRelationshipResponse: PropTypes.func,
-  updateRelationshipResponse: PropTypes.any,
+  // resetUpdateRelationshipResponse: PropTypes.func,
+  // updateRelationshipResponse: PropTypes.any,
   successmodalIsOpen: PropTypes.any,
   componentPropertiesPayload: PropTypes.any,
   copiedComponentProperties: PropTypes.any,
@@ -1576,7 +1529,7 @@ ComponentTypeComponent.propTypes = {
   // setModalOpenStatus: PropTypes.func
   componentTypeComponentRelationships: PropTypes.any,
   isDropDownOpen: PropTypes.any,
-  // deleteComponent: PropTypes.any,
+  // isDiscussionModalOpen: PropTypes.any,
   // setDeleteModalOpenStatus: PropTypes.func,
   // history: PropTypes.any,
   deletemodalIsOpen: PropTypes.any

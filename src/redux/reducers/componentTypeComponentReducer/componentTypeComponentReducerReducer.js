@@ -8,7 +8,8 @@ import { FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS,
   DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS,
   VIEW_RELATIONSHIP_PROPERTY_SUCCESS,
   UPDATE_RELATIONSHIP_PROPERTY_SUCCESS,
-  DELETE_COMPONENT_RELATIONSHIP_SUCCESS
+  DELETE_COMPONENT_RELATIONSHIP_SUCCESS,
+  UPDATE_COMPONENT_TYPE_COMPONENT_PROPERTIES_SUCCESS
  } from '../../sagas/componentTypeComponent/componentTypeComponentSaga'
 // Name Spaced Action Types
 const SET_DATA_LOADING = 'ComponentTypeComponentReducer/SET_DATA_LOADING'
@@ -23,11 +24,12 @@ const RESTORE_COMPONENT_PROPERTIES = 'ComponentTypeComponentReducer/RESTORE_COMP
 const EDIT_COMPONENT_PROPERTIES = 'ComponentTypeComponentReducer/EDIT_COMPONENT_PROPERTIES'
 const PUSH_COMPONENT_PROPERTY_PAYLOAD = 'ComponentTypeComponentReducer/PUSH_COMPONENT_PROPERTY_PAYLOAD'
 const RESET_UPDATE_RELATIONSHIP_RESPONSE = 'ComponentTypeComponentReducer/RESET_UPDATE_RELATIONSHIP_RESPONSE'
-const SET_DELETE_FLAG = 'ComponentTypeComponentReducer/SET_DELETE_FLAG'
+const SET_DISCUSSION_MODAL_OPEN_STATUS = 'ComponentTypeComponentReducer/SET_DISCUSSION_MODAL_OPEN_STATUS'
 const EDIT_COMPONENT_RELATIONSHIP_PROPERTY = 'ComponentTypeComponentReducer/EDIT_COMPONENT_RELATIONSHIP_PROPERTY'
 const RESET_COMPONENT_RELATIONSHIP_PROPERTY = 'ComponentTypeComponentReducer/RESET_COMPONENT_RELATIONSHIP_PROPERTY'
 const SET_RELATIONSHIP_ACTION_SETTINGS = 'ComponentTypeComponentReducer/SET_RELATIONSHIP_ACTION_SETTINGS'
 const EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD = 'ComponentTypeComponentReducer/EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD'
+const RESET_RESPONSE = 'EntitlementDetailReducer/RESET_RESPONSE'
 
 export const actions = {
   FETCH_COMPONENT_TYPE_COMPONENT_SUCCESS,
@@ -55,7 +57,10 @@ export const actions = {
   RESET_COMPONENT_RELATIONSHIP_PROPERTY,
   EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD,
   UPDATE_RELATIONSHIP_PROPERTY_SUCCESS,
-  DELETE_COMPONENT_RELATIONSHIP_SUCCESS
+  DELETE_COMPONENT_RELATIONSHIP_SUCCESS,
+  UPDATE_COMPONENT_TYPE_COMPONENT_PROPERTIES_SUCCESS,
+  RESET_RESPONSE,
+  SET_DISCUSSION_MODAL_OPEN_STATUS
 }
 
 export const actionCreators = {
@@ -71,12 +76,13 @@ export const actionCreators = {
     editComponentProperties: createAction(EDIT_COMPONENT_PROPERTIES),
     pushComponentPropertyPayload: createAction(PUSH_COMPONENT_PROPERTY_PAYLOAD),
     resetUpdateRelationshipResponse: createAction(RESET_UPDATE_RELATIONSHIP_RESPONSE),
-    setDeleteFlag: createAction(SET_DELETE_FLAG),
+    setDiscussionModalOpenStatus: createAction(SET_DISCUSSION_MODAL_OPEN_STATUS),
     setRedirectFlag: createAction(DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS),
     setRelationshipActionSettings: createAction(SET_RELATIONSHIP_ACTION_SETTINGS),
     editComponentRelationshipProperties: createAction(EDIT_COMPONENT_RELATIONSHIP_PROPERTY),
     resetComponentRelationshipProperties: createAction(RESET_COMPONENT_RELATIONSHIP_PROPERTY),
-    editComponentRelationshipPropertyPayload: createAction(EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD)
+    editComponentRelationshipPropertyPayload: createAction(EDIT_COMPONENT_RELATIONSHIP_PROPERTY_PAYLOAD),
+    resetResponse: createAction(RESET_RESPONSE)
 }
 
 export const initialState = {
@@ -89,6 +95,7 @@ export const initialState = {
   componentTypeComponentRelationships: '',
   componentTypeComponentConstraints: '',
   componentTypeComponents: '',
+  updateComponentPropertyResponse: '',
   updateRelationshipResponse: '',
   isComponentTypeLoading: false,
   currentPage: 1,
@@ -124,7 +131,8 @@ export const initialState = {
   relationshipProperty: '',
   relationshipPropertyPayload: [],
   updateRelationshipPropertyResponse: '',
-  deleteRelationshipResponse: ''
+  deleteRelationshipResponse: '',
+  isDiscussionModalOpen: false
 }
 
 export default handleActions(
@@ -201,8 +209,7 @@ export default handleActions(
       updateRelationshipResponse: '',
       updateRelationshipPropertyResponse: '',
       deleteRelationshipResponse: '',
-      relationshipPropertyPayload: [],
-      deleteComponent: ''
+      relationshipPropertyPayload: []
     }),
     [DELETE_COMPONENT_TYPE_COMPONENT_SUCCESS]: (state, action) => ({
       ...state,
@@ -235,6 +242,19 @@ export default handleActions(
     [DELETE_COMPONENT_RELATIONSHIP_SUCCESS]: (state, action) => ({
       ...state,
       deleteRelationshipResponse: action.payload
+    }),
+    [UPDATE_COMPONENT_TYPE_COMPONENT_PROPERTIES_SUCCESS]: (state, action) => ({
+      ...state,
+      updateComponentPropertyResponse: action.payload
+    }),
+    [RESET_RESPONSE]: (state, action) => ({
+      ...state,
+      updateComponentPropertyResponse: '',
+      deleteComponent: ''
+    }),
+    [SET_DISCUSSION_MODAL_OPEN_STATUS]: (state, action) => ({
+      ...state,
+      isDiscussionModalOpen: action.payload
     })
   },
   initialState
