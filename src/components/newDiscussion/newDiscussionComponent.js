@@ -6,19 +6,6 @@ import defaultMentionStyle from './defaultMentionStyle.js'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
 
-const customStyles = {
-    content: {
-      top: '50%',
-      left: '50%',
-      right: 'auto',
-      bottom: 'auto',
-      marginRight: '-50%',
-      border: 'none',
-      background: 'none',
-      transform: 'translate(-50%, -50%)'
-    }
-  }
-
 export default function NewDiscussion (props) {
   console.log('props new discussion', props, props.isDiscussionModalOpen)
   let NameInputBox
@@ -106,9 +93,10 @@ return (
   <div>
     <ReactModal isOpen={props.isDiscussionModalOpen}
       onRequestClose={closeDiscussionModal}
-      style={customStyles} >
-      <div className='modalwidth'>
-        <div className='modal-dialog'>
+      className='modal-dialog modal-lg'
+      style={{'content': {'top': '20%'}}}>
+      <div className=''>
+        <div >
           <div className='modal-content'>
             <div className='modal-header'>
               <h6>New Discussion</h6>
@@ -149,7 +137,7 @@ return (
               {/* <TextInput onRequestOptions={handleRequestOptions} options={options} >{usersList}</TextInput> */}
             </div>
             <div className='modal-footer'>
-              <button type='button' onClick={createDiscussion} id='m_login_signup' className='buttonbg'>Add Discussion</button>
+              <button type='button' onClick={createDiscussion} id='m_login_signup' className='btn btn-outline-info btn-sm m-btn m-btn--custom'>Add Discussion</button>
             </div>
           </div>
         </div>

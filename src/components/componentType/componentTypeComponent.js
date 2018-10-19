@@ -167,10 +167,7 @@ export default function ComponentType (props) {
           <div className='m-portlet__head'>
             <div className='m-portlet__head-caption'>
               <div className='m-portlet__head-title row'>
-                <h3 className=' col-md-6 m-portlet__head-text m--font-light'>
-                  Component Types
-                </h3>
-                <div className={' col-md-6 pull-right'}>
+                <div className={' col-md-12'}>
                   <div className='m-input-icon m-input-icon--left'>
                     <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleInputChange} />
                     <span className='m-input-icon__icon m-input-icon__icon--left'>

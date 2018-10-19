@@ -1182,7 +1182,7 @@ export default function ComponentTypeComponent (props) {
           </div>
           <div className='m-alert__text'>
             <div className='row'>
-              {!props.isEditComponent && (<h2 className='col-8'>{componentTypeComponentName}</h2>)}
+              {!props.isEditComponent && (<h2 className=''>{componentTypeComponentName}</h2>)}
               {props.isEditComponent && (<div className='col-8 form-group m-form__group has-danger'>
                 <input type='text' className='form-control m-input' onChange={editComponentName} value={componentTypeComponentName} placeholder='Component Name' aria-describedby='basic-addon2' />
                 {componentNameMessage && (<div className='form-control-feedback'>Component name required</div>)}
@@ -1191,7 +1191,7 @@ export default function ComponentTypeComponent (props) {
                 <button onClick={cancelEditComponent} className='btn btn-outline-info btn-sm'>Cancel</button>
                 <button onClick={saveComponentProperty} className='btn btn-outline-info btn-sm'>Save</button>
               </div>)}
-              {!props.isEditComponent && (<div className={'col-3 pull-right m-dropdown m-dropdown--inline m-dropdown--arrow m-dropdown--align-left m-dropdown--align-push ' + dropDownClass}>
+              {!props.isEditComponent && (<div className={'pull-left m-dropdown m-dropdown--inline m-dropdown--arrow m-dropdown--align-left m-dropdown--align-push ' + dropDownClass}>
                 <a href='javascript:void(0);' className='m-portlet__nav-link m-dropdown__toggle btn btn-secondary m-btn m-btn--icon m-btn--pill' onClick={openDropDown}>
                   <i className='la la-ellipsis-h' />
                 </a>
