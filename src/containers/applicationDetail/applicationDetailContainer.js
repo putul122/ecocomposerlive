@@ -126,6 +126,7 @@ export default compose(
       }
     }
     if (nextProps.perPage && nextProps.perPage !== this.props.perPage) {
+      this.props.setCurrentPage(1)
       const componentTypeId = this.props.match.params.id
       // eslint-disable-next-line
       mApp.block('#style-1', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
