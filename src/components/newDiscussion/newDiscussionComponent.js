@@ -3,15 +3,75 @@ import PropTypes from 'prop-types'
 import { MentionsInput, Mention } from 'react-mentions'
 import defaultStyle from './defaultStyle.js'
 import defaultMentionStyle from './defaultMentionStyle.js'
+import debounce from 'lodash/debounce'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
 
 export default function NewDiscussion (props) {
   console.log('props new discussion', props, props.isDiscussionModalOpen)
   let NameInputBox
+  let tempMessageStorage = ''
+  let tempTagStorage = []
+  let viewMessageBox = ''
   let closeDiscussionModal = function (event) {
+    tempMessageStorage = ''
+    tempTagStorage = []
     props.setDiscussionModalOpenStatus(false)
   }
+  let onAddReference = function (id, display) {
+    // Unicode Replacement Mapping
+    // "[" ---> 8261
+    // "]" ---> 8262
+    // ":" ---> 8285
+    setTimeout(function () {
+      let originalMessage = props.newMessage
+      let formattedText = display.replace('[', String.fromCharCode(8261)).replace(']', String.fromCharCode(8262)).replace(':', String.fromCharCode(8285)).trim()
+      console.log(tempMessageStorage)
+      console.log(tempTagStorage)
+      if (!tempTagStorage.length > 0) {
+        tempTagStorage.push({id: 1, display: '...'})
+      }
+      let buildMessage = originalMessage.substring(0, originalMessage.length - 2) + '@[' + display + ':Reference:' + id + ']'
+      let formattedMessage = buildMessage.replace(display, formattedText)
+      let payload = {}
+      payload.message = formattedMessage
+      payload.tags = tempTagStorage
+      props.setMessageData(payload)
+    }, 0)
+  }
+  let handleChange1 = debounce((e) => {
+    console.log(e)
+    console.log('call api', viewMessageBox, viewMessageBox ? viewMessageBox.props.value : '')
+    if (viewMessageBox) {
+      let str = viewMessageBox ? viewMessageBox.props.value : ''
+      let matches = str.match(/[^@!a-z$]#[a-z]+/gi)
+      console.log('matches', matches)
+      let reference = []
+      if (matches !== null) {
+        matches.forEach(function (data, index) {
+          console.log('inside for', data.trim().substring(1, data.trim().length))
+          reference.push(data.trim().substring(1, data.trim().length))
+        })
+      }
+      if (reference.length > 0) {
+        if (reference[reference.length - 1] !== '') {
+          let initialPayload = {
+            'search': reference[reference.length - 1],
+            page_size: 100,
+            page: 1
+          }
+          props.fetchModelArtefacts && props.fetchModelArtefacts(initialPayload)
+        }
+      } else {
+        let initialPayload = {
+          'search': '',
+          page_size: 100,
+          page: 1
+        }
+        props.fetchModelArtefacts && props.fetchModelArtefacts(initialPayload)
+      }
+    }
+  }, 500)
   let handleChange = function (event) {
     let str = event.target.value
     let matches = str.match(/[^@!a-z$]\$[a-z]+/gi)
@@ -26,6 +86,8 @@ export default function NewDiscussion (props) {
     } else {
       tags.push({id: 1, display: '...'})
     }
+    tempMessageStorage = str
+    tempTagStorage = tags
     let payload = {}
     payload.message = str
     payload.tags = tags
@@ -88,6 +150,8 @@ export default function NewDiscussion (props) {
     resetPayload.message = ''
     resetPayload.formattedTags = [{id: 1, display: '...'}]
     props.setMessageData(resetPayload)
+    tempTagStorage = []
+    viewMessageBox = ''
   }
 return (
   <div>
@@ -112,7 +176,7 @@ return (
                   <input type='text' className='form-control' ref={input => (NameInputBox = input)} id='component-name' autoComplete='off' required />
                 </div>
                 <div className='form-group'>
-                  <MentionsInput value={props.newMessage} placeholder={'for mentions use \'@\', for references use \'#\' and for tags use \'$\''} onChange={handleChange} markup='@[__display__:__type__:__id__]' style={defaultStyle}>
+                  <MentionsInput onKeyUp={handleChange1} allowSpaceInQuery='true' ref={input => (viewMessageBox = input)} value={props.newMessage} placeholder={'for mentions use \'@\', for references use \'#\' and for tags use \'$\''} onChange={handleChange} markup='@[__display__:__type__:__id__]' style={defaultStyle}>
                     <Mention
                       type='Mention'
                       trigger='@'
@@ -124,6 +188,7 @@ return (
                       trigger='#'
                       data={props.formattedModels}
                       style={defaultMentionStyle}
+                      onAdd={onAddReference}
                     />
                     <Mention
                       type='Tag'

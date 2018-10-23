@@ -60,18 +60,19 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      console.log('new dis comp will mount', this.props)
-      let initialPayload = {
+      let accountPayload = {
         'search': ''
       }
-      this.props.fetchAccountArtefacts && this.props.fetchAccountArtefacts(initialPayload)
-      this.props.fetchModelArtefacts && this.props.fetchModelArtefacts(initialPayload)
+      let modelPayload = {
+        'search': '',
+        page_size: 100,
+        page: 1
+      }
+      this.props.fetchAccountArtefacts && this.props.fetchAccountArtefacts(accountPayload)
+      this.props.fetchModelArtefacts && this.props.fetchModelArtefacts(modelPayload)
     },
-    componentDidMount: function () {
-        console.log('component did mount')
-    },
+    componentDidMount: function () {},
     componentWillReceiveProps: function (nextProps) {
-      console.log('next props new discussion', nextProps)
       if (nextProps.accountArtefactsData && nextProps.accountArtefactsData !== this.props.accountArtefactsData) {
         if (nextProps.accountArtefactsData.result_code === 0) {
           let accountsData = nextProps.accountArtefactsData.resources.map(function (account, index) {

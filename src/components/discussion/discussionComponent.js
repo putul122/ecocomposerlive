@@ -2,16 +2,46 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ReactHtmlParser from 'react-html-parser'
 import { MentionsInput, Mention } from 'react-mentions'
+import debounce from 'lodash/debounce'
 import defaultStyle from './defaultStyle.js'
 import defaultMentionStyle from './defaultMentionStyle.js'
 import styles from './discussionComponent.scss'
+// import axios from 'axios'
+// import api from '../../constants'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
 
 export default function Discussion (props) {
   // console.log('Discussion Components', props.newMessage, props.formattedAccounts, props.type, props.formattedModels, props)
+  let viewMessageBox = ''
   let discussionList = ''
   let discussionReplyList = ''
+  let tempMessageStorage = ''
+  let tempTagStorage = []
+  // let asyncData = debounce((query, callback) => {
+  //   console.log(query)
+  //   // function (query, callback) {
+  //   console.log('my data', callback)
+  //   axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+  //   axios.get(api.getModelArtefacts, {
+  //     params: {
+  //       'search': query,
+  //       page_size: 100,
+  //       page: 1
+  //     }
+  //   })
+  //   .then(function (response) {
+  //     console.log(response)
+  //     if (response.data.error_code === null) {
+  //       return response.data.resources.map(reference => ({ display: reference.name, id: reference.id }))
+  //     }
+  //   })
+  //   .then(callback)
+  //   .catch(function (error) {
+  //     console.log('error', error)
+  //   })
+  //   // asyncQuery(query).then(callback);
+  // }, 500)
   let getMessages = function (data) {
     console.log(data)
     props.setMessageData('')
@@ -24,20 +54,98 @@ export default function Discussion (props) {
     }
   }
   let openSlide = function (event) {
+    tempMessageStorage = ''
+    tempTagStorage = []
     props.setQuickslideDiscussion('m-quick-sidebar--on')
   }
   let closeSlide = function (event) {
+    tempMessageStorage = ''
+    tempTagStorage = []
     props.setQuickslideDiscussion('m-quick-sidebar--off')
   }
   let openModal = function (message) {
+    tempMessageStorage = ''
+    tempTagStorage = []
     props.setQuickslideDiscussion('m-quick-sidebar--off')
     let payload = {...props.replySettings, 'isModalOpen': true, 'selectedMessage': message, 'messageReply': '@[' + message.author.name + ':Mention:' + message.author.id + ']'}
     props.setReplySettings(payload)
   }
   let closeModal = function (event) {
+    tempMessageStorage = ''
+    tempTagStorage = []
     let payload = {...props.replySettings, 'isModalOpen': false, 'selectedMessage': '', 'messageReply': ''}
     props.setReplySettings(payload)
   }
+  let onAddReference = function (id, display) {
+    // Unicode Replacement Mapping
+    // "[" ---> 8261
+    // "]" ---> 8262
+    // ":" ---> 8285
+    setTimeout(function () {
+      let originalMessage = props.newMessage
+      let formattedText = display.replace('[', String.fromCharCode(8261)).replace(']', String.fromCharCode(8262)).replace(':', String.fromCharCode(8285)).trim()
+      if (!tempTagStorage.length > 0) {
+        tempTagStorage.push({id: 1, display: '...'})
+      }
+      let buildMessage = originalMessage.substring(0, originalMessage.length - 2) + '@[' + display + ':Reference:' + id + ']'
+      let formattedMessage = buildMessage.replace(display, formattedText)
+      let payload = {}
+      console.log(tempMessageStorage)
+      payload.message = formattedMessage
+      payload.tags = tempTagStorage
+      props.setMessageData(payload)
+    }, 0)
+  }
+  let onAddReplyReference = function (id, display) {
+    // Unicode Replacement Mapping
+    // "[" ---> 8261
+    // "]" ---> 8262
+    // ":" ---> 8285
+    setTimeout(function () {
+      let originalMessage = props.replySettings.messageReply
+      let formattedText = display.replace('[', String.fromCharCode(8261)).replace(']', String.fromCharCode(8262)).replace(':', String.fromCharCode(8285)).trim()
+      if (!tempTagStorage.length > 0) {
+        tempTagStorage.push({id: 1, display: '...'})
+      }
+      let buildMessage = originalMessage.substring(0, originalMessage.length - 2) + '@[' + display + ':Reference:' + id + ']'
+      let formattedMessage = buildMessage.replace(display, formattedText)
+      let payload = {...props.replySettings, 'messageReply': formattedMessage, 'tags': tempTagStorage}
+      props.setReplySettings(payload)
+    }, 0)
+  }
+  let handleChange1 = debounce((e) => {
+    console.log(e)
+    console.log('call api', viewMessageBox, viewMessageBox ? viewMessageBox.props.value : '')
+    if (viewMessageBox) {
+      let str = viewMessageBox ? viewMessageBox.props.value : ''
+      let matches = str.match(/[^@!a-z$]#[a-z]+/gi)
+      console.log('matches', matches)
+      let reference = []
+      if (matches !== null) {
+        matches.forEach(function (data, index) {
+          console.log('inside for', data.trim().substring(1, data.trim().length))
+          reference.push(data.trim().substring(1, data.trim().length))
+        })
+      }
+      if (reference.length > 0) {
+        if (reference[reference.length - 1] !== '') {
+          let initialPayload = {
+            'search': reference[reference.length - 1],
+            page_size: 100,
+            page: 1
+          }
+          props.fetchModelArtefacts && props.fetchModelArtefacts(initialPayload)
+        }
+      } else {
+        let initialPayload = {
+          'search': '',
+          page_size: 100,
+          page: 1
+        }
+        props.fetchModelArtefacts && props.fetchModelArtefacts(initialPayload)
+      }
+    }
+  }, 500)
   let handleChange = function (event) {
     let str = event.target.value
     let matches = str.match(/[^@!a-z$]\$[a-z]+/gi)
@@ -56,9 +164,44 @@ export default function Discussion (props) {
     let payload = {}
     payload.message = str
     payload.tags = tags
+    tempMessageStorage = str
+    tempTagStorage = tags
     console.log('payload', payload)
     props.setMessageData(payload)
   }
+  let handleMessageReply1 = debounce((e) => {
+    console.log(e)
+    console.log('call api', viewMessageBox, viewMessageBox ? viewMessageBox.props.value : '')
+    if (viewMessageBox) {
+      let str = viewMessageBox ? viewMessageBox.props.value : ''
+      let matches = str.match(/[^@!a-z$]#[a-z]+/gi)
+      console.log('matches', matches)
+      let reference = []
+      if (matches !== null) {
+        matches.forEach(function (data, index) {
+          console.log('inside for', data.trim().substring(1, data.trim().length))
+          reference.push(data.trim().substring(1, data.trim().length))
+        })
+      }
+      if (reference.length > 0) {
+        if (reference[reference.length - 1] !== '') {
+          let initialPayload = {
+            'search': reference[reference.length - 1],
+            page_size: 100,
+            page: 1
+          }
+          props.fetchModelArtefacts && props.fetchModelArtefacts(initialPayload)
+        }
+      } else {
+        let initialPayload = {
+          'search': '',
+          page_size: 100,
+          page: 1
+        }
+        props.fetchModelArtefacts && props.fetchModelArtefacts(initialPayload)
+      }
+    }
+  }, 500)
   let handleMessageReply = function (event) {
     let str = event.target.value
     let matches = str.match(/[^@!a-z$]\$[a-z]+/gi)
@@ -74,6 +217,8 @@ export default function Discussion (props) {
     } else {
       tags.push({id: 1, display: '...'})
     }
+    tempMessageStorage = str
+    tempTagStorage = tags
     let payload = {...props.replySettings, 'messageReply': str, 'tags': tags}
     props.setReplySettings(payload)
   }
@@ -184,22 +329,21 @@ export default function Discussion (props) {
                 data = data.substring(1, data.length - 1)
                 let parts = data.toString().split(':')
                 // eslint-disable-next-line
-                let str = `\\@\\[${data}\\]`
-                console.log('str replace', str)
-                let reg = new RegExp(str, 'g')
-                console.log('message content', messageContent)
-                console.log('reg', reg)
+                // let str = `\\@\\[${data}\\]`
+                // let reg = new RegExp(str, 'g')
+                let match = '@[' + data + ']'
                 if (parts[1] === 'Mention') {
                   console.log('Mention string', data)
-                  messageContent = messageContent.replace(reg, '<a href="javascript:void(0);">@' + parts[0] + '</a>')
+                  messageContent = messageContent.replace(match, '<a href="javascript:void(0);">@' + parts[0] + '</a>')
                   console.log('Mention string', messageContent)
                 } else if (parts[1] === 'Reference') {
                   console.log('Reference string', data)
-                  messageContent = messageContent.replace(reg, '<a href="javascript:void(0);">#' + parts[0] + '</a>')
+                  messageContent = messageContent.replace(match, '<a href="javascript:void(0);">#' + parts[0] + '</a>')
+                  messageContent = messageContent.replace(String.fromCharCode(8261), '[').replace(String.fromCharCode(8262), ']').replace(String.fromCharCode(8285), ':')
                   console.log('Reference string', messageContent)
                 } else if (parts[1] === 'Tag') {
                   console.log('tag string', data)
-                  messageContent = messageContent.replace(reg, '#' + parts[0] + '')
+                  messageContent = messageContent.replace(match, '#' + parts[0] + '')
                   console.log('tag string', messageContent)
                 }
               })
@@ -226,7 +370,7 @@ export default function Discussion (props) {
               </div>
               {!showReply && (<div className='row'>
                 <div className='col-md-8'>
-                  <MentionsInput value={value} placeholder={'for mentions use \'@\', for references use \'#\' and for tags use \'$\''} onChange={handleMessageReply} markup='@[__display__:__type__:__id__]' style={defaultStyle}>
+                  <MentionsInput value={value} allowSpaceInQuery='true' ref={input => (viewMessageBox = input)} placeholder={'for mentions use \'@\', for references use \'#\' and for tags use \'$\''} onKeyUp={handleMessageReply1} onChange={handleMessageReply} markup='@[__display__:__type__:__id__]' style={defaultStyle}>
                     <Mention
                       type='Mention'
                       trigger='@'
@@ -237,6 +381,8 @@ export default function Discussion (props) {
                       type='Reference'
                       trigger='#'
                       data={props.formattedModels}
+                      onAdd={onAddReplyReference}
+                      // data={asyncData}
                       style={defaultMentionStyle}
                     />
                     <Mention
@@ -302,14 +448,16 @@ export default function Discussion (props) {
               data = data.substring(1, data.length - 1)
               let parts = data.toString().split(':')
               // eslint-disable-next-line
-              let str = `\\@\\[${data}\\]`
-              let reg = new RegExp(str, 'g')
+              // let str = `\\@\\[${data}\\]`
+              // let reg = new RegExp(str, 'g')
+              let match = '@[' + data + ']'
               if (parts[1] === 'Mention') {
-                messageContent = messageContent.replace(reg, '<a href="javascript:void(0);">@' + parts[0] + '</a>')
+                messageContent = messageContent.replace(match, '<a href="javascript:void(0);">@' + parts[0] + '</a>')
               } else if (parts[1] === 'Reference') {
-                messageContent = messageContent.replace(reg, '<a href="javascript:void(0);">#' + parts[0] + '</a>')
+                messageContent = messageContent.replace(match, '<a href="javascript:void(0);">#' + parts[0] + '</a>')
+                messageContent = messageContent.replace(String.fromCharCode(8261), '[').replace(String.fromCharCode(8262), ']').replace(String.fromCharCode(8285), ':')
               } else if (parts[1] === 'Tag') {
-                messageContent = messageContent.replace(reg, '#' + parts[0] + '')
+                messageContent = messageContent.replace(match, '#' + parts[0] + '')
               }
             })
           }
@@ -317,7 +465,7 @@ export default function Discussion (props) {
         })
       }
       return (
-        <div className='m-accordion__item'>
+        <div className='m-accordion__item' style={{'overflow': 'visible'}}>
           <a className='m-accordion__item-head collapsed' onClick={() => getMessages(data)} role='tab' id={'m_accordion_7_item_1_head' + index} data-toggle='collapse' href={'#m_accordion_7_item_1_body' + index} aria-expanded='false'>
             {/* <span className='m-accordion__item-icon'><i className='fa flaticon-user-ok' /></span> */}
             <span className='m-accordion__item-title'>{data.name}</span>
@@ -330,7 +478,7 @@ export default function Discussion (props) {
                 <div className='m-messenger__form'>
                   <div className='m-messenger__form-controls'>
                     {/* <input type='text' name='' placeholder='New Messages' className='m-messenger__form-input' /> */}
-                    <MentionsInput value={props.newMessage} placeholder={'for mentions use \'@\', for references use \'#\' and for tags use \'$\''} onChange={handleChange} markup='@[__display__:__type__:__id__]' style={defaultStyle}>
+                    <MentionsInput allowSpaceInQuery='true' ref={input => (viewMessageBox = input)} value={props.newMessage} placeholder={'for mentions use \'@\', for references use \'#\' and for tags use \'$\''} onKeyUp={handleChange1} onChange={handleChange} markup='@[__display__:__type__:__id__]' style={defaultStyle}>
                       <Mention
                         type='Mention'
                         trigger='@'
@@ -342,6 +490,7 @@ export default function Discussion (props) {
                         trigger='#'
                         data={props.formattedModels}
                         style={defaultMentionStyle}
+                        onAdd={onAddReference}
                       />
                       <Mention
                         type='Tag'
@@ -550,7 +699,7 @@ export default function Discussion (props) {
           >
           {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
           <div>
-            <div>
+            <div className='' >
               <div className='modal-content'>
                 <div className='modal-header'>
                   <h4 className='modal-title' id='exampleModalLabel'>{props.name + ' Discussion'}</h4>
@@ -558,7 +707,7 @@ export default function Discussion (props) {
                     <span aria-hidden='true'>×</span>
                   </button>
                 </div>
-                <div className='modal-body'>
+                <div className='modal-body' style={{'height': 'calc(60vh - 55px)', 'overflow': 'auto'}}>
                   <ul>
                     {discussionReplyList}
                   </ul>
