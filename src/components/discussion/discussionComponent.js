@@ -118,31 +118,33 @@ export default function Discussion (props) {
     console.log('call api', viewMessageBox, viewMessageBox ? viewMessageBox.props.value : '')
     if (viewMessageBox) {
       let str = viewMessageBox ? viewMessageBox.props.value : ''
-      let matches = str.match(/[^@!a-z$]#[a-z]+/gi)
-      console.log('matches', matches)
-      let reference = []
-      if (matches !== null) {
-        matches.forEach(function (data, index) {
-          console.log('inside for', data.trim().substring(1, data.trim().length))
-          reference.push(data.trim().substring(1, data.trim().length))
-        })
-      }
-      if (reference.length > 0) {
-        if (reference[reference.length - 1] !== '') {
+      if (str !== '') {
+        let matches = str.match(/[^@!a-z$]#[a-z]+/gi)
+        console.log('matches', matches)
+        let reference = []
+        if (matches !== null) {
+          matches.forEach(function (data, index) {
+            console.log('inside for', data.trim().substring(1, data.trim().length))
+            reference.push(data.trim().substring(1, data.trim().length))
+          })
+        }
+        if (reference.length > 0) {
+          if (reference[reference.length - 1] !== '') {
+            let initialPayload = {
+              'search': reference[reference.length - 1],
+              page_size: 100,
+              page: 1
+            }
+            props.fetchModelArtefacts && props.fetchModelArtefacts(initialPayload)
+          }
+        } else {
           let initialPayload = {
-            'search': reference[reference.length - 1],
+            'search': '',
             page_size: 100,
             page: 1
           }
           props.fetchModelArtefacts && props.fetchModelArtefacts(initialPayload)
         }
-      } else {
-        let initialPayload = {
-          'search': '',
-          page_size: 100,
-          page: 1
-        }
-        props.fetchModelArtefacts && props.fetchModelArtefacts(initialPayload)
       }
     }
   }, 500)
@@ -174,31 +176,33 @@ export default function Discussion (props) {
     console.log('call api', viewMessageBox, viewMessageBox ? viewMessageBox.props.value : '')
     if (viewMessageBox) {
       let str = viewMessageBox ? viewMessageBox.props.value : ''
-      let matches = str.match(/[^@!a-z$]#[a-z]+/gi)
-      console.log('matches', matches)
-      let reference = []
-      if (matches !== null) {
-        matches.forEach(function (data, index) {
-          console.log('inside for', data.trim().substring(1, data.trim().length))
-          reference.push(data.trim().substring(1, data.trim().length))
-        })
-      }
-      if (reference.length > 0) {
-        if (reference[reference.length - 1] !== '') {
+      if (str !== '') {
+        let matches = str.match(/[^@!a-z$]#[a-z]+/gi)
+        console.log('matches', matches)
+        let reference = []
+        if (matches !== null) {
+          matches.forEach(function (data, index) {
+            console.log('inside for', data.trim().substring(1, data.trim().length))
+            reference.push(data.trim().substring(1, data.trim().length))
+          })
+        }
+        if (reference.length > 0) {
+          if (reference[reference.length - 1] !== '') {
+            let initialPayload = {
+              'search': reference[reference.length - 1],
+              page_size: 100,
+              page: 1
+            }
+            props.fetchModelArtefacts && props.fetchModelArtefacts(initialPayload)
+          }
+        } else {
           let initialPayload = {
-            'search': reference[reference.length - 1],
+            'search': '',
             page_size: 100,
             page: 1
           }
           props.fetchModelArtefacts && props.fetchModelArtefacts(initialPayload)
         }
-      } else {
-        let initialPayload = {
-          'search': '',
-          page_size: 100,
-          page: 1
-        }
-        props.fetchModelArtefacts && props.fetchModelArtefacts(initialPayload)
       }
     }
   }, 500)
@@ -358,7 +362,7 @@ export default function Discussion (props) {
             return (<li>
               <div className='row'>
                 <div className='col-md-8'>
-                  <img src={userIconlink} alt={cdata.author.name} />{ReactHtmlParser(messageContent)}
+                  <img src={userIconlink} alt={cdata.author.name} />{cdata.author.name} {ReactHtmlParser(messageContent)}
                 </div>
                 <div className='col-md-4'>
                   <span className=''>
@@ -461,7 +465,7 @@ export default function Discussion (props) {
               }
             })
           }
-          return (<li><img src={userIconlink} alt={cdata.author.name} />{ReactHtmlParser(messageContent)}<span className='pull-right' style={{cursor: 'pointer'}}><a href='javascript:void(0);' onClick={(event) => { openModal(cdata) }} ><i className='fa fa-reply' /></a></span></li>)
+          return (<li><img src={userIconlink} alt={cdata.author.name} />{cdata.author.name} {ReactHtmlParser(messageContent)}<span className='pull-right' style={{cursor: 'pointer'}}><a href='javascript:void(0);' onClick={(event) => { openModal(cdata) }} ><i className='fa fa-reply' /></a></span></li>)
         })
       }
       return (
