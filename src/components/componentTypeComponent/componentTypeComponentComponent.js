@@ -1263,8 +1263,11 @@ export default function ComponentTypeComponent (props) {
                     </table>
                   </div>
                   <div className={'tab-pane' + showRelationships} id='m_tabs_3_2' role='tabpanel'>
-                    <div className='pull-right'>
-                      <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
+                    <div className='row'>
+                      <div className='col-6' />
+                      <div className='col-6 float-right'>
+                        <button onClick={openModal} className={'btn btn-sm btn-outline-info pull-right'}>Add Relationship</button>
+                      </div>
                     </div>
                     <div className={'row'} style={{'marginTop': '20px'}}>
                       <div className='m--space-10' />

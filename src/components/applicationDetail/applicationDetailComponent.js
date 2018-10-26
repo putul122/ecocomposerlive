@@ -69,16 +69,22 @@ export default function ApplicationDetail (props) {
     console.log(props.componentComponents)
     if (componentComponents.length > 0) {
       componentComponentsList = componentComponents.map(function (componentComponent, index) {
+        console.log('index', index)
+        let componentDescription = ''
+        if (componentComponent.description) {
+          componentDescription = componentComponent.description.length > 75 ? componentComponent.description.substring(0, 75) + ' ...' : componentComponent.description
+        }
         return (
           <tr className='m-datatable__row m-datatable__row--even' key={index} style={{ 'left': '0px' }} >
             <td className='m-datatable__cell--sorted m-datatable__cell' style={{ 'width': '142px' }} data-toggle='tooltip' data-placement='top' title={componentComponent.name} data-original-title={componentComponent.name} >
               <span className='m-card-user m-card-user__details'><Link to={'/components/' + ComponentTypeId + '/' + componentComponent.id}>{ componentComponent.name.length > 75 ? componentComponent.name.substring(0, 75) + ' ...' : componentComponent.name }</Link></span>
             </td>
-            <td className='m-datatable__cell--sorted m-datatable__cell'><span style={{pointer: 'cursor'}} data-toggle='tooltip' data-placement='top' title={componentComponent.description} data-original-title={componentComponent.description} >{ componentComponent.description.length > 75 ? componentComponent.description.substring(0, 75) + ' ...' : componentComponent.description }</span></td>
+            <td className='m-datatable__cell--sorted m-datatable__cell'><span style={{pointer: 'cursor'}} data-toggle='tooltip' data-placement='top' title={componentComponent.description} data-original-title={componentComponent.description} >{ componentDescription }</span></td>
           </tr>
         )
       })
     } else {
+      console.log('else', props)
       componentComponentsList = []
       componentComponentsList.push((
         <tr key={0}>
@@ -190,29 +196,25 @@ export default function ApplicationDetail (props) {
 
   let handleInputChange = debounce((e) => {
     console.log(e)
-    const value = searchTextBox.value
-    let payload = {
-      'id': props.componentDetail.resources[0].id,
-      'ComponentTypeComponent': {
-        'search': value || '',
-        'page_size': props.perPage,
-        'page': currentPage,
-        'recommended': value === ''
+    console.log(searchTextBox)
+    if (searchTextBox) {
+      let payload = {
+        'id': props.componentDetail.resources[0].id,
+        'ComponentTypeComponent': {
+          'search': searchTextBox.value || '',
+          'page_size': props.perPage,
+          'page': currentPage,
+          'recommended': searchTextBox.value === ''
+        }
       }
+      props.searchComponentComponent(payload)
+      // eslint-disable-next-line
+      mApp.block('#style-1', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      listPage = _.filter(pageArray, function (group) {
+        let found = _.filter(group, {'number': currentPage})
+        if (found.length > 0) { return group }
+      })
     }
-    if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
-      // if (searchTextBox.value.length % 2 === 0) {
-        // props.fetchComponentComponent(payload)
-        props.searchComponentComponent(payload)
-        // eslint-disable-next-line
-        mApp.block('#style-1', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-        // props.setComponentTypeLoading(true)
-      // }
-    }
-    listPage = _.filter(pageArray, function (group) {
-      let found = _.filter(group, {'number': currentPage})
-      if (found.length > 0) { return group }
-    })
   }, 500)
   let openModal = function (event) {
     event.preventDefault()
@@ -359,7 +361,7 @@ export default function ApplicationDetail (props) {
                           <th className='m-datatable__cell m-datatable__cell--sort'>Description</th>
                         </tr>
                       </thead>
-                      <tbody className='m-datatable__body ps ps--active-y ps--scrolling-y' d='style-1'>
+                      <tbody className='m-datatable__body ps ps--active-y ps--scrolling-y' id='style-1'>
                         { componentComponentsList }
                         {/* <div className='ps__rail-x' >
                           <div className='ps__thumb-x' style={{ 'left': '0px', 'width': '0px' }} />

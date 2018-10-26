@@ -46,6 +46,24 @@ export const propsMapping: Callbacks = {
 //     onClick: () => dispatch(actions.starsActions.FETCH_STARS)
 //   }
 // }
+// eslint-disable-next-line
+toastr.options = {
+  'closeButton': false,
+  'debug': false,
+  'newestOnTop': false,
+  'progressBar': false,
+  'positionClass': 'toast-bottom-full-width',
+  'preventDuplicates': false,
+  'onclick': null,
+  'showDuration': '300',
+  'hideDuration': '1000',
+  'timeOut': '4000',
+  'extendedTimeOut': '1000',
+  'showEasing': 'swing',
+  'hideEasing': 'linear',
+  'showMethod': 'fadeIn',
+  'hideMethod': 'fadeOut'
+}
 
 export default compose(
   connect(mapStateToProps, propsMapping),
@@ -90,24 +108,6 @@ export default compose(
       if (nextProps.addComponent && nextProps.addComponent !== '') {
         console.log('+++++', nextProps)
         console.log('deleting deleteComponent component', nextProps.addComponent)
-        // eslint-disable-next-line
-        toastr.options = {
-          'closeButton': false,
-          'debug': false,
-          'newestOnTop': false,
-          'progressBar': false,
-          'positionClass': 'toast-bottom-full-width',
-          'preventDuplicates': false,
-          'onclick': null,
-          'showDuration': '300',
-          'hideDuration': '1000',
-          'timeOut': '4000',
-          'extendedTimeOut': '1000',
-          'showEasing': 'swing',
-          'hideEasing': 'linear',
-          'showMethod': 'fadeIn',
-          'hideMethod': 'fadeOut'
-        }
         if (nextProps.addComponent.error_code === null) {
           let newComponent = nextProps.addComponent.resources[0].name
           let componentId = nextProps.addComponent.resources[0].id
@@ -144,33 +144,39 @@ export default compose(
       if (nextProps.componentDetail && (nextProps.componentDetail !== this.props.componentDetail)) {
         // eslint-disable-next-line
         mApp.unblockPage()
-        let breadcrumb = {
-          title: nextProps.componentDetail.resources[0].name,
-          items: [
-            {
-              name: 'Home',
-              href: '/home',
-              separator: false
-            },
-            {
-              separator: true
-            },
-            {
-              name: 'Component Type',
-              href: '/components',
-              separator: false
-            },
-            {
-              separator: true
-            },
-            {
-              name: nextProps.componentDetail.resources[0].name,
-              href: '/components/' + nextProps.componentDetail.resources[0].id,
-              separator: false
-            }
-          ]
+        if (nextProps.componentDetail.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.componentDetail.error_message, nextProps.componentDetail.error_code)
+          this.props.history.push('/components')
+        } else {
+          let breadcrumb = {
+            title: nextProps.componentDetail.resources[0].name,
+            items: [
+              {
+                name: 'Home',
+                href: '/home',
+                separator: false
+              },
+              {
+                separator: true
+              },
+              {
+                name: 'Component Type',
+                href: '/components',
+                separator: false
+              },
+              {
+                separator: true
+              },
+              {
+                name: nextProps.componentDetail.resources[0].name,
+                href: '/components/' + nextProps.componentDetail.resources[0].id,
+                separator: false
+              }
+            ]
+          }
+          this.props.setBreadcrumb && this.props.setBreadcrumb(breadcrumb)
         }
-        this.props.setBreadcrumb && this.props.setBreadcrumb(breadcrumb)
       }
     }
   })

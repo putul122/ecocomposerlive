@@ -61,32 +61,28 @@ export default function ComponentType (props) {
     })
 
     let handleInputChange = debounce((e) => {
-      // props.setSearchComponentType(searchTextBox.value)
-      console.log(e)
-      const value = searchTextBox.value
-      // const value = e.target.value
-      console.log('value', value)
-      console.log('searchTextBox', searchTextBox.value)
-      props.setComponentTypeLoading(true)
-      componentTypeBlockList = ''
-      let payload = {
-        'search': value || '',
-        'page_size': 10,
-        'page': currentPage,
-        'recommended': value === ''
+      if (searchTextBox) {
+        const value = searchTextBox.value
+        // const value = e.target.value
+        console.log('value', value)
+        console.log('searchTextBox', searchTextBox.value)
+        props.setComponentTypeLoading(true)
+        componentTypeBlockList = ''
+        let payload = {
+          'search': value || '',
+          'page_size': 10,
+          'page': currentPage,
+          'recommended': value === ''
+        }
+        props.setSearchObject(payload)
+        props.searchComponent(payload)
+        // eslint-disable-next-line
+        mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+        listPage = _.filter(pageArray, function (group) {
+          let found = _.filter(group, {'number': currentPage})
+          if (found.length > 0) { return group }
+        })
       }
-      props.setSearchObject(payload)
-      // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
-      props.searchComponent(payload)
-      // eslint-disable-next-line
-      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      //   // props.setComponentTypeLoading(true)
-      // }
-      // autocompleteSearchDebounced(payload)
-      listPage = _.filter(pageArray, function (group) {
-        let found = _.filter(group, {'number': currentPage})
-        if (found.length > 0) { return group }
-      })
     }, 500)
     let handlePage = function (page) {
       if (page === 1) {
