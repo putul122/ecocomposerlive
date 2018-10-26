@@ -3,6 +3,7 @@ import { compose, lifecycle } from 'recompose'
 import Discusson from '../../components/discussion/discussionComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/discussionReducer/discussionReducerReducer'
+import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 // Global State
 export function mapStateToProps (state, props) {
   return {
@@ -18,7 +19,8 @@ export function mapStateToProps (state, props) {
     formattedTags: state.discussionReducer.formattedTags,
     newMessage: state.discussionReducer.newMessage,
     replySettings: state.discussionReducer.replySettings,
-    createMessageResponse: state.discussionReducer.createMessageResponse
+    createMessageResponse: state.discussionReducer.createMessageResponse,
+    isAccordianOpen: state.discussionReducer.isAccordianOpen
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -33,7 +35,9 @@ export const propsMapping: Callbacks = {
   setFormattedAccountData: actionCreators.setFormattedAccountData,
   setFormattedModelData: actionCreators.setFormattedModelData,
   setMessageData: actionCreators.setMessageData,
-  setReplySettings: actionCreators.setReplySettings
+  setReplySettings: actionCreators.setReplySettings,
+  setAccordianOpenFlag: actionCreators.setAccordianOpenFlag,
+  setDiscussionModalOpenStatus: newDiscussionActionCreators.setDiscussionModalOpenStatus
 }
 
 // If you want to use the function mapping
@@ -57,7 +61,9 @@ export default compose(
         'context_id': contextId
       }
       let accountPayload = {
-        'search': ''
+        'search': '',
+        page_size: 1000,
+        page: 1
       }
       let modelPayload = {
         'search': '',
@@ -80,6 +86,7 @@ export default compose(
             obj.display = account.name.trim()
             return obj
           })
+          accountsData.shift()
           this.props.setFormattedAccountData && this.props.setFormattedAccountData(accountsData)
         }
       }

@@ -60,16 +60,13 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      let accountPayload = {
-        'search': ''
-      }
-      let modelPayload = {
+      let initialPayload = {
         'search': '',
         page_size: 100,
         page: 1
       }
-      this.props.fetchAccountArtefacts && this.props.fetchAccountArtefacts(accountPayload)
-      this.props.fetchModelArtefacts && this.props.fetchModelArtefacts(modelPayload)
+      this.props.fetchAccountArtefacts && this.props.fetchAccountArtefacts(initialPayload)
+      this.props.fetchModelArtefacts && this.props.fetchModelArtefacts(initialPayload)
     },
     componentDidMount: function () {},
     componentWillReceiveProps: function (nextProps) {
@@ -78,11 +75,10 @@ export default compose(
           let accountsData = nextProps.accountArtefactsData.resources.map(function (account, index) {
             let obj = {}
             obj.id = account.id
-            obj.display = account.name
-            obj.artefactId = account.artefact_type.id
-            obj.artefactKey = account.artefact_type.key
+            obj.display = account.name.trim()
             return obj
           })
+          accountsData.shift()
           this.props.setFormattedAccountData && this.props.setFormattedAccountData(accountsData)
         }
       }
@@ -91,9 +87,7 @@ export default compose(
           let modelData = nextProps.modelArtefactsData.resources.map(function (model, index) {
             let obj = {}
             obj.id = model.id
-            obj.display = model.name
-            obj.artefactId = model.artefact_type.id
-            obj.artefactKey = model.artefact_type.key
+            obj.display = model.name.trim()
             return obj
           })
           this.props.setFormattedModelData && this.props.setFormattedModelData(modelData)

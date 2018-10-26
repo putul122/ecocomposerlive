@@ -5,52 +5,36 @@ import { MentionsInput, Mention } from 'react-mentions'
 import debounce from 'lodash/debounce'
 import defaultStyle from './defaultStyle.js'
 import defaultMentionStyle from './defaultMentionStyle.js'
-import styles from './discussionComponent.scss'
 // import axios from 'axios'
 // import api from '../../constants'
+import styles from './discussionComponent.scss'
 import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
+const customStylescrud = { content: { top: '20%', background: 'none', border: '0px', overflow: 'none' } }
 
 export default function Discussion (props) {
-  // console.log('Discussion Components', props.newMessage, props.formattedAccounts, props.type, props.formattedModels, props)
+  console.log('Discussion Components', props.newMessage, props.formattedAccounts, props.type, props.formattedModels, props)
   let viewMessageBox = ''
   let discussionList = ''
   let discussionReplyList = ''
   let tempMessageStorage = ''
   let tempTagStorage = []
-  // let asyncData = debounce((query, callback) => {
-  //   console.log(query)
-  //   // function (query, callback) {
-  //   console.log('my data', callback)
-  //   axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
-  //   axios.get(api.getModelArtefacts, {
-  //     params: {
-  //       'search': query,
-  //       page_size: 100,
-  //       page: 1
-  //     }
-  //   })
-  //   .then(function (response) {
-  //     console.log(response)
-  //     if (response.data.error_code === null) {
-  //       return response.data.resources.map(reference => ({ display: reference.name, id: reference.id }))
-  //     }
-  //   })
-  //   .then(callback)
-  //   .catch(function (error) {
-  //     console.log('error', error)
-  //   })
-  //   // asyncQuery(query).then(callback);
-  // }, 500)
+  let openDiscussionModal = function (event) {
+    event.preventDefault()
+    closeSlide()
+    props.setDiscussionModalOpenStatus(true)
+  }
   let getMessages = function (data) {
-    console.log(data)
     props.setMessageData('')
     if (props.discussionId !== data.id) {
       let payload = {
         id: data.id
       }
       props.setDiscussionId(data.id)
+      props.setAccordianOpenFlag(true)
       props.fetchDiscussionMessages && props.fetchDiscussionMessages(payload)
+    } else {
+      props.setAccordianOpenFlag(false)
     }
   }
   let openSlide = function (event) {
@@ -76,24 +60,63 @@ export default function Discussion (props) {
     let payload = {...props.replySettings, 'isModalOpen': false, 'selectedMessage': '', 'messageReply': ''}
     props.setReplySettings(payload)
   }
+  // let asyncData = debounce((query, callback) => {
+  //   console.log(query)
+  //   // function (query, callback) {
+  //   console.log('my data', callback)
+  //   axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+  //   axios.get(api.getModelArtefacts, {
+  //     params: {
+  //       'search': query,
+  //       page_size: 100,
+  //       page: 1
+  //     }
+  //   })
+  //   .then(function (response) {
+  //     console.log(response)
+  //     if (response.data.error_code === null) {
+  //       return response.data.resources.map(reference => ({ display: reference.name, id: reference.id }))
+  //     }
+  //   })
+  //   .then(callback)
+  //   .catch(function (error) {
+  //     console.log('error', error)
+  //   })
+  //   // asyncQuery(query).then(callback);
+  // }, 500)
   let onAddReference = function (id, display) {
     // Unicode Replacement Mapping
     // "[" ---> 8261
     // "]" ---> 8262
     // ":" ---> 8285
     setTimeout(function () {
+      console.log('on select')
       let originalMessage = props.newMessage
       let formattedText = display.replace('[', String.fromCharCode(8261)).replace(']', String.fromCharCode(8262)).replace(':', String.fromCharCode(8285)).trim()
       if (!tempTagStorage.length > 0) {
         tempTagStorage.push({id: 1, display: '...'})
       }
-      let buildMessage = originalMessage.substring(0, originalMessage.length - 2) + '@[' + display + ':Reference:' + id + ']'
-      let formattedMessage = buildMessage.replace(display, formattedText)
-      let payload = {}
-      console.log(tempMessageStorage)
-      payload.message = formattedMessage
-      payload.tags = tempTagStorage
-      props.setMessageData(payload)
+      // eslint-disable-next-line
+      let matches = originalMessage.match(/(?:^|\s)(#[a-zA-Z0-9:\[\]\s]{0,}\w*)/gi)
+      console.log('matches', matches)
+      console.log('tempMessageStorage', tempMessageStorage)
+      if (matches) {
+        let noRefText = originalMessage.replace(matches[0].trim(), '')
+        let buildMessage = noRefText + '@[' + formattedText + ':Reference:' + id + ']'
+        console.log('buildMessage', buildMessage)
+        let payload = {}
+        payload.message = buildMessage
+        payload.tags = tempTagStorage
+        console.log('set props', payload)
+        props.setMessageData(payload)
+      }
+      // let buildMessage = originalMessage.substring(0, originalMessage.length - 2) + '@[' + display + ':Reference:' + id + ']'
+      // let formattedMessage = buildMessage.replace(display, formattedText)
+      // let payload = {}
+      // payload.message = formattedMessage
+      // payload.tags = tempTagStorage
+      // console.log('set props', payload)
+      // props.setMessageData(payload)
     }, 0)
   }
   let onAddReplyReference = function (id, display) {
@@ -102,15 +125,33 @@ export default function Discussion (props) {
     // "]" ---> 8262
     // ":" ---> 8285
     setTimeout(function () {
+      console.log('onselect', id, display)
       let originalMessage = props.replySettings.messageReply
       let formattedText = display.replace('[', String.fromCharCode(8261)).replace(']', String.fromCharCode(8262)).replace(':', String.fromCharCode(8285)).trim()
+      // console.log(formattedText)
+      // console.log(display)
+      // console.log(originalMessage + '@[' + display + ':Reference:' + id + ']')
+      console.log(tempMessageStorage)
+      // console.log(tempTagStorage)
       if (!tempTagStorage.length > 0) {
         tempTagStorage.push({id: 1, display: '...'})
       }
-      let buildMessage = originalMessage.substring(0, originalMessage.length - 2) + '@[' + display + ':Reference:' + id + ']'
-      let formattedMessage = buildMessage.replace(display, formattedText)
-      let payload = {...props.replySettings, 'messageReply': formattedMessage, 'tags': tempTagStorage}
-      props.setReplySettings(payload)
+      // eslint-disable-next-line
+      let matches = originalMessage.match(/(?:^|\s)(#[a-zA-Z0-9:\[\]\s]{0,}\w*)/gi)
+      console.log('matches', matches)
+      if (matches) {
+        let noRefText = originalMessage.replace(matches[0].trim(), '')
+        let buildMessage = noRefText + '@[' + formattedText + ':Reference:' + id + ']'
+        console.log('buildMessage', buildMessage)
+        let payload = {...props.replySettings, 'messageReply': buildMessage, 'tags': tempTagStorage}
+        props.setReplySettings(payload)
+      }
+      // console.log(props)
+      // let buildMessage = originalMessage.substring(0, originalMessage.length - 2) + '@[' + display + ':Reference:' + id + ']'
+      // let formattedMessage = buildMessage.replace(display, formattedText)
+      // console.log(formattedMessage)
+      // let payload = {...props.replySettings, 'messageReply': formattedMessage, 'tags': tempTagStorage}
+      // props.setReplySettings(payload)
     }, 0)
   }
   let handleChange1 = debounce((e) => {
@@ -118,45 +159,45 @@ export default function Discussion (props) {
     console.log('call api', viewMessageBox, viewMessageBox ? viewMessageBox.props.value : '')
     if (viewMessageBox) {
       let str = viewMessageBox ? viewMessageBox.props.value : ''
-      if (str !== '') {
-        let matches = str.match(/[^@!a-z$]#[a-z]+/gi)
-        console.log('matches', matches)
-        let reference = []
-        if (matches !== null) {
-          matches.forEach(function (data, index) {
-            console.log('inside for', data.trim().substring(1, data.trim().length))
-            reference.push(data.trim().substring(1, data.trim().length))
-          })
-        }
-        if (reference.length > 0) {
-          if (reference[reference.length - 1] !== '') {
-            let initialPayload = {
-              'search': reference[reference.length - 1],
-              page_size: 100,
-              page: 1
-            }
-            props.fetchModelArtefacts && props.fetchModelArtefacts(initialPayload)
-          }
-        } else {
+      // eslint-disable-next-line
+      let matches = str.match(/(?:^|\s)(#[a-zA-Z0-9:\[\]\s]{0,}\w*)/gi)
+      let reference = []
+      if (matches !== null) {
+        matches.forEach(function (data, index) {
+          reference.push(data.trim().substring(1, data.trim().length))
+        })
+      }
+      if (reference.length > 0) {
+        if (reference[reference.length - 1] !== '') {
           let initialPayload = {
-            'search': '',
+            'search': reference[reference.length - 1],
             page_size: 100,
             page: 1
           }
           props.fetchModelArtefacts && props.fetchModelArtefacts(initialPayload)
         }
+      } else {
+        let initialPayload = {
+          'search': '',
+          page_size: 100,
+          page: 1
+        }
+        props.fetchModelArtefacts && props.fetchModelArtefacts(initialPayload)
       }
     }
   }, 500)
   let handleChange = function (event) {
+      // console.log(props)
+      console.log('handleChange', event.target.value)
     let str = event.target.value
-    let matches = str.match(/[^@!a-z$]\$[a-z]+/gi)
+    let matches = str.match(/(?:^|\s)(\$[a-zA-Z0-9]\w*)/gi)
     let tags = []
     if (matches !== null) {
       matches.forEach(function (data, index) {
         let obj = {}
         obj.id = ++index
         obj.display = data.trim().substring(1, data.trim().length)
+        console.log('inside for', obj)
         tags.push(obj)
       })
     } else {
@@ -176,39 +217,36 @@ export default function Discussion (props) {
     console.log('call api', viewMessageBox, viewMessageBox ? viewMessageBox.props.value : '')
     if (viewMessageBox) {
       let str = viewMessageBox ? viewMessageBox.props.value : ''
-      if (str !== '') {
-        let matches = str.match(/[^@!a-z$]#[a-z]+/gi)
-        console.log('matches', matches)
-        let reference = []
-        if (matches !== null) {
-          matches.forEach(function (data, index) {
-            console.log('inside for', data.trim().substring(1, data.trim().length))
-            reference.push(data.trim().substring(1, data.trim().length))
-          })
-        }
-        if (reference.length > 0) {
-          if (reference[reference.length - 1] !== '') {
-            let initialPayload = {
-              'search': reference[reference.length - 1],
-              page_size: 100,
-              page: 1
-            }
-            props.fetchModelArtefacts && props.fetchModelArtefacts(initialPayload)
-          }
-        } else {
+      // eslint-disable-next-line
+      let matches = str.match(/(?:^|\s)(#[a-zA-Z0-9:\[\]\s]{0,}\w*)/gi)
+      let reference = []
+      if (matches !== null) {
+        matches.forEach(function (data, index) {
+          reference.push(data.trim().substring(1, data.trim().length))
+        })
+      }
+      if (reference.length > 0) {
+        if (reference[reference.length - 1] !== '') {
           let initialPayload = {
-            'search': '',
+            'search': reference[reference.length - 1],
             page_size: 100,
             page: 1
           }
           props.fetchModelArtefacts && props.fetchModelArtefacts(initialPayload)
         }
+      } else {
+        let initialPayload = {
+          'search': '',
+          page_size: 100,
+          page: 1
+        }
+        props.fetchModelArtefacts && props.fetchModelArtefacts(initialPayload)
       }
     }
   }, 500)
   let handleMessageReply = function (event) {
     let str = event.target.value
-    let matches = str.match(/[^@!a-z$]\$[a-z]+/gi)
+    let matches = str.match(/(?:^|\s)(\$[a-zA-Z0-9]\w*)/gi)
     let tags = []
     if (matches !== null) {
       matches.forEach(function (data, index) {
@@ -323,10 +361,12 @@ export default function Discussion (props) {
         // if (props.discussionId === data.id) {
           childElement = props.discussionMessages.resources.map(function (cdata, cindex) {
             let userIconlink = cdata.author.icon ? 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/' + cdata.author.icon : 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18'
+            // For old Static Message Format
             let messageContent = cdata.name.replace(/<m ix=0>/g, '<a href="javascript:void(0);">@').replace(/<\/m>/g, '</a>')
             .replace(/<r ix=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
             .replace(/<r ix=1>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
             .replace(/<t>/g, ' #').replace(/<\/t>/g, '')
+            // End
             let mentionArray = cdata.name.match(/\[(.*?)\]/g)
             if (mentionArray) {
               mentionArray.forEach(function (data, index) {
@@ -337,18 +377,12 @@ export default function Discussion (props) {
                 // let reg = new RegExp(str, 'g')
                 let match = '@[' + data + ']'
                 if (parts[1] === 'Mention') {
-                  console.log('Mention string', data)
                   messageContent = messageContent.replace(match, '<a href="javascript:void(0);">@' + parts[0] + '</a>')
-                  console.log('Mention string', messageContent)
                 } else if (parts[1] === 'Reference') {
-                  console.log('Reference string', data)
                   messageContent = messageContent.replace(match, '<a href="javascript:void(0);">#' + parts[0] + '</a>')
                   messageContent = messageContent.replace(String.fromCharCode(8261), '[').replace(String.fromCharCode(8262), ']').replace(String.fromCharCode(8285), ':')
-                  console.log('Reference string', messageContent)
                 } else if (parts[1] === 'Tag') {
-                  console.log('tag string', data)
                   messageContent = messageContent.replace(match, '#' + parts[0] + '')
-                  console.log('tag string', messageContent)
                 }
               })
             }
@@ -439,28 +473,48 @@ export default function Discussion (props) {
     console.log(props.discussionId)
     discussionList = props.discussions.resources.map(function (data, index) {
       let childElement = ''
+      let collapsedClass = ''
+      let showClass = ''
       if (props.discussionId === data.id) {
+        if (props.isAccordianOpen) {
+          collapsedClass = 'collapsed'
+          showClass = 'show'
+        } else {
+          collapsedClass = ''
+          showClass = ''
+        }
         childElement = props.discussionMessages.resources.map(function (cdata, cindex) {
           let userIconlink = cdata.author.icon ? 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/' + cdata.author.icon : 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18'
+          // For old Static Message Format
           let messageContent = cdata.name.replace(/<m ix=0>/g, '<a href="javascript:void(0);">@').replace(/<\/m>/g, '</a>')
           .replace(/<r ix=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
           .replace(/<r ix=1>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
           .replace(/<t>/g, ' #').replace(/<\/t>/g, '')
+          // End
           let mentionArray = cdata.name.match(/\[(.*?)\]/g)
+          console.log('mentionArray', mentionArray)
           if (mentionArray) {
             mentionArray.forEach(function (data, index) {
               data = data.substring(1, data.length - 1)
+              console.log(data)
               let parts = data.toString().split(':')
+              console.log(parts)
+              console.log(messageContent)
               // eslint-disable-next-line
               // let str = `\\@\\[${data}\\]`
               // let reg = new RegExp(str, 'g')
               let match = '@[' + data + ']'
               if (parts[1] === 'Mention') {
+                console.log('Mention', parts[0])
                 messageContent = messageContent.replace(match, '<a href="javascript:void(0);">@' + parts[0] + '</a>')
               } else if (parts[1] === 'Reference') {
+                console.log('Reference', parts[0])
                 messageContent = messageContent.replace(match, '<a href="javascript:void(0);">#' + parts[0] + '</a>')
+                console.log(messageContent)
                 messageContent = messageContent.replace(String.fromCharCode(8261), '[').replace(String.fromCharCode(8262), ']').replace(String.fromCharCode(8285), ':')
+                console.log(messageContent)
               } else if (parts[1] === 'Tag') {
+                console.log('Tag')
                 messageContent = messageContent.replace(match, '#' + parts[0] + '')
               }
             })
@@ -470,18 +524,17 @@ export default function Discussion (props) {
       }
       return (
         <div className='m-accordion__item' style={{'overflow': 'visible'}}>
-          <a className='m-accordion__item-head collapsed' onClick={() => getMessages(data)} role='tab' id={'m_accordion_7_item_1_head' + index} data-toggle='collapse' href={'#m_accordion_7_item_1_body' + index} aria-expanded='false'>
+          <a className={'m-accordion__item-head ' + collapsedClass} onClick={() => getMessages(data)} role='tab' id={'m_accordion_7_item_1_head' + index} data-toggle='collapse' href={'#m_accordion_7_item_1_body' + index} aria-expanded='false'>
             {/* <span className='m-accordion__item-icon'><i className='fa flaticon-user-ok' /></span> */}
             <span className='m-accordion__item-title'>{data.name}</span>
             <span className='m-accordion__item-mode' />
           </a>
-          <div className='m-accordion__item-body collapse' id={'m_accordion_7_item_1_body' + index} role='tabpanel' aria-labelledby={'m_accordion_7_item_1_head' + index} data-parent='#m_accordion_7'>
+          <div className={'m-accordion__item-body collapse' + showClass} id={'m_accordion_7_item_1_body' + index} role='tabpanel' aria-labelledby={'m_accordion_7_item_1_head' + index} data-parent='#m_accordion_7'>
             <div className='m-accordion__item-content' >
               <div className='m-messenger m-messenger--message-arrow m-messenger--skin-light'>
                 <br />
                 <div className='m-messenger__form'>
                   <div className='m-messenger__form-controls'>
-                    {/* <input type='text' name='' placeholder='New Messages' className='m-messenger__form-input' /> */}
                     <MentionsInput allowSpaceInQuery='true' ref={input => (viewMessageBox = input)} value={props.newMessage} placeholder={'for mentions use \'@\', for references use \'#\' and for tags use \'$\''} onKeyUp={handleChange1} onChange={handleChange} markup='@[__display__:__type__:__id__]' style={defaultStyle}>
                       <Mention
                         type='Mention'
@@ -534,6 +587,13 @@ export default function Discussion (props) {
           </ul>
           <div className='tab-content'>
             <div className='tab-pane active show' id='m_quick_sidebar_tabs_messenger' role='tabpanel'>
+              <div className='row'>
+                <div className='col-6' />
+                <div className='col-6 float-right'>
+                  <button onClick={openDiscussionModal} className='btn btn-outline-info btn-sm pull-right'>New Discussion</button>
+                </div>
+              </div>
+              <br />
               <div className='m-accordion m-accordion--default m-accordion--solid m-accordion--section  m-accordion--toggle-arrow' id='m_accordion_7' role='tablist'>
                 {discussionList}
               </div>
@@ -697,13 +757,13 @@ export default function Discussion (props) {
         <ReactModal isOpen={props.replySettings.isModalOpen}
           // onRequestClose={closeModal}
           shouldCloseOnOverlayClick={false}
-          className='modal-dialog modal-lg'
-          style={{'content': {'top': '20%'}}}
+          className=''
+          style={customStylescrud}
           // className={''}
           >
           {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
           <div>
-            <div className='' >
+            <div className='modal-dialog modal-lg'>
               <div className='modal-content'>
                 <div className='modal-header'>
                   <h4 className='modal-title' id='exampleModalLabel'>{props.name + ' Discussion'}</h4>
@@ -743,5 +803,7 @@ Discussion.propTypes = {
   discussionId: PropTypes.any,
   // eslint-disable-next-line
   newMessage: PropTypes.any,
-  replySettings: PropTypes.any
+  replySettings: PropTypes.any,
+  // eslint-disable-next-line
+  isAccordianOpen: PropTypes.any
 }
