@@ -18,15 +18,16 @@ export default function ComponentType (props) {
     let totalComponentType
     let listPage = []
     let paginationLimit = 6
-
+    console.log('change', props)
     if (typeof componentTypes !== 'undefined') {
       componentTypeBlockList = componentTypes.map(function (componentType, index) {
+        console.log(index)
         let iconlink = componentType.links.find(function (link) { return link.rel === 'icon' })
         return (
           <div className='m-widget17__item'>
             <a href={'/components/' + componentType.id} >
               <span className='m-widget17__icon text-center' style={{ float: 'none', margin: '0 auto' }}>
-                <img src={iconlink.href} alt={componentType.name} />
+                <img src={iconlink ? iconlink.href : ''} alt={componentType.name} />
               </span>
               <span className='m-widget17__subtitle'>
                 {componentType.name}
@@ -67,7 +68,7 @@ export default function ComponentType (props) {
         console.log('value', value)
         console.log('searchTextBox', searchTextBox.value)
         props.setComponentTypeLoading(true)
-        componentTypeBlockList = ''
+        // componentTypeBlockList = ''
         let payload = {
           'search': value || '',
           'page_size': 10,
@@ -91,7 +92,7 @@ export default function ComponentType (props) {
         nextClass = 'm-datatable__pager-link--disabled'
       }
       props.setComponentTypeLoading(true)
-      componentTypeBlockList = ''
+      // componentTypeBlockList = ''
       let payload = {
         'search': searchTextBox.value ? searchTextBox.value : '',
         'page_size': 10,
@@ -144,7 +145,7 @@ export default function ComponentType (props) {
           'recommended': searchTextBox.value === ''
         }
         props.setComponentTypeLoading(true)
-        componentTypeBlockList = ''
+        // componentTypeBlockList = ''
         props.fetchComponent(payload)
         // eslint-disable-next-line
         mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
