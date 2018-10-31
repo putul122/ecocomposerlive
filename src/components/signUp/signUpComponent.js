@@ -90,7 +90,7 @@ export default function SignUp (props) {
                 </div>
                 <div className='m-login__form-action'>
                   <button type='button' onClick={handleInput} id='m_login_signup' className={styles.buttonbg + ' ' + loadingClass}>Register</button>&nbsp;&nbsp;
-                  <button id='m_login_signup_cancel' onClick={handelClick} className='btn m-btn--pill    btn-outline-info btn-lg'>Cancel</button>
+                  <button id='m_login_signup_cancel' onClick={handelClick} className='btn m-btn--pill btn-outline-info btn-md'>Cancel</button>
                 </div>
               </div>
             </div>
