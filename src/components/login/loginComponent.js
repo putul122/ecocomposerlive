@@ -70,8 +70,8 @@ export default function Login (props) {
     // props.setApiCallingStatus(false)
   }
   return (
-    <div className='m-login__wrapper-2 m-portlet-full-height'>
-      <div className='m-login__contanier'>
+    <div className=''>
+      <div className=''>
         <div className='m-login__head'>
           {/* <h3 className='m-login__title'>Login To Your Account</h3> */}
           <h2 className='m-login__title'>Login</h2>
