@@ -26,7 +26,7 @@ export default function Breadcrumb (props) {
   }
 
   return (
-    <div className='m-subheader '>
+    <div className='m-subheader ' style={{'padding': '20px 20px 0 20px'}}>
       <div className='d-flex align-items-center'>
         <div className='mr-auto'>
           <h3 className='m-subheader__title m-subheader__title--separator'>{pageName}</h3>
