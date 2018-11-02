@@ -18,15 +18,17 @@ function wrap (text, width) {
             lineNumber = 0,
             lineHeight = 1.1, // ems
             x = text.attr('x'),
-            y = text.attr('y'),
+            y = words.length > 1 ? text.attr('y') - 20 : text.attr('y') - 10,
             dy = 0, // parseFloat(text.attr("dy")),
             tspan = text.text(null)
                         .append('tspan')
                         .attr('x', x)
                         .attr('y', y)
                         .attr('dy', dy + 'em')
+        // let limit = 0
         // eslint-disable-next-line
         while (word = words.pop()) {
+            // limit++
             line.push(word)
             tspan.text(line.join(' '))
             if (tspan.node().getComputedTextLength() > width) {
@@ -351,7 +353,7 @@ class ApplicationModelComponent extends React.Component {
             node.strokeWidth = 4
             node.Attributes = ['']
             node.textAnchor = 'middle'
-            node.fontSize = 20
+            node.fontSize = 15
             node.fontWeight = 900
             node.fontFamily = 'sans-serif'
             node.dy = '0.25em'

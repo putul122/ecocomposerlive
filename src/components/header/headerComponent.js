@@ -2,6 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import ApplicationActivity from '../../containers/applicationActivity/applicationActivityContainer'
 import * as signalR from '@aspnet/signalr'
+const notificationAlert = {
+  background: '#ff006c',
+  border: '1px solid #ff006c'
+}
 // import { Redirect } from 'react-router-dom'
 let userToken = localStorage.getItem('userAccessToken')
 var connection = new signalR.HubConnectionBuilder()
@@ -26,6 +30,12 @@ export default function HeaderComponent (props) {
   let quickSlideClass = 'm-quick-sidebar--off'
   let isLoginSlideOpen = props.isLoginSlideOpen
   let loginSlideClass = 'm-dropdown--close'
+  let notificationStyle = {}
+  if (props.notificationFlag) {
+    notificationStyle = notificationAlert
+  } else {
+    notificationStyle = {}
+  }
 
   connection.on('ReceiveMessage', (payload) => {
     console.log('1111111111111111111111111111111111111110000000000000000000000000000000000')
@@ -85,7 +95,7 @@ export default function HeaderComponent (props) {
   return (
     <div>
       <header id='m_header' className='m-grid__item    m-header ' m-minimize-offset='200' m-minimize-mobile-offset='200' >
-        <div className='m-container m-container--fluid m-container--full-height'>
+        <div className='m-container m-container--fluid m-container--full-height' style={{'padding': '10px 10px -10px 10px'}}>
           <div className='m-stack m-stack--ver m-stack--desktop'>
             {/* <!-- BEGIN: Brand --> */}
             <div className='m-stack__item m-brand '>
@@ -125,9 +135,9 @@ export default function HeaderComponent (props) {
                   <ul className='m-topbar__nav m-nav m-nav--inline'>
                     <li className='m-nav__item m-topbar__notifications m-dropdown m-dropdown--large m-dropdown--arrow m-dropdown--align-center m-dropdown--mobile-full-width m-dropdown--open' id='search-container' >
                       <a href='' className='m-nav__link m-dropdown__toggle' onClick={openQuickSlide} id='m_topbar_notification_icon'>
-                        {props.notificationFlag && (<span className='m-nav__link-badge m-badge m-badge--danger'><i className='flaticon-exclamation-2' /></span>)}
-                        <span className='m-nav__link-icon m-topbar__usericon'>
-                          <span className='m-nav__link-icon-wrapper'><i className='flaticon-music-2' /></span>
+                        {/* {props.notificationFlag && (<span className='m-nav__link-badge m-badge m-badge--danger'><i className='flaticon-exclamation-2' /></span>)} */}
+                        <span className='m-nav__link-icon m-topbar__usericon '>
+                          <span className={'m-nav__link-icon-wrapper '} style={notificationStyle}><i className='flaticon-music-2' /></span>
                         </span>
                       </a>
                       <div >
