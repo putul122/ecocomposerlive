@@ -66,7 +66,7 @@ export default function ApplicationActivity (props) {
       return (
         <li key={index} style={liStyle} >
           <div className={styles.groupspace}>
-            <img src={contextIconlink} alt={context} /><div className={styles.tooltip} style={{'fontSize': '14px'}} ><b><a href='javascript:void(0);'>{context}</a></b><span className={styles.tooltiptext}>{description}</span>:&nbsp;<a href='javascript:void(0);'>{discussion}</a></div>
+            <img src={contextIconlink} alt={context} /><div className={styles.tooltip} style={{'fontSize': '14px'}} ><b><a href='javascript:void(0);'>{context}</a></b><span className={styles.tooltiptext}>{description}</span></div>:&nbsp;<a href='javascript:void(0);'>{discussion}</a>
             <ul>
               {messageList}
             </ul>

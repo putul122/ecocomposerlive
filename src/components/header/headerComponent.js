@@ -6,7 +6,6 @@ const notificationAlert = {
   background: '#ff006c',
   border: '1px solid #ff006c'
 }
-// import { Redirect } from 'react-router-dom'
 let userToken = localStorage.getItem('userAccessToken')
 var connection = new signalR.HubConnectionBuilder()
           .withUrl('https://notification-eco-dev.ecoconductor.com/notification', {
@@ -16,12 +15,8 @@ var connection = new signalR.HubConnectionBuilder()
           })
           .configureLogging(signalR.LogLevel.Information)
           .build()
-console.log(connection)
-// connection.qs = {'access_token': userToken}
-// connection.Headers['Authentication'] = 'Bearer ' + userToken
 connection.start().then(function () {
   console.log('Connection Started---- >', connection)
-  // connection.invoke('SendUserToken', userToken).catch(err => console.error('Call SendUserToken method---', err))
   connection.invoke('GetNotificationStatus').catch(err => console.error('Call GetNotificationStatus method---', err))
 }).catch(err => console.error('connection error --------------', err))
 
