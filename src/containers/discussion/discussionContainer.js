@@ -46,6 +46,24 @@ export const propsMapping: Callbacks = {
 //     onClick: () => dispatch(actions.starsActions.FETCH_STARS)
 //   }
 // }
+// eslint-disable-next-line
+toastr.options = {
+  'closeButton': false,
+  'debug': false,
+  'newestOnTop': false,
+  'progressBar': false,
+  'positionClass': 'toast-bottom-full-width',
+  'preventDuplicates': false,
+  'onclick': null,
+  'showDuration': '300',
+  'hideDuration': '1000',
+  'timeOut': '4000',
+  'extendedTimeOut': '1000',
+  'showEasing': 'swing',
+  'hideEasing': 'linear',
+  'showMethod': 'fadeIn',
+  'hideMethod': 'fadeOut'
+}
 export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
@@ -78,6 +96,7 @@ export default compose(
         console.log('component did mount')
     },
     componentWillReceiveProps: function (nextProps) {
+      console.log('com will receive', nextProps)
       if (nextProps.artefactAccounts && nextProps.artefactAccounts !== this.props.artefactAccounts) {
         if (nextProps.artefactAccounts.result_code === 0) {
           let accountsData = nextProps.artefactAccounts.resources.map(function (account, index) {
@@ -108,6 +127,16 @@ export default compose(
           }
           this.props.fetchDiscussionMessages && this.props.fetchDiscussionMessages(payload)
         }
+      }
+      if (nextProps.discussionMessages && nextProps.discussionMessages !== '' && nextProps.discussionMessages !== this.props.discussionMessages) {
+        if (nextProps.discussionMessages.error_code) {
+          // eslint-disable-next-line
+          toastr.error(nextProps.discussionMessages.error_message, nextProps.discussionMessages.error_source)
+        } else {
+          console.log('inside else')
+        }
+      } else {
+        console.log('outside else')
       }
     }
   })

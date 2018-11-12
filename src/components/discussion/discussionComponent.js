@@ -469,7 +469,7 @@ export default function Discussion (props) {
       })
     }
   }
-  if (props.discussionMessages && props.discussionMessages !== '') {
+  if (props.discussionMessages && props.discussionMessages !== '' && props.discussionMessages.error_code === null) {
     console.log(props.discussionId)
     discussionList = props.discussions.resources.map(function (data, index) {
       let childElement = ''
