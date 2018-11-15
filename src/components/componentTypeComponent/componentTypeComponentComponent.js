@@ -68,7 +68,7 @@ export default function ComponentTypeComponent (props) {
     let removeComponent = function (event) {
       event.preventDefault()
       let payload = {
-         'id': props.match.params.componentId
+         'id': props.match.params.id
         }
         props.deletecomponentTypeComponent(payload)
         props.setDeleteModalOpenStatus(false)

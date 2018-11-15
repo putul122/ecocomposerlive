@@ -155,7 +155,7 @@ export default compose(
         if (nextProps.componentTypeComponentData.error_code) {
           // eslint-disable-next-line
           toastr.error(nextProps.componentTypeComponentData.error_message, nextProps.componentTypeComponentData.error_code)
-          this.props.history.push('/components')
+          this.props.history.push('/component_types')
         }
       }
       if (nextProps.componentTypeComponents && nextProps.componentTypeComponents !== this.props.componentTypeComponents) {
@@ -167,7 +167,7 @@ export default compose(
           // eslint-disable-next-line
           toastr.success('The ' + this.props.componentTypeComponentData.resources[0].name + ' ' + this.props.componentTypeComponentData.resources[0].component_type.name + ' was successfully deleted', 'Zapped!')
           // eslint-disable-next-line
-          window.location.href = window.location.origin + '/component_types/' + nextProps.match.params.id
+          window.location.href = window.location.origin + '/component_types/' + this.props.componentTypeComponentData.resources[0].component_type.id
         } else {
           // eslint-disable-next-line
           toastr.error(nextProps.deleteComponent.error_message, nextProps.deleteComponent.error_code)
