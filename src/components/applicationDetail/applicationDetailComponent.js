@@ -43,7 +43,7 @@ export default function ApplicationDetail (props) {
   let previousClass = ''
   let totalComponentTypeComponent
   let pageArray = []
-  let ComponentTypeId
+  // let ComponentTypeId
   let listPage = []
   let paginationLimit = 5
   let NameInputBox
@@ -62,7 +62,7 @@ export default function ApplicationDetail (props) {
   if (props.componentDetail !== '') {
     ComponentName = props.componentDetail.resources[0].name
     ComponentDescription = props.componentDetail.resources[0].description
-    ComponentTypeId = props.componentDetail.resources[0].id
+    // ComponentTypeId = props.componentDetail.resources[0].id
     ComponentTypeIcon = props.componentDetail.resources[0].links.find(function (link) { return link.rel === 'icon' })
   }
   if (props.componentComponents !== '') {
@@ -77,7 +77,7 @@ export default function ApplicationDetail (props) {
         return (
           <tr className='m-datatable__row m-datatable__row--even' key={index} style={{ 'left': '0px' }} >
             <td className='m-datatable__cell--sorted m-datatable__cell' style={{ 'width': '142px' }} data-toggle='tooltip' data-placement='top' title={componentComponent.name} data-original-title={componentComponent.name} >
-              <span className='m-card-user m-card-user__details'><Link to={'/components/' + ComponentTypeId + '/' + componentComponent.id}>{ componentComponent.name.length > 75 ? componentComponent.name.substring(0, 75) + ' ...' : componentComponent.name }</Link></span>
+              <span className='m-card-user m-card-user__details'><Link to={'/components/' + componentComponent.id}>{ componentComponent.name.length > 75 ? componentComponent.name.substring(0, 75) + ' ...' : componentComponent.name }</Link></span>
             </td>
             <td className='m-datatable__cell--sorted m-datatable__cell'><span style={{pointer: 'cursor'}} data-toggle='tooltip' data-placement='top' title={componentComponent.description} data-original-title={componentComponent.description} >{ componentDescription }</span></td>
           </tr>

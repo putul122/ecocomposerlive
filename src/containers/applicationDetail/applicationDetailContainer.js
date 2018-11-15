@@ -106,18 +106,12 @@ export default compose(
       }
       if (nextProps.addComponent !== '') {
       if (nextProps.addComponent && nextProps.addComponent !== '') {
-        console.log('+++++', nextProps)
-        console.log('deleting deleteComponent component', nextProps.addComponent)
         if (nextProps.addComponent.error_code === null) {
           let newComponent = nextProps.addComponent.resources[0].name
           let componentId = nextProps.addComponent.resources[0].id
-          // let ComponentTypeId = nextProps.componentDetail.resources[0].id
-          let ComponentTypeId = nextProps.match.params.id
-          // let ComponentTypeId = nextProps.match.params.componentTypeId
-          // nextProps.setAddRedirectFlag(false)
           // eslint-disable-next-line
           toastr.success('We\'ve added the ' +  newComponent  +  ' to your model' , 'Nice!')
-          nextProps.history.push('/components/' + ComponentTypeId + '/' + componentId)
+          nextProps.history.push('/components/' + componentId)
         } else {
           // eslint-disable-next-line
           toastr.error(nextProps.addComponent.error_message, nextProps.addComponent.error_code)
@@ -147,7 +141,7 @@ export default compose(
         if (nextProps.componentDetail.error_code) {
           // eslint-disable-next-line
           toastr.error(nextProps.componentDetail.error_message, nextProps.componentDetail.error_code)
-          this.props.history.push('/components')
+          this.props.history.push('/component_types')
         } else {
           let breadcrumb = {
             title: nextProps.componentDetail.resources[0].name,
@@ -162,7 +156,7 @@ export default compose(
               },
               {
                 name: 'Component Type',
-                href: '/components',
+                href: '/component_types',
                 separator: false
               },
               {
@@ -170,7 +164,7 @@ export default compose(
               },
               {
                 name: nextProps.componentDetail.resources[0].name,
-                href: '/components/' + nextProps.componentDetail.resources[0].id,
+                href: '/component_types/' + nextProps.componentDetail.resources[0].id,
                 separator: false
               }
             ]

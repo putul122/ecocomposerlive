@@ -55,12 +55,19 @@ export default function HeaderComponent (props) {
     event.preventDefault()
     quickSlideClass = 'm-quick-sidebar--on'
     props.setQuickslideFlag(true)
+    // Default clickFrom settings when slide is open
+    let obj = {}
+    obj.component = 'Activity Feed'
+    obj.discussionId = null
+    localStorage.setItem('clickFrom', JSON.stringify(obj))
+    // End Default clickFrom settings
   }
 
   let closeQuickSlide = function (event) {
     event.preventDefault()
     quickSlideClass = 'm-quick-sidebar--off'
     props.setQuickslideFlag(false)
+    localStorage.removeItem('clickFrom')
   }
 
   if (isLoginSlideOpen) {

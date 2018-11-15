@@ -25,7 +25,7 @@ export default function ComponentType (props) {
         let iconlink = componentType.links.find(function (link) { return link.rel === 'icon' })
         return (
           <div className='m-widget17__item'>
-            <a href={'/components/' + componentType.id} >
+            <a href={'/component_types/' + componentType.id} >
               <span className='m-widget17__icon text-center' style={{ float: 'none', margin: '0 auto' }}>
                 <img src={iconlink ? iconlink.href : ''} alt={componentType.name} />
               </span>

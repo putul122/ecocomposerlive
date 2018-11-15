@@ -15,15 +15,25 @@ export default function ApplicationActivity (props) {
     let now = moment()
     activityMessagesList = result.map(function (messageGroup, index) {
       // console.log('------>messag ', index, messageGroup)
-      messageGroup = messageGroup.reverse()
+      // messageGroup = messageGroup.reverse()
       let contextIconlink = messageGroup[0].discussion.context.icon ? 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/' + messageGroup[0].discussion.context.icon : 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/1'
       // console.log('context icon link', contextIconlink)
-      //   // let contextIconlink = messageGroup[0].links.find(function (link) { console.log(link); return link.rel === 'context_icon' })
-    //   console.log(contextIconlink)
         let context = messageGroup[0].discussion.context.name
         let discussion = messageGroup[0].discussion.name
+        let discussionId = messageGroup[0].discussion.id
+        if (discussion === 'Default') {
+          discussion = 'Event'
+        }
         let description = messageGroup[0].discussion.context.description
+        let contextHyperLink = 'javascript:void(0);'
+        if (messageGroup[0].discussion.context.artefact_type.key === 'ComponentType') {
+          contextHyperLink = '/component_types/' + messageGroup[0].discussion.context.id
+        }
+        if (messageGroup[0].discussion.context.artefact_type.key === 'Component') {
+          contextHyperLink = '/components/' + messageGroup[0].discussion.context.id
+        }
         let messageList = messageGroup.map(function (message, i) {
+          console.log('----------------> message', message)
           // let userIconlink = message.links.find(function (link) { return link.rel === 'author_avatar' })
           let userIconlink = message.author.icon ? 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/' + message.author.icon : 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18'
           let messageContent = message.name.replace(/<m ix=0>/g, '<a href="javascript:void(0);">@').replace(/<\/m>/g, '</a>')
@@ -42,7 +52,23 @@ export default function ApplicationActivity (props) {
               if (parts[1] === 'Mention') {
                 messageContent = messageContent.replace(match, '<a href="javascript:void(0);">@' + parts[0] + '</a>')
               } else if (parts[1] === 'Reference') {
-                messageContent = messageContent.replace(match, '<a href="javascript:void(0);">#' + parts[0] + '</a>')
+                let msgContextHyperLink = 'javascript:void(0);'
+                if (message.references.length > 0) {
+                  message.references.forEach(function (reference, index) {
+                    console.log(reference)
+                    let originalArtefactName = parts[0].replace(String.fromCharCode(8261), '[').replace(String.fromCharCode(8262), ']').replace(String.fromCharCode(8285), ':')
+                    if (reference.name === originalArtefactName) {
+                      if (reference.artefact_type.key === 'ComponentType') {
+                        msgContextHyperLink = '/component_types/' + parts[2]
+                      }
+                      if (reference.artefact_type.key === 'Component') {
+                        msgContextHyperLink = '/components/' + parts[2]
+                      }
+                    }
+                  })
+                }
+                console.log('reference data', parts, msgContextHyperLink)
+                messageContent = messageContent.replace(match, `<a href="${msgContextHyperLink}" >#` + parts[0] + `</a>`)
                 messageContent = messageContent.replace(String.fromCharCode(8261), '[').replace(String.fromCharCode(8262), ']').replace(String.fromCharCode(8285), ':')
               } else if (parts[1] === 'Tag') {
                 messageContent = messageContent.replace(match, '#' + parts[0] + '')
@@ -58,15 +84,23 @@ export default function ApplicationActivity (props) {
             messageTime = moment(message.created).format('MM MMM h:mA')
           }
           let timeContent = '<span class="pull-right">' + messageTime + '</span>'
+          console.log(ReactHtmlParser(messageContent + timeContent))
           return (<li>
-            <img src={userIconlink} alt={message.author.name} />{ReactHtmlParser('<span style="font-zise:10px">' + message.author.name + '</span>' + ' :')} {ReactHtmlParser(messageContent + timeContent)}
+            <img src={userIconlink} alt={message.author.name} />{ReactHtmlParser('<span style="font-zise:10px">' + message.author.name + '</span>' + ':')} {ReactHtmlParser(messageContent + timeContent)}
             {props.notificationReceived && message.new && (<span className='m-nav__link-badge m-badge m-badge--dot m-badge--dot-small m-badge--danger pull-right' />)}
           </li>)
         })
+      let handleTitleClick = function (value) {
+        let obj = {}
+        obj.component = 'Activity Feed'
+        obj.discussionId = value
+        localStorage.setItem('clickFrom', JSON.stringify(obj))
+        window.location.href = window.location.origin + contextHyperLink
+      }
       return (
         <li key={index} style={liStyle} >
           <div className={styles.groupspace}>
-            <img src={contextIconlink} alt={context} /><div className={styles.tooltip} style={{'fontSize': '14px'}} ><b><a href='javascript:void(0);'>{context}</a></b><span className={styles.tooltiptext}>{description}</span></div>:&nbsp;<a href='javascript:void(0);'>{discussion}</a>
+            <img src={contextIconlink} alt={context} /><div className={styles.tooltip} style={{'fontSize': '14px'}} ><b><a onClick={(event) => { handleTitleClick(null) }} href='javascript:void(0);' >{context}</a></b><span className={styles.tooltiptext}>{description}</span></div>:&nbsp;<a onClick={(event) => { handleTitleClick(discussionId) }} href='javascript:void(0);'>{discussion}</a>
             <ul>
               {messageList}
             </ul>

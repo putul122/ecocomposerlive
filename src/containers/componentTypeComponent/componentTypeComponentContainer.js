@@ -15,7 +15,7 @@ export function mapStateToProps (state, props) {
     copiedComponentProperties: state.componentTypeComponentReducer.copiedComponentProperties,
     copiedComponentData: state.componentTypeComponentReducer.copiedComponentData,
     componentPropertiesPayload: state.componentTypeComponentReducer.componentPropertiesPayload,
-    componentDetail: state.applicationDetailReducer.componentDetail,
+    // componentDetail: state.applicationDetailReducer.componentDetail,
     componentTypeComponentRelationships: state.componentTypeComponentReducer.componentTypeComponentRelationships,
     updateRelationshipResponse: state.componentTypeComponentReducer.updateRelationshipResponse,
     componentTypeComponents: state.componentTypeComponentReducer.componentTypeComponents,
@@ -41,7 +41,7 @@ export function mapStateToProps (state, props) {
 export const propsMapping: Callbacks = {
   fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
   setBreadcrumb: basicActionCreators.setBreadcrumb,
-  fetchComponentById: sagaActions.applicationDetailActions.fetchComponentById,
+  // fetchComponentById: sagaActions.applicationDetailActions.fetchComponentById,
   fetchComponentTypeComponent: sagaActions.componentTypeComponentActions.fetchComponentTypeComponent,
   fetchcomponentTypeComponentProperties: sagaActions.componentTypeComponentActions.fetchcomponentTypeComponentProperties,
   fetchcomponentTypeComponentRelationships: sagaActions.componentTypeComponentActions.fetchcomponentTypeComponentRelationships,
@@ -108,28 +108,25 @@ export default compose(
   lifecycle({
     componentWillMount: function () {
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
-      const componentTypeComponentId = this.props.match.params.componentId
-      const componentTypeId = this.props.match.params.componentTypeId
+      const componentTypeComponentId = this.props.match.params.id
+      // const componentTypeId = this.props.match.params.componentTypeId
       let payload = {
-        'componentTypeId': componentTypeId,
+        // 'componentTypeId': componentTypeId,
         'componentTypeComponentId': componentTypeComponentId,
         'id': componentTypeComponentId
       }
       // eslint-disable-next-line
       mApp && mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-      this.props.fetchComponentById && this.props.fetchComponentById({id: componentTypeId})
+      // this.props.fetchComponentById && this.props.fetchComponentById({id: componentTypeId}) // componentType by id
       this.props.fetchComponentTypeComponent && this.props.fetchComponentTypeComponent(payload)
       this.props.fetchcomponentTypeComponentProperties && this.props.fetchcomponentTypeComponentProperties(payload)
       this.props.fetchcomponentTypeComponentRelationships && this.props.fetchcomponentTypeComponentRelationships(payload)
       this.props.fetchComponentConstraints && this.props.fetchComponentConstraints(payload)
-      this.props.fetchComponentTypeComponents && this.props.fetchComponentTypeComponents(payload)
     },
     componentWillReceiveProps: function (nextProps) {
       console.log('will receive props mmmmmmmmmmmmm', nextProps)
-      const componentTypeComponentId = this.props.match.params.componentId
-      const componentTypeId = this.props.match.params.componentTypeId
+      const componentTypeComponentId = this.props.match.params.id
       let payload = {
-        'componentTypeId': componentTypeId,
         'componentTypeComponentId': componentTypeComponentId,
         'id': componentTypeComponentId
       }
@@ -140,6 +137,11 @@ export default compose(
       }
       if (nextProps.updateComponentPropertyResponse && nextProps.updateComponentPropertyResponse !== '') {
         if (nextProps.updateComponentPropertyResponse.error_code === null) {
+          let payload = {
+            'componentTypeId': this.props.componentTypeComponentData.resources[0].component_type.id,
+            'componentTypeComponentId': this.props.componentTypeComponentData.resources[0].id,
+            'id': componentTypeComponentId
+          }
           this.props.fetchComponentTypeComponent && this.props.fetchComponentTypeComponent(payload)
           // eslint-disable-next-line
           toastr.success('The ' + this.props.componentTypeComponentData.resources[0].name + ' was successfully updated', 'Good Stuff!')
@@ -165,7 +167,7 @@ export default compose(
           // eslint-disable-next-line
           toastr.success('The ' + this.props.componentTypeComponentData.resources[0].name + ' ' + this.props.componentTypeComponentData.resources[0].component_type.name + ' was successfully deleted', 'Zapped!')
           // eslint-disable-next-line
-          window.location.href = window.location.origin + '/components/' + nextProps.match.params.componentTypeId
+          window.location.href = window.location.origin + '/component_types/' + nextProps.match.params.id
         } else {
           // eslint-disable-next-line
           toastr.error(nextProps.deleteComponent.error_message, nextProps.deleteComponent.error_code)
@@ -174,6 +176,11 @@ export default compose(
       }
       if (nextProps.updateRelationshipResponse && nextProps.updateRelationshipResponse !== '') {
         if (nextProps.updateRelationshipResponse.error_code === null) {
+          let payload = {
+            'componentTypeId': this.props.componentTypeComponentData.resources[0].component_type.id,
+            'componentTypeComponentId': this.props.componentTypeComponentData.resources[0].id,
+            'id': componentTypeComponentId
+          }
           this.props.fetchcomponentTypeComponentRelationships && this.props.fetchcomponentTypeComponentRelationships(payload)
           // eslint-disable-next-line
           toastr.success('We\'ve added the new relationships to the ' + this.props.componentTypeComponentData.resources[0].name + '', 'Connecting the dots!')
@@ -206,6 +213,11 @@ export default compose(
         mApp && mApp.unblockPage()
         if (nextProps.deleteRelationshipResponse.error_code === null) {
           if (nextProps.relationshipActionSettings.actionType === 'delete' && nextProps.deleteRelationshipResponse.result_code === 0) {
+            let payload = {
+              'componentTypeId': this.props.componentTypeComponentData.resources[0].component_type.id,
+              'componentTypeComponentId': this.props.componentTypeComponentData.resources[0].id,
+              'id': componentTypeComponentId
+            }
             this.props.fetchcomponentTypeComponentRelationships && this.props.fetchcomponentTypeComponentRelationships(payload)
           }
           // eslint-disable-next-line
@@ -238,7 +250,7 @@ export default compose(
           mApp && mApp.unblock('#relationshipPropertyContent .modal-content')
         }
       }
-      if (nextProps.componentDetail && nextProps.componentTypeComponentData && (nextProps.componentTypeComponentData !== '') && nextProps.componentTypeComponentData.resources) {
+      if (nextProps.componentTypeComponentData && (nextProps.componentTypeComponentData !== '') && nextProps.componentTypeComponentData !== this.props.componentTypeComponentData) {
         // eslint-disable-next-line
         mApp.unblockPage()
         let breadcrumb = {
@@ -254,15 +266,15 @@ export default compose(
             },
             {
               name: 'Component Type',
-              href: '/components',
+              href: '/component_types',
               separator: false
             },
             {
               separator: true
             },
             {
-              name: nextProps.componentDetail.resources[0].name ? nextProps.componentDetail.resources[0].name : '',
-              href: '/components/' + nextProps.componentDetail.resources[0].id,
+              name: nextProps.componentTypeComponentData.resources[0].component_type.name || '',
+              href: '/component_types/' + nextProps.componentTypeComponentData.resources[0].component_type.id,
               separator: false
             },
             {
@@ -270,7 +282,7 @@ export default compose(
             },
             {
               name: nextProps.componentTypeComponentData.resources[0].name,
-              href: '/components/' + nextProps.componentDetail.resources[0].id + '/' + nextProps.componentTypeComponentData.resources[0].id,
+              href: '/components/' + nextProps.componentTypeComponentData.resources[0].id,
               separator: false
             }
           ]

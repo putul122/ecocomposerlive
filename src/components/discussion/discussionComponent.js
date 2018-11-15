@@ -361,12 +361,7 @@ export default function Discussion (props) {
         // if (props.discussionId === data.id) {
           childElement = props.discussionMessages.resources.map(function (cdata, cindex) {
             let userIconlink = cdata.author.icon ? 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/' + cdata.author.icon : 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18'
-            // For old Static Message Format
-            let messageContent = cdata.name.replace(/<m ix=0>/g, '<a href="javascript:void(0);">@').replace(/<\/m>/g, '</a>')
-            .replace(/<r ix=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
-            .replace(/<r ix=1>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
-            .replace(/<t>/g, ' #').replace(/<\/t>/g, '')
-            // End
+            let messageContent = cdata.name
             let mentionArray = cdata.name.match(/\[(.*?)\]/g)
             if (mentionArray) {
               mentionArray.forEach(function (data, index) {
@@ -485,12 +480,7 @@ export default function Discussion (props) {
         }
         childElement = props.discussionMessages.resources.map(function (cdata, cindex) {
           let userIconlink = cdata.author.icon ? 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/' + cdata.author.icon : 'https://ecoconductor-dev-api-resources.azurewebsites.net/icons/18'
-          // For old Static Message Format
-          let messageContent = cdata.name.replace(/<m ix=0>/g, '<a href="javascript:void(0);">@').replace(/<\/m>/g, '</a>')
-          .replace(/<r ix=0>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
-          .replace(/<r ix=1>/g, '<a href="javascript:void(0);">#').replace(/<\/r>/g, '</a>')
-          .replace(/<t>/g, ' #').replace(/<\/t>/g, '')
-          // End
+          let messageContent = cdata.name
           let mentionArray = cdata.name.match(/\[(.*?)\]/g)
           console.log('mentionArray', mentionArray)
           if (mentionArray) {

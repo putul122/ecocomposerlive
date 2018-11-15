@@ -68,15 +68,9 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      let contextId = ''
-      if (this.props.type === 'ComponentType') {
-        contextId = this.props.match.params.id
-      } else {
-        contextId = this.props.match.params.componentId
-      }
       let payload = {
         'context_type_key': this.props.type,
-        'context_id': contextId
+        'context_id': this.props.match.params.id
       }
       let accountPayload = {
         'search': '',
@@ -128,15 +122,31 @@ export default compose(
           this.props.fetchDiscussionMessages && this.props.fetchDiscussionMessages(payload)
         }
       }
+      if (nextProps.discussions && nextProps.discussions !== '' && nextProps.discussions !== this.props.discussions) {
+        if (!nextProps.discussions.error_code) {
+          let clickFrom = JSON.parse(localStorage.getItem('clickFrom'))
+          if (clickFrom && clickFrom.component === 'Activity Feed') {
+            this.props.setQuickslideDiscussion('m-quick-sidebar--on')
+            let discussionId = clickFrom.discussionId
+            if (discussionId) {
+              let payload = {
+                id: discussionId
+              }
+              this.props.setDiscussionId(discussionId)
+              this.props.setAccordianOpenFlag(true)
+              this.props.fetchDiscussionMessages && this.props.fetchDiscussionMessages(payload)
+            } else {
+              console.log('discussion id is null')
+            }
+            localStorage.removeItem('clickFrom')
+          }
+        }
+      }
       if (nextProps.discussionMessages && nextProps.discussionMessages !== '' && nextProps.discussionMessages !== this.props.discussionMessages) {
         if (nextProps.discussionMessages.error_code) {
           // eslint-disable-next-line
           toastr.error(nextProps.discussionMessages.error_message, nextProps.discussionMessages.error_source)
-        } else {
-          console.log('inside else')
         }
-      } else {
-        console.log('outside else')
       }
     }
   })

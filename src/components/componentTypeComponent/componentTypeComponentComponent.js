@@ -7,6 +7,7 @@ import Discussion from '../../containers/discussion/discussionContainer'
 import NewDiscussion from '../../containers/newDiscussion/newDiscussionContainer'
 import Select from 'react-select'
 import CreatableSelect from 'react-select/lib/Creatable'
+import ReactHtmlParser from 'react-html-parser'
 import moment from 'moment'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -472,6 +473,7 @@ export default function ComponentTypeComponent (props) {
       props.resetComponentRelationshipProperties()
     }
     if (props.relationshipProperty !== '') {
+      console.log('inside if relationship properties else', typeof componentRelationshipProperties, componentRelationshipProperties)
       componentRelationshipPropertiesList = componentRelationshipProperties.map(function (property, index) {
         let propertyProperties = property.properties
         let childProperties = propertyProperties.map(function (childProperty, childIndex) {
@@ -570,7 +572,8 @@ export default function ComponentTypeComponent (props) {
         )
       })
     } else {
-      console.log('check relationship properties else', props)
+      console.log('check relationship properties else', typeof componentRelationshipProperties, componentRelationshipProperties)
+      componentRelationshipPropertiesList = ReactHtmlParser('<div class="row align-items-center justify-content-center"><h2>No data to Display</h2></div>')
     }
     // End Update Connection Code
     // Model ADD new Connections Code
@@ -777,7 +780,8 @@ export default function ComponentTypeComponent (props) {
       props.setAddConnectionSettings(payload)
     }
 
-    if (props.componentTypeComponentConstraints !== '' && props.componentTypeComponents !== '') {
+    if (props.componentTypeComponentConstraints !== '' && props.componentTypeComponentConstraints !== '') {
+      console.log('componentTypeComponentConstraints', props.componentTypeComponentConstraints)
       SelectedData = props.componentTypeComponentConstraints.resources.filter(function (constraint) {
           if (constraint.target_component_type !== null) {
           return constraint
@@ -813,18 +817,22 @@ export default function ComponentTypeComponent (props) {
           return false
         }
       })
+    }
 
-      selectComponentOptions1 = props.componentTypeComponents.resources.map((component, index) => {
-        let option = {...component}
-        option.value = component.name
-        option.label = component.name
-        return option
-      })
-      if (props.addNewConnectionSettings.firstSelectboxIndex !== null) {
-        let newOption = {}
-        newOption.value = NEWCOMPONENT
-        newOption.label = 'New ' + props.addNewConnectionSettings.firstSelectboxIndex.target_component_type.name
-        selectComponentOptions1.push(newOption)
+    if (props.componentTypeComponents !== '' && props.componentTypeComponents !== '' && props.componentTypeComponents.error_code === null) {
+      if (props.componentTypeComponents.resources.length > 0) {
+        selectComponentOptions1 = props.componentTypeComponents.resources.map((component, index) => {
+          let option = {...component}
+          option.value = component.name
+          option.label = component.name
+          return option
+        })
+        if (props.addNewConnectionSettings.firstSelectboxIndex !== null) {
+          let newOption = {}
+          newOption.value = NEWCOMPONENT
+          newOption.label = 'New ' + props.addNewConnectionSettings.firstSelectboxIndex.target_component_type.name
+          selectComponentOptions1.push(newOption)
+        }
       }
     }
 
@@ -1501,7 +1509,7 @@ export default function ComponentTypeComponent (props) {
           </div>
         </div>
         <Discussion name={componentTypeComponentName} type='Component' {...props} />
-        <NewDiscussion contextId={props.match.params.componentId} name={componentTypeComponentName} type='Component' {...props} />
+        <NewDiscussion contextId={props.match.params.id} name={componentTypeComponentName} type='Component' {...props} />
       </div>
     )
 }
