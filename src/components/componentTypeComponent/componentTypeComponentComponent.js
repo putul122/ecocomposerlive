@@ -472,8 +472,7 @@ export default function ComponentTypeComponent (props) {
       props.setRelationshipActionSettings(settingPayload)
       props.resetComponentRelationshipProperties()
     }
-    if (props.relationshipProperty !== '') {
-      console.log('inside if relationship properties else', typeof componentRelationshipProperties, componentRelationshipProperties)
+    if (props.relationshipProperty !== '' && componentRelationshipProperties.length > 0) {
       componentRelationshipPropertiesList = componentRelationshipProperties.map(function (property, index) {
         let propertyProperties = property.properties
         let childProperties = propertyProperties.map(function (childProperty, childIndex) {
@@ -572,7 +571,6 @@ export default function ComponentTypeComponent (props) {
         )
       })
     } else {
-      console.log('check relationship properties else', typeof componentRelationshipProperties, componentRelationshipProperties)
       componentRelationshipPropertiesList = ReactHtmlParser('<div class="row align-items-center justify-content-center"><h2>No data to Display</h2></div>')
     }
     // End Update Connection Code

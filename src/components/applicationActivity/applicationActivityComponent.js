@@ -81,7 +81,7 @@ export default function ApplicationActivity (props) {
           if (differenceInDays === 0) {
             messageTime = moment(message.created).fromNow()
           } else {
-            messageTime = moment(message.created).format('MM MMM h:mA')
+            messageTime = moment(message.created).format('DD MMM h:mA')
           }
           let timeContent = '<span class="pull-right">' + messageTime + '</span>'
           console.log(ReactHtmlParser(messageContent + timeContent))

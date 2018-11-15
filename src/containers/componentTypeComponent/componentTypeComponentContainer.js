@@ -194,7 +194,7 @@ export default compose(
         if (nextProps.relationshipActionSettings.isModalOpen) {
           if (nextProps.relationshipActionSettings.actionType === 'view' || nextProps.relationshipActionSettings.actionType === 'edit') {
             // eslint-disable-next-line
-            mApp && mApp.block('#relationshipPropertyContent .modal-content', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+            mApp && mApp.block('#relationshipPropertyContent', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
             let payload = {}
             payload.componentId = this.props.componentTypeComponentData.resources[0].id
             payload.relationshipType = nextProps.relationshipActionSettings.selectedObject.relationship_type
@@ -246,8 +246,9 @@ export default compose(
       }
       if (nextProps.relationshipProperty && nextProps.relationshipProperty !== this.props.relationshipProperty) {
         if (nextProps.relationshipProperty !== '') {
+          console.log('got relationship data')
           // eslint-disable-next-line
-          mApp && mApp.unblock('#relationshipPropertyContent .modal-content')
+          mApp && mApp.unblock('#relationshipPropertyContent')
         }
       }
       if (nextProps.componentTypeComponentData && (nextProps.componentTypeComponentData !== '') && nextProps.componentTypeComponentData !== this.props.componentTypeComponentData) {
