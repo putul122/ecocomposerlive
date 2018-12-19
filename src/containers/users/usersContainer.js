@@ -13,10 +13,12 @@ export function mapStateToProps (state, props) {
     authenticateUser: state.basicReducer.authenticateUser,
     externalUsers: state.usersReducer.externalUsers,
     users: state.usersReducer.users,
+    copyUsers: state.usersReducer.copyUsers,
     selectedUser: state.usersReducer.selectedUser,
     roles: state.usersReducer.roles,
     userRoles: state.usersReducer.userRoles,
     updatePayload: state.usersReducer.updatePayload,
+    getUserResponse: state.usersReducer.getUserResponse,
     createUserResponse: state.usersReducer.createUserResponse,
     updateUserResponse: state.usersReducer.updateUserResponse,
     deleteUserResponse: state.usersReducer.deleteUserResponse,
@@ -41,6 +43,7 @@ export const propsMapping: Callbacks = {
   setRoleData: actionCreators.setRoleData,
   setUpdatePayload: actionCreators.setUpdatePayload,
   resetResponse: actionCreators.resetResponse,
+  setUsersData: actionCreators.setUsersData,
   setBreadcrumb: basicActionCreators.setBreadcrumb
 }
 
@@ -111,6 +114,20 @@ export default compose(
           this.props.history.push('/')
         }
       }
+      if (nextProps.getUserResponse && nextProps.getUserResponse !== '') {
+        // eslint-disable-next-line
+        mApp && mApp.unblockPage()
+        if (nextProps.getUserResponse.error_code === null) {
+          let payload = {}
+          payload.users = nextProps.getUserResponse.resources
+          payload.copyUsers = nextProps.getUserResponse.resources
+          nextProps.setUsersData(payload)
+        } else {
+          // eslint-disable-next-line
+          toastr.error(nextProps.getUserResponse.error_message, nextProps.getUserResponse.error_code)
+        }
+        this.props.resetResponse()
+      }
       if (nextProps.createUserResponse && nextProps.createUserResponse !== '') {
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
@@ -129,12 +146,12 @@ export default compose(
       if (nextProps.deleteUserResponse && nextProps.deleteUserResponse !== '') {
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
-        let userActionSettings = {...this.props.userActionSettings, 'isDeleteModalOpen': false, 'deleteUserData': ''}
+        let userActionSettings = {...this.props.userActionSettings, 'isDeActivateModalOpen': false, 'deActivateUserData': ''}
         this.props.setUserActionSettings(userActionSettings)
         if (nextProps.deleteUserResponse.error_code === null) {
           this.props.fetchUsers && this.props.fetchUsers()
           // eslint-disable-next-line
-          toastr.success('Successfully deleted user ' +  nextProps.deleteUserResponse.resources[0].first_name , 'Removed')
+          toastr.success('Successfully De-Activated user ' +  nextProps.deleteUserResponse.resources[0].first_name , 'De-Activated')
         } else {
           // eslint-disable-next-line
           toastr.error(nextProps.deleteUserResponse.error_message, nextProps.deleteUserResponse.error_code)

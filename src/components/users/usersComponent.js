@@ -10,8 +10,6 @@ ReactModal.setAppElement('#root')
 
 export default function Users (props) {
   let searchTextBox = ''
-  let userName = ''
-  let email = ''
   let roleList = ''
   let listPage = []
   let currentPage = props.currentPage
@@ -25,14 +23,13 @@ export default function Users (props) {
   let userList = ''
   // let userCount = ''
   let roleOptions = []
-  console.log('roles', searchTextBox, userName, email, props.updatePayload, props)
+  console.log('props', props.updatePayload, props)
   if (props.roles && props.roles !== '') {
     roleOptions = props.roles.resources.map(function (data, index) {
       console.log(data)
       data.label = data.name
       return data
     })
-    console.log('roleOptions', roleOptions)
   }
   let handleBlurdropdownChange = function (event) {
     console.log('handle Blur change', event.target.value)
@@ -55,7 +52,6 @@ export default function Users (props) {
     props.setUserActionSettings(userActionSettings)
   }
   let openUpdateModal = function (data) {
-    console.log('update modal', data)
     let userRoles = JSON.parse(JSON.stringify(data.roles))
     props.setRoleData(userRoles)
     let userActionSettings = {...props.userActionSettings, 'isUpdateModalOpen': true, 'updateUserData': data}
@@ -76,17 +72,17 @@ export default function Users (props) {
     console.log('update payload', props.updatePayload)
     props.updateUser(payload)
   }
-  let openDeleteModal = function (data) {
-    let userActionSettings = {...props.userActionSettings, 'isDeleteModalOpen': true, 'deleteUserData': data}
+  let openDeActivateModal = function (data) {
+    let userActionSettings = {...props.userActionSettings, 'isDeActivateModalOpen': true, 'deActivateUserData': data}
     props.setUserActionSettings(userActionSettings)
   }
-  let closeDeleteModal = function () {
-    let userActionSettings = {...props.userActionSettings, 'isDeleteModalOpen': false, 'deleteUserData': ''}
+  let closeDeActivateModal = function () {
+    let userActionSettings = {...props.userActionSettings, 'isDeActivateModalOpen': false, 'deActivateUserData': ''}
     props.setUserActionSettings(userActionSettings)
   }
-  let deleteUser = function () {
+  let deActivateUser = function () {
     let payload = {}
-    payload.user_id = props.userActionSettings.deleteUserData.id
+    payload.user_id = props.userActionSettings.deActivateUserData.id
     console.log(payload)
     props.deleteUser(payload)
   }
@@ -180,8 +176,8 @@ export default function Users (props) {
   }
   let listUsers = function () {
     if (props.users !== '') {
-      if (props.users.resources.length > 0) {
-        userList = props.users.resources.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
+      if (props.users.length > 0) {
+        userList = props.users.slice(perPage * (currentPage - 1), ((currentPage - 1) + 1) * perPage).map(function (data, index) {
           return (
             <tr key={index}>
               <td>{data.first_name + ' ' + data.last_name}</td>
@@ -189,7 +185,7 @@ export default function Users (props) {
               <td>{data.roles.toString()}</td>
               <td>
                 <a href='' onClick={(event) => { event.preventDefault(); openUpdateModal(data) }} className=''>Edit</a>&nbsp;|&nbsp;
-                <a href='' onClick={(event) => { event.preventDefault(); openDeleteModal(data) }} className=''>Activate/De-Activate</a>
+                <a href='' onClick={(event) => { event.preventDefault(); openDeActivateModal(data) }} className=''>De-Activate</a>
               </td>
             </tr>
           )
@@ -205,7 +201,7 @@ export default function Users (props) {
     }
   }
   if (props.users && props.users !== '') {
-    totalUserPages = Math.ceil(props.users.resources.length / perPage)
+    totalUserPages = Math.ceil(props.users.length / perPage)
     // userCount = props.users.total_count
     console.log('totalUserPages', totalUserPages)
     let i = 1
@@ -267,29 +263,38 @@ export default function Users (props) {
         }
       })
     } else {}
+    console.log('userOptions', userOptions)
   }
 
   let handleInputChange = debounce((e) => {
     console.log(e)
-    // const value = searchTextBox.value
-    // agreementsList = ''
-    // let payload = {
-    //   'search': value || '',
-    //   'page_size': props.perPage,
-    //   'page': currentPage
-    // }
-    // // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
-    //   props.fetchAgreements(payload)
-    //   // eslint-disable-next-line
-    //   mApp && mApp.block('#agreementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //   // eslint-disable-next-line
-    //   // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-    //   // props.setComponentTypeLoading(true)
-    // // }
-    // listPage = _.filter(pageArray, function (group) {
-    //   let found = _.filter(group, {'number': currentPage})
-    //   if (found.length > 0) { return group }
-    // })
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let searchText = searchTextBox ? searchTextBox.value : ''
+    let originalData = props.copyUsers
+    if (searchText.trim() !== '') {
+      if (originalData !== '') {
+        let list = _.filter(originalData, function (data, index) {
+          if ((data.first_name && (data.first_name.toLowerCase()).match(searchText.toLowerCase())) || (data.last_name && (data.last_name.toLowerCase()).match(searchText.toLowerCase()))) {
+            return data
+          }
+        })
+        let payload = {}
+        payload.users = list
+        payload.copyUsers = props.copyUsers
+        props.setUsersData(payload)
+      }
+      // eslint-disable-next-line
+      mApp && mApp.unblockPage()
+    } else {
+      let payload = {}
+      payload.users = props.copyUsers
+      payload.copyUsers = props.copyUsers
+      props.setUsersData(payload)
+      // eslint-disable-next-line
+      mApp && mApp.unblockPage()
+    }
+    props.setCurrentPage(1)
   }, 500)
 
   let handlePrevious = function (event) {
@@ -322,11 +327,9 @@ export default function Users (props) {
     return (
       <div>
         <div className='row'>
-          <div className='col-md-10'>
-            <h3>Users</h3>
-          </div>
-          <div className='col-md-2'>
-            <button onClick={openAddUserModal} className='btn btn-outline-info btn-sm'>Invite User</button>&nbsp;
+          <div className='col-md-10' />
+          <div className='col-md-2 float-right'>
+            <button onClick={openAddUserModal} className='btn btn-outline-info btn-sm pull-right'>Invite User</button>&nbsp;
           </div>
         </div>
         <div id='userList'>
@@ -587,8 +590,8 @@ export default function Users (props) {
               </div>
             </div>
           </ReactModal>
-          <ReactModal isOpen={props.userActionSettings.isDeleteModalOpen}
-            onRequestClose={closeDeleteModal}
+          <ReactModal isOpen={props.userActionSettings.isDeActivateModalOpen}
+            onRequestClose={closeDeActivateModal}
             className='modal-dialog'
             style={{'content': {'top': '20%'}}}
             >
@@ -596,18 +599,18 @@ export default function Users (props) {
               <div className=''>
                 <div className='modal-content'>
                   <div className='modal-header'>
-                    <h6 className='modal-title' id='exampleModalLabel'>Delete User</h6>
-                    <button type='button' onClick={closeDeleteModal} className='close' data-dismiss='modal' aria-label='Close'>
+                    <h6 className='modal-title' id='exampleModalLabel'>De-Activate User</h6>
+                    <button type='button' onClick={closeDeActivateModal} className='close' data-dismiss='modal' aria-label='Close'>
                       <span aria-hidden='true'>×</span>
                     </button>
                   </div>
                   <div className='modal-body'>
-                    <h3>{props.userActionSettings.deleteUserData.first_name} {props.userActionSettings.deleteUserData.last_name}</h3><br />
-                    <p>Are you sure?</p>
+                    <h3>{props.userActionSettings.deActivateUserData.first_name} {props.userActionSettings.deActivateUserData.last_name}</h3><br />
+                    <p>Are you sure to De-Activate User</p>
                   </div>
                   <div className='modal-footer'>
-                    <button type='button' onClick={closeDeleteModal} id='m_login_signup' className={'btn btn-sm btn-outline-info'}>Cancel</button>
-                    <button type='button' className={'btn btn-sm btn-outline-info'} onClick={deleteUser}>Delete</button>
+                    <button type='button' onClick={closeDeActivateModal} id='m_login_signup' className={'btn btn-sm btn-outline-info'}>Cancel</button>
+                    <button type='button' className={'btn btn-sm btn-outline-info'} onClick={deActivateUser}>De-Activate User</button>
                   </div>
                 </div>
               </div>
@@ -625,5 +628,7 @@ export default function Users (props) {
     userRoles: PropTypes.any,
     currentPage: PropTypes.any,
     users: PropTypes.any,
+    // eslint-disable-next-line
+    copyUsers: PropTypes.any,
     perPage: PropTypes.any
  }

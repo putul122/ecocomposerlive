@@ -11,6 +11,7 @@ const api = {
     deleteUser: function (userId) {
       return 'https://account-eco-dev.ecoconductor.com/users/' + userId
     },
+    getExternalUsers: 'https://account-eco-dev.ecoconductor.com/external_users',
     getRoles: 'https://account-eco-dev.ecoconductor.com/roles',
     getActivityMessage: function () {
         return 'https://ecoconductor-dev-api-notification.azurewebsites.net/messages'
