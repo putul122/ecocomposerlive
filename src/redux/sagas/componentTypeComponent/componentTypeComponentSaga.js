@@ -40,6 +40,9 @@ export const UPDATE_RELATIONSHIP_PROPERTY_FAILURE = 'saga/componentTypeComponent
 export const DELETE_COMPONENT_RELATIONSHIP = 'saga/componentTypeComponent/DELETE_COMPONENT_RELATIONSHIP'
 export const DELETE_COMPONENT_RELATIONSHIP_SUCCESS = 'saga/componentTypeComponent/DELETE_COMPONENT_RELATIONSHIP_SUCCESS'
 export const DELETE_COMPONENT_RELATIONSHIP_FAILURE = 'saga/componentTypeComponent/DELETE_COMPONENT_RELATIONSHIP_FAILURE'
+export const FETCH_COMPONENTS = 'saga/componentTypeComponent/FETCH_COMPONENTS'
+export const FETCH_COMPONENTS_SUCCESS = 'saga/componentTypeComponent/FETCH_COMPONENTS_SUCCESS'
+export const FETCH_COMPONENTS_FAILURE = 'saga/componentTypeComponent/FETCH_COMPONENTS_FAILURE'
 
 export const actionCreators = {
   fetchComponentTypeComponent: createAction(FETCH_COMPONENT_TYPE_COMPONENT),
@@ -77,7 +80,10 @@ export const actionCreators = {
   updateRelationshipPropertyFailure: createAction(UPDATE_RELATIONSHIP_PROPERTY_FAILURE),
   deleteComponentRelationship: createAction(DELETE_COMPONENT_RELATIONSHIP),
   deleteComponentRelationshipSuccess: createAction(DELETE_COMPONENT_RELATIONSHIP_SUCCESS),
-  deleteComponentRelationshipFailure: createAction(DELETE_COMPONENT_RELATIONSHIP_FAILURE)
+  deleteComponentRelationshipFailure: createAction(DELETE_COMPONENT_RELATIONSHIP_FAILURE),
+  fetchComponents: createAction(FETCH_COMPONENTS),
+  fetchComponentsSuccess: createAction(FETCH_COMPONENTS_SUCCESS),
+  fetchComponentsFailure: createAction(FETCH_COMPONENTS_FAILURE)
 }
 
 export default function * watchComponentTypeComponent () {
@@ -93,7 +99,8 @@ export default function * watchComponentTypeComponent () {
     takeLatest(DELETE_COMPONENT_TYPE_COMPONENT, deleteComponentTypeComponent),
     takeLatest(VIEW_RELATIONSHIP_PROPERTY, getRelationshipProperty),
     takeLatest(UPDATE_RELATIONSHIP_PROPERTY, updateRelationshipProperty),
-    takeLatest(DELETE_COMPONENT_RELATIONSHIP, deleteComponentRelationship)
+    takeLatest(DELETE_COMPONENT_RELATIONSHIP, deleteComponentRelationship),
+    takeLatest(FETCH_COMPONENTS, getComponents)
   ]
 }
 
@@ -108,6 +115,20 @@ export function * getComponentTypeComponent (action) {
     yield put(actionCreators.fetchComponentTypeComponentSuccess(componentTypes.data))
   } catch (error) {
     yield put(actionCreators.fetchComponentTypeComponentFailure(error))
+  }
+}
+
+export function * getComponents (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const components = yield call(
+      axios.get,
+      api.getComponents,
+      {params: action.payload}
+    )
+    yield put(actionCreators.fetchComponentsSuccess(components.data))
+  } catch (error) {
+    yield put(actionCreators.fetchComponentsFailure(error))
   }
 }
 
@@ -169,7 +190,6 @@ export function * getComponentTypeComponents (action) {
 
 export function * updateComponentTypeComponentRelationships (action) {
   try {
-    console.log('relation saga action', action)
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
     const componentTypes = yield call(
       axios.patch,

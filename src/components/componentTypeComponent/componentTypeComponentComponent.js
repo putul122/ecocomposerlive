@@ -15,8 +15,8 @@ import ReactModal from 'react-modal'
 ReactModal.setAppElement('#root')
 const NEWCOMPONENT = '99999'
 var divStyle = {
-  width: '900px',
-  height: '700px',
+  // width: '900px',
+  // height: '700px',
   'overflowY': 'scroll',
   'overflowX': 'scroll',
   'border': '1px solid #000000'

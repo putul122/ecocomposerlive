@@ -5,6 +5,13 @@ const api = {
     loginUser: 'https://ecoconductor-dev-api-account.azurewebsites.net/user_access_token',
     authenticateUser: 'https://ecoconductor-dev-api-account.azurewebsites.net/user_access_token',
     registerProcess: 'https://ecoconductor-dev-api-notification.azurewebsites.net/processes',
+    getUser: function (userId) {
+      return 'https://account-eco-dev.ecoconductor.com/users/' + userId
+    },
+    deleteUser: function (userId) {
+      return 'https://account-eco-dev.ecoconductor.com/users/' + userId
+    },
+    getRoles: 'https://account-eco-dev.ecoconductor.com/roles',
     getActivityMessage: function () {
         return 'https://ecoconductor-dev-api-notification.azurewebsites.net/messages'
     },
@@ -20,6 +27,7 @@ const api = {
     getComponent: function (payload) {
         return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentTypeComponentId
     },
+    getComponents: 'https://ecoconductor-dev-api-model.azurewebsites.net/components',
     getComponentProperty: function (payload) {
         return 'https://ecoconductor-dev-api-model.azurewebsites.net/components/' + payload.componentTypeComponentId + '/component_properties'
     },
@@ -63,7 +71,15 @@ const api = {
     getAccountArtefacts: 'https://account-eco-dev.ecoconductor.com/artefacts',
     getModelArtefacts: 'https://model-eco-dev.ecoconductor.com/artefacts',
     updateNotificationViewStatus: 'https://notification-eco-dev.ecoconductor.com/notification_view_status',
-    createDiscussion: 'https://notification-eco-dev.ecoconductor.com/discussions'
+    createDiscussion: 'https://notification-eco-dev.ecoconductor.com/discussions',
+    getModelPerspectives: 'https://model-eco-dev.ecoconductor.com/model_perspectives',
+    updateModelPerspectives: function (metaModelPerspectiveId) {
+        return 'https://model-eco-dev.ecoconductor.com/model_perspectives?meta_model_perspective_id=' + metaModelPerspectiveId
+    },
+    getMetaModelPerspective: function (perspectiveId) {
+        return 'https://model-eco-dev.ecoconductor.com/meta_model_perspectives/' + perspectiveId
+    },
+    getMetaModelPerspectives: 'https://ecoconductor-dev-api-model.azurewebsites.net/meta_model_perspectives'
   }
 
 export default api

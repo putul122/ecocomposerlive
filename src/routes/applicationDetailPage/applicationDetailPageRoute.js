@@ -21,7 +21,7 @@ class applicationDetailPageRoute extends React.Component {
         {/* <!-- END: Subheader --> */}
         <div className='m-content'>
           <div className='row'>
-            <div className='col-sm-12'>
+            <div className='col-xl-12'>
               <ApplicationDetail {...this.props} />
             </div>
             {/* <div className='col-sm-2'>

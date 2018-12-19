@@ -7,6 +7,8 @@ import watchApplicationDetail, {actionCreators as applicationDetailActions} from
 import watchApplicationActivity, {actionCreators as applicationActivityActions} from './applicationActivity/applicationActivitySaga'
 import watchComponentTypeComponent, {actionCreators as componentTypeComponentActions} from './componentTypeComponent/componentTypeComponentSaga'
 import watchDiscussions, {actionCreators as discussionActions} from './discussion/discussionSaga'
+import watchUserActions, {actionCreators as userActions} from './user/userSaga'
+import watchModelActivity, {actionCreators as modelActions} from './model/modelSaga'
 
 export const actions = {
   basicActions,
@@ -17,7 +19,9 @@ export const actions = {
   applicationDetailActions,
   applicationActivityActions,
   componentTypeComponentActions,
-  discussionActions
+  discussionActions,
+  userActions,
+  modelActions
 }
 export default function * rootSaga () {
   yield [
@@ -29,6 +33,8 @@ export default function * rootSaga () {
     watchApplicationDetail(),
     watchApplicationActivity(),
     watchComponentTypeComponent(),
-    watchDiscussions()
+    watchDiscussions(),
+    watchUserActions(),
+    watchModelActivity()
   ]
 }

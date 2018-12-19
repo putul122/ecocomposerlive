@@ -13,6 +13,9 @@ export const FETCH_USER_AUTHENTICATION_FAILURE = 'saga/Basic/FETCH_USER_AUTHENTI
 export const UPDATE_NOTIFICATION_VIEW_STATUS = 'saga/Basic/UPDATE_NOTIFICATION_VIEW_STATUS'
 export const UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS = 'saga/Basic/UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS'
 export const UPDATE_NOTIFICATION_VIEW_STATUS_FAILURE = 'saga/Basic/UPDATE_NOTIFICATION_VIEW_STATUS_FAILURE'
+export const FETCH_ROLES = 'saga/Basic/FETCH_ROLES'
+export const FETCH_ROLES_SUCCESS = 'saga/Basic/FETCH_ROLES_SUCCESS'
+export const FETCH_ROLES_FAILURE = 'saga/Basic/FETCH_ROLES_FAILURE'
 
 export const actionCreators = {
   fetchClientAccessToken: createAction(FETCH_CLIENT_ACCESS_TOKEN),
@@ -23,14 +26,18 @@ export const actionCreators = {
   fetchUserAuthenticationFailure: createAction(FETCH_USER_AUTHENTICATION_FAILURE),
   updateNotificationViewStatus: createAction(UPDATE_NOTIFICATION_VIEW_STATUS),
   updateNotificationViewStatusSuccess: createAction(UPDATE_NOTIFICATION_VIEW_STATUS_SUCCESS),
-  updateNotificationViewStatusFailure: createAction(UPDATE_NOTIFICATION_VIEW_STATUS_FAILURE)
+  updateNotificationViewStatusFailure: createAction(UPDATE_NOTIFICATION_VIEW_STATUS_FAILURE),
+  fetchRoles: createAction(FETCH_ROLES),
+  fetchRolesSuccess: createAction(FETCH_ROLES_SUCCESS),
+  fetchRolesFailure: createAction(FETCH_ROLES_FAILURE)
 }
 
 export default function * watchBasic () {
   yield [
     takeLatest(FETCH_CLIENT_ACCESS_TOKEN, getClientAccessToken),
     takeLatest(FETCH_USER_AUTHENTICATION, getUserAuthentication),
-    takeLatest(UPDATE_NOTIFICATION_VIEW_STATUS, updateNotificationViewStatus)
+    takeLatest(UPDATE_NOTIFICATION_VIEW_STATUS, updateNotificationViewStatus),
+    takeLatest(FETCH_ROLES, getRoles)
   ]
 }
 
@@ -70,5 +77,18 @@ export function * updateNotificationViewStatus (action) {
     yield put(actionCreators.updateNotificationViewStatusSuccess(updateNotificationViewStatus.data))
   } catch (error) {
     yield put(actionCreators.updateNotificationViewStatusFailure(error))
+  }
+}
+
+export function * getRoles (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('userAccessToken')
+    const roles = yield call(
+      axios.get,
+      api.getRoles
+    )
+    yield put(actionCreators.fetchRolesSuccess(roles.data))
+  } catch (error) {
+    yield put(actionCreators.fetchRolesFailure(error))
   }
 }

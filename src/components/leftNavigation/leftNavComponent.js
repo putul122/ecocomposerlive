@@ -33,20 +33,52 @@ class LeftNavigation extends React.Component {
         <li className='m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight' ><a href='javascript:;' className='m-menu__link'><i className='m-menu__link-icon flaticon-settings' /></a></li>
       </ul> */}
         <nav className={styles.mainmenu}>
-          <ul id='' className={'m-menu__nav  m-menu__nav--dropdown-submenu-arrow'}>
+          <ul id='' className={'m-menu__item m-menu__item--submenu'}>
             <li className={'m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight '} style={{'paddingTop': '20px'}}>
               <a className='m-menu__link' href='/home'>
-                <i className='m-menu__link-icon flaticon-menu' style={{'textAlign': 'center'}} />
+                <i className='m-menu__link-icon flaticon-menu' style={{'font-size': '25px'}} />
                 <span className={styles.navtext}>
                 Home
                 </span>
               </a>
             </li>
-            <li className={'m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight ' + styles.navicon}>
+            <li className={'m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight '}>
               <a className='m-menu__link' href='/component_types'>
-                <i className='m-menu__link-icon flaticon-squares' />
+                <i className='m-menu__link-icon flaticon-squares' style={{'font-size': '25px'}} />
                 <span className={styles.navtext}>
                   Components
+                </span>
+              </a>
+            </li>
+            <li className={'m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight '}>
+              <a className='m-menu__link' href='/explorer'>
+                <i className='m-menu__link-icon flaticon-list-1' style={{'font-size': '25px'}} />
+                <span className={styles.navtext}>
+                  Explore
+                </span>
+              </a>
+            </li>
+            <li className={'m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight '}>
+              <a className='m-menu__link' href='/sheets'>
+                <i className='m-menu__link-icon flaticon-interface-9 ' style={{'font-size': '25px'}} />
+                <span className={styles.navtext}>
+                  Sheets
+                </span>
+              </a>
+            </li>
+            <li className={'m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight '}>
+              <a className='m-menu__link' href='/tasks'>
+                <i className='m-menu__link-icon flaticon-arrows ' style={{'font-size': '25px'}} />
+                <span className={styles.navtext}>
+                  Tasks
+                </span>
+              </a>
+            </li>
+            <li className={'m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight '}>
+              <a className='m-menu__link' href='/users'>
+                <i className='m-menu__link-icon flaticon-user ' style={{'font-size': '25px'}} />
+                <span className={styles.navtext}>
+                  Users
                 </span>
               </a>
             </li>

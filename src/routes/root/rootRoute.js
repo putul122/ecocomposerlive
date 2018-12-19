@@ -74,6 +74,24 @@ export default class Root extends Component {
 		}
 		resolve(require('../componentsPage/componentsPageRoute').default)
 		break
+	case 'tasks':
+		if (module.hot) {
+			module.hot.accept('../tasksPage/tasksPageRoute', () => {
+                require('../tasksPage/tasksPageRoute').default // eslint-disable-line
+				this.forceUpdate()
+			})
+		}
+		resolve(require('../tasksPage/tasksPageRoute').default)
+		break
+	case 'taskDetail':
+		if (module.hot) {
+			module.hot.accept('../taskDetailPage/taskDetailPageRoute', () => {
+                require('../taskDetailPage/taskDetailPageRoute').default // eslint-disable-line
+				this.forceUpdate()
+			})
+		}
+		resolve(require('../taskDetailPage/taskDetailPageRoute').default)
+		break
 	case 'applicationDetail':
 		if (module.hot) {
 			module.hot.accept('../applicationDetailPage/applicationDetailPageRoute', () => {
@@ -91,6 +109,33 @@ export default class Root extends Component {
 			})
 		}
 		resolve(require('../componentTypeComponentPage/componentTypeComponentPageRoute').default)
+		break
+	case 'explorer':
+		if (module.hot) {
+			module.hot.accept('../explorerPage/explorerPageRoute', () => {
+                require('../explorerPage/explorerPageRoute').default // eslint-disable-line
+				this.forceUpdate()
+			})
+		}
+		resolve(require('../explorerPage/explorerPageRoute').default)
+		break
+	case 'sheets':
+		if (module.hot) {
+            module.hot.accept('../sheetsPage/sheetsPageRoute', () => {
+				require('../sheetsPage/sheetsPageRoute').default // eslint-disable-line
+                this.forceUpdate()
+            })
+		}
+		resolve(require('../sheetsPage/sheetsPageRoute').default)
+		break
+	case 'users':
+		if (module.hot) {
+			module.hot.accept('../usersPage/usersPageRoute', () => {
+				require('../usersPage/usersPageRoute').default // eslint-disable-line
+				this.forceUpdate()
+			})
+		}
+		resolve(require('../usersPage/usersPageRoute').default)
 		break
 	default:
 		break
@@ -114,11 +159,15 @@ export default class Root extends Component {
     <BrowserRouter>
       <Switch>
         <Route exact path='/' component={(props) => this.loadView('landing', props)} />
+        <Route path='/users' exact component={(props) => this.loadView('users', props)} />
+        <Route exact path='/sheets' component={(props) => this.loadView('sheets', props)} />
         <Route exact path='/sample_joinjs' component={(props) => this.loadView('dummy', props)} />
         <Route exact path='/landing' component={(props) => this.loadView('landing', props)} />
         <Route exact path='/registering' component={(props) => this.loadView('registerProcess', props)} />
         <Route exact path='/home' component={(props) => this.loadView('home', props)} />
-        {/* <Route path='/componentTypeComponents' component={(props) => this.loadView('componentTypeComponent', props)} /> */}
+        <Route exact path='/explorer' component={(props) => this.loadView('explorer', props)} />
+        <Route exact path='/tasks' component={(props) => this.loadView('tasks', props)} />
+        <Route exact path='/tasks/:id' component={(props) => this.loadView('taskDetail', props)} />
         {/* <Route path='/components' component={(props) => this.ComponentsRoute(props)} /> */}
         <Route exact path='/component_types' component={(props) => this.loadView('components', props)} />
         <Route exact path='/component_types/:id' component={(props) => this.loadView('applicationDetail', props)} />

@@ -25,11 +25,10 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      console.log('Activity feed will mount', this.props)
       this.props.activityMessage && this.props.activityMessage()
     },
     componentWillReceiveProps: function (nextProps) {
-      if (nextProps.notificationReceived && nextProps.isMessageSlideOpen) {
+      if (nextProps.notificationReceived) {
         this.props.activityMessage && this.props.activityMessage()
       }
     }

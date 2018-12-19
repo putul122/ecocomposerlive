@@ -2,7 +2,7 @@ import React from 'react'
 import * as d3 from 'd3'
 import './componentModelComponent.scss'
 // let colors = d3.scaleOrdinal(d3.schemeCategory10)
-let width = 1000
+let width = 9000
 let height = 700
 let diagramLayout
 let simulation
@@ -44,9 +44,22 @@ function wrap (text, width) {
     })
 }
 
+function clearVisualization () {
+    d3.select('#diagramLayout').remove()
+    diagramLayout = d3.select('#mainScreen')
+      .append('svg:svg')
+      .attr('id', 'diagramLayout') // set id
+      .attr('width', width) // set width
+      .attr('height', height) // set height
+      .attr('display', 'block')
+      .append('g')
+      .attr('transform', 'translate(' + 20 + ',' + 20 + ')')
+}
+
 function forceInitialize (graphData) {
-    d3.selectAll('svg > *').remove()
-    diagramLayout = d3.select('svg')
+    d3.select('#diagramLayout').remove()
+    diagramLayout = d3.select('#mainScreen')
+      .append('svg:svg')
       .attr('id', 'diagramLayout') // set id
       .attr('width', width) // set width
       .attr('height', height) // set height
@@ -511,13 +524,17 @@ class ComponentModelComponent extends React.Component {
                     forceInitialize(graphData)
                     this.forceUpdate()
                 }
+            } else {
+                clearVisualization()
             }
+        } else {
+            clearVisualization()
         }
     }
     render () {
         return (
-          <div id='mainScreen1' >
-            <svg id='diagramLayout1' />
+          <div id='mainScreen' >
+            <svg id='diagramLayout' />
           </div>
           )
     }

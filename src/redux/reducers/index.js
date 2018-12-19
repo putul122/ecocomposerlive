@@ -9,6 +9,11 @@ import componentTypeComponentReducer from './componentTypeComponentReducer/compo
 import signUpReducer from './signUpReducer/signUpReducerReducer'
 import discussionReducer from './discussionReducer/discussionReducerReducer'
 import newDiscussionReducer from './newDiscussionReducer/newDiscussionReducerReducer'
+import tasksReducer from './tasksReducer/tasksReducerReducer'
+import explorerReducer from './explorerReducer/explorerReducerReducer'
+import usersReducer from './usersReducer/usersReducerReducer'
+import sheetsReducer from './sheetsReducer/sheetsReducerReducer'
+
 export default combineReducers({
     basicReducer,
     loginReducer,
@@ -19,5 +24,9 @@ export default combineReducers({
     componentTypeComponentReducer,
     signUpReducer,
     discussionReducer,
-    newDiscussionReducer
+    newDiscussionReducer,
+    tasksReducer,
+    explorerReducer,
+    usersReducer,
+    sheetsReducer
 })
