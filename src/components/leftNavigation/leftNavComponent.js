@@ -10,17 +10,11 @@ class LeftNavigation extends React.Component {
     <button className='m-aside-left-close  m-aside-left-close--skin-light' id='m_aside_left_close_btn'><i className='la la-close' /></button>
     <div id='m_aside_left' className='m-grid__item	m-aside-left  m-aside-left--skin-light '>
       {/* <!-- BEGIN: Brand --> */}
-      <div className='m-brand  m-brand--skin-light '>
-        {/* <a href='/' className='m-brand__logo'>
-        <img alt='' src='assets/demo/demo7/media/img/logo/logo.png' />
-        </a> */}
-        {/* <a href='/'>
-        <img alt='' src='assets/ECO-Conductor.png' />
-        </a> */}
+      {/* <div className='m-brand  m-brand--skin-light '>
         <a href='/'>
           <img alt='' src='/assets/ECO-Conductor.png' width='100px' style={{marginTop: '13'}} />
         </a>
-      </div>
+      </div> */}
       {/* <!-- END: Brand --> */}
       {/* <!-- BEGIN: Aside Menu --> */}
       <div id='m_ver_menu' style={{'marginLeft': '30px'}} className='m-aside-menu  m-aside-menu--skin-light m-aside-menu--submenu-skin-light '>
@@ -33,6 +27,12 @@ class LeftNavigation extends React.Component {
         <li className='m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight' ><a href='javascript:;' className='m-menu__link'><i className='m-menu__link-icon flaticon-settings' /></a></li>
       </ul> */}
         <nav className={styles.mainmenu}>
+          <div className={styles.logotext}>
+            <a href='/'>
+              <img alt='' src='/assets/ECO-Conductor.png' width='100px' className={styles.logotext} />
+            </a>
+            {/* <h1 className={styles.logotext}>LM</h1> */}
+          </div>
           <ul id='' className={'m-menu__item m-menu__item--submenu'}>
             <li className={'m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight '} style={{'paddingTop': '20px'}}>
               <a className='m-menu__link' href='/home'>
@@ -79,6 +79,14 @@ class LeftNavigation extends React.Component {
                 <i className='m-menu__link-icon flaticon-user ' style={{'font-size': '25px'}} />
                 <span className={styles.navtext}>
                   Users
+                </span>
+              </a>
+            </li>
+            <li className={'m-menu__item  m-menu__item--submenu m-menu__item--submenu-fullheight '}>
+              <a className='m-menu__link' href='/roles'>
+                <i className='m-menu__link-icon flaticon-interface-8' style={{'font-size': '25px'}} />
+                <span className={styles.navtext}>
+                  Roles
                 </span>
               </a>
             </li>

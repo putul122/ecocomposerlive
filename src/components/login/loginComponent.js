@@ -94,9 +94,9 @@ export default function Login (props) {
                     <span />
               </label> */}
             </div>
-            {/* <div className='col m--align-right'>
-              <a href='' id='m_login_forget_password' className='m-link'>Forgot Password ?</a>
-            </div> */}
+            <div className='col m--align-right'>
+              <a href='/forgot_password' id='m_login_forget_password' className='m-link'>Forgot Password ?</a>
+            </div>
           </div>
           <div className='m-login__form-action'>
             <button onClick={handleSubmit} className={styles.buttonbg + ' ' + loadingClass} >Login</button>

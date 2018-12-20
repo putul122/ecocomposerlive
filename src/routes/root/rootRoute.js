@@ -74,6 +74,24 @@ export default class Root extends Component {
 		}
 		resolve(require('../componentsPage/componentsPageRoute').default)
 		break
+	case 'forgotPassword':
+		if (module.hot) {
+			module.hot.accept('../forgotPasswordPage/forgotPasswordPageRoute', () => {
+                require('../forgotPasswordPage/forgotPasswordPageRoute').default // eslint-disable-line
+				this.forceUpdate()
+			})
+		}
+		resolve(require('../forgotPasswordPage/forgotPasswordPageRoute').default)
+		break
+	case 'changePassword':
+		if (module.hot) {
+			module.hot.accept('../changePasswordPage/changePasswordPageRoute', () => {
+                require('../changePasswordPage/changePasswordPageRoute').default // eslint-disable-line
+				this.forceUpdate()
+			})
+		}
+		resolve(require('../changePasswordPage/changePasswordPageRoute').default)
+		break
 	case 'tasks':
 		if (module.hot) {
 			module.hot.accept('../tasksPage/tasksPageRoute', () => {
@@ -128,6 +146,24 @@ export default class Root extends Component {
 		}
 		resolve(require('../sheetsPage/sheetsPageRoute').default)
 		break
+	case 'roles':
+		if (module.hot) {
+			module.hot.accept('../rolesPage/rolesPageRoute', () => {
+                require('../rolesPage/rolesPageRoute').default // eslint-disable-line
+				this.forceUpdate()
+			})
+		}
+		resolve(require('../rolesPage/rolesPageRoute').default)
+		break
+	case 'editRoles':
+		if (module.hot) {
+			module.hot.accept('../editRolesPage/editRolesPageRoute', () => {
+                require('../editRolesPage/editRolesPageRoute').default // eslint-disable-line
+				this.forceUpdate()
+			})
+		}
+		resolve(require('../editRolesPage/editRolesPageRoute').default)
+		break
 	case 'users':
 		if (module.hot) {
 			module.hot.accept('../usersPage/usersPageRoute', () => {
@@ -172,6 +208,10 @@ export default class Root extends Component {
         <Route exact path='/component_types' component={(props) => this.loadView('components', props)} />
         <Route exact path='/component_types/:id' component={(props) => this.loadView('applicationDetail', props)} />
         <Route exact path='/components/:id' component={(props) => this.loadView('componentTypeComponent', props)} />
+        <Route exact path='/forgot_password' component={(props) => this.loadView('forgotPassword', props)} />
+        <Route exact path='/change_password' component={(props) => this.loadView('changePassword', props)} />
+        <Route exact path='/roles' component={(props) => this.loadView('roles', props)} />
+        <Route exact path='/edit-roles' component={(props) => this.loadView('editRoles', props)} />
       </Switch>
     </BrowserRouter>
   </AppWrapper>

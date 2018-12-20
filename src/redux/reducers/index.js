@@ -13,6 +13,9 @@ import tasksReducer from './tasksReducer/tasksReducerReducer'
 import explorerReducer from './explorerReducer/explorerReducerReducer'
 import usersReducer from './usersReducer/usersReducerReducer'
 import sheetsReducer from './sheetsReducer/sheetsReducerReducer'
+import changePasswordReducer from './changePasswordReducer/changePasswordReducerReducer'
+import rolesReducer from './rolesReducer/rolesReducerReducer'
+import editRolesReducer from './editRolesReducer/editRolesReducerReducer'
 
 export default combineReducers({
     basicReducer,
@@ -28,5 +31,8 @@ export default combineReducers({
     tasksReducer,
     explorerReducer,
     usersReducer,
-    sheetsReducer
+    sheetsReducer,
+    changePasswordReducer,
+    rolesReducer,
+    editRolesReducer
 })

@@ -80,7 +80,8 @@ const api = {
     getMetaModelPerspective: function (perspectiveId) {
         return 'https://model-eco-dev.ecoconductor.com/meta_model_perspectives/' + perspectiveId
     },
-    getMetaModelPerspectives: 'https://ecoconductor-dev-api-model.azurewebsites.net/meta_model_perspectives'
+    getMetaModelPerspectives: 'https://ecoconductor-dev-api-model.azurewebsites.net/meta_model_perspectives',
+    forgotPassword: 'https://account-eco-dev.ecoconductor.com/user_passwords'
   }
 
 export default api

@@ -22,6 +22,9 @@ export const DELETE_USER_FAILURE = 'saga/users/FETCH_AGREEMENT_ENTITLEMENTS_FAIL
 export const FETCH_USER = 'saga/users/FETCH_USERS'
 export const FETCH_USER_SUCCESS = 'saga/users/FETCH_USER_SUCCESS'
 export const FETCH_USER_FAILURE = 'saga/users/FETCH_USER_FAILURE'
+export const CHANGE_PASSWORD = 'saga/users/CHANGE_PASSWORD'
+export const CHANGE_PASSWORD_SUCCESS = 'saga/users/CHANGE_PASSWORD_SUCCESS'
+export const CHANGE_PASSWORD_FAILURE = 'saga/users/CHANGE_PASSWORD_FAILURE'
 
 export const actionCreators = {
   fetchExUsers: createAction(FETCH_EX_USERS),
@@ -41,7 +44,10 @@ export const actionCreators = {
   deleteUserFailure: createAction(DELETE_USER_FAILURE),
   fetchUser: createAction(FETCH_USER),
   fetchUserSuccess: createAction(FETCH_USER_SUCCESS),
-  fetchUserFailure: createAction(FETCH_USER_FAILURE)
+  fetchUserFailure: createAction(FETCH_USER_FAILURE),
+  changePassword: createAction(CHANGE_PASSWORD),
+  changePasswordSuccess: createAction(CHANGE_PASSWORD_SUCCESS),
+  changePasswordFailure: createAction(CHANGE_PASSWORD_FAILURE)
 }
 
 export default function * watchUserActions () {
@@ -51,8 +57,23 @@ export default function * watchUserActions () {
     takeLatest(ADD_USER, createUser),
     takeLatest(UPDATE_USER, updateUser),
     takeLatest(DELETE_USER, deleteUser),
-    takeLatest(FETCH_USER, getUser)
+    takeLatest(FETCH_USER, getUser),
+    takeLatest(CHANGE_PASSWORD, changePassword)
   ]
+}
+
+export function * changePassword (action) {
+  try {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('clientAccessToken')
+    const changePassword = yield call(
+      axios.post,
+      api.forgotPassword,
+      action.payload
+    )
+    yield put(actionCreators.changePasswordSuccess(changePassword.data))
+  } catch (error) {
+    yield put(actionCreators.changePasswordFailure(error))
+  }
 }
 
 export function * getExUsers (action) {
