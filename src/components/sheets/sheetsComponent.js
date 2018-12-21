@@ -364,7 +364,7 @@ export default function Sheets (props) {
       payload.copyData = ''
       props.setModalPerspectivesData(payload)
       // let selectedStandard = newValue
-      let perspectiveId = newValue.meta_model_id
+      let perspectiveId = newValue.id
       let modelPrespectivesPayload = {'meta_model_perspective_id': perspectiveId}
       // eslint-disable-next-line
       mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
