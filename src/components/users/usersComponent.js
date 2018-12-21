@@ -21,6 +21,7 @@ export default function Users (props) {
   let pageArray = []
   let userOptions = ''
   let userList = ''
+  let activateClass = props.userActionSettings.activateButton ? '' : 'disabled ' + styles.pointerDisabled
   // let userCount = ''
   let roleOptions = []
   console.log('props', props.updatePayload, props)
@@ -51,6 +52,34 @@ export default function Users (props) {
     userActionSettings.updateUserData.last_name = names[1] || ''
     props.setUserActionSettings(userActionSettings)
   }
+  let editPassword = function (event) {
+    let userActionSettings = JSON.parse(JSON.stringify(props.userActionSettings))
+    console.log('userActionSettings', userActionSettings)
+    let password = event.target.value
+    userActionSettings.activateButton = false
+    userActionSettings.updateUserData.password = password
+    if (password.length === 0) {
+      userActionSettings.validPassword = true
+      userActionSettings.updateUserData.confirm_password = ''
+    }
+    props.setUserActionSettings(userActionSettings)
+  }
+  let editConfPassword = function (event) {
+    let userActionSettings = JSON.parse(JSON.stringify(props.userActionSettings))
+    let confirmPassword = event.target.value
+    let password = userActionSettings.updateUserData.password
+    if (password === confirmPassword) {
+      userActionSettings.validPassword = true
+      if (password.trim().length > 0) {
+        userActionSettings.activateButton = true
+      }
+    } else {
+      userActionSettings.validPassword = false
+      userActionSettings.activateButton = false
+    }
+    userActionSettings.updateUserData.confirm_password = confirmPassword
+    props.setUserActionSettings(userActionSettings)
+  }
   let openUpdateModal = function (data) {
     let userRoles = JSON.parse(JSON.stringify(data.roles))
     props.setRoleData(userRoles)
@@ -72,17 +101,35 @@ export default function Users (props) {
     console.log('update payload', props.updatePayload)
     props.updateUser(payload)
   }
+  let activateUser = function () {
+    // eslint-disable-next-line
+    mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    let payload = {}
+    payload.client_id = props.client_id
+    payload.client_secret = props.client_secret
+    payload.email = props.userActionSettings.userData.email
+    payload.password = props.userActionSettings.updateUserData.password
+    props.addUser(payload)
+  }
+  let openActivateModal = function (data) {
+    let userActionSettings = {...props.userActionSettings, 'isActivateModalOpen': true, 'userData': data}
+    props.setUserActionSettings(userActionSettings)
+  }
+  let closeActivateModal = function () {
+    let userActionSettings = {...props.userActionSettings, 'isActivateModalOpen': false, 'userData': '', 'updateUserData': {}, 'validPassword': true, 'activateButton': false}
+    props.setUserActionSettings(userActionSettings)
+  }
   let openDeActivateModal = function (data) {
-    let userActionSettings = {...props.userActionSettings, 'isDeActivateModalOpen': true, 'deActivateUserData': data}
+    let userActionSettings = {...props.userActionSettings, 'isDeActivateModalOpen': true, 'userData': data}
     props.setUserActionSettings(userActionSettings)
   }
   let closeDeActivateModal = function () {
-    let userActionSettings = {...props.userActionSettings, 'isDeActivateModalOpen': false, 'deActivateUserData': ''}
+    let userActionSettings = {...props.userActionSettings, 'isDeActivateModalOpen': false, 'userData': ''}
     props.setUserActionSettings(userActionSettings)
   }
   let deActivateUser = function () {
     let payload = {}
-    payload.user_id = props.userActionSettings.deActivateUserData.id
+    payload.user_id = props.userActionSettings.userData.id
     console.log(payload)
     props.deleteUser(payload)
   }
@@ -185,7 +232,8 @@ export default function Users (props) {
               <td>{data.roles.toString()}</td>
               <td>
                 <a href='' onClick={(event) => { event.preventDefault(); openUpdateModal(data) }} className=''>Edit</a>&nbsp;|&nbsp;
-                <a href='' onClick={(event) => { event.preventDefault(); openDeActivateModal(data) }} className=''>De-Activate</a>
+                {data.is_active && (<a href='' onClick={(event) => { event.preventDefault(); openDeActivateModal(data) }} className=''>De-Activate</a>)}
+                {!data.is_active && (<a href='' onClick={(event) => { event.preventDefault(); openActivateModal(data) }} className=''>Activate</a>)}
               </td>
             </tr>
           )
@@ -605,12 +653,65 @@ export default function Users (props) {
                     </button>
                   </div>
                   <div className='modal-body'>
-                    <h3>{props.userActionSettings.deActivateUserData.first_name} {props.userActionSettings.deActivateUserData.last_name}</h3><br />
+                    <h3>{props.userActionSettings.userData.first_name} {props.userActionSettings.userData.last_name}</h3><br />
                     <p>Are you sure to De-Activate User</p>
                   </div>
                   <div className='modal-footer'>
                     <button type='button' onClick={closeDeActivateModal} id='m_login_signup' className={'btn btn-sm btn-outline-info'}>Cancel</button>
                     <button type='button' className={'btn btn-sm btn-outline-info'} onClick={deActivateUser}>De-Activate User</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ReactModal>
+          <ReactModal isOpen={props.userActionSettings.isActivateModalOpen}
+            onRequestClose={closeActivateModal}
+            className='modal-dialog modal-lg'
+            style={{'content': {'top': '20%'}}}
+            >
+            {/* <button onClick={closeModal} ><i className='la la-close' /></button> */}
+            <div className={''}>
+              <div className=''>
+                <div className='modal-content'>
+                  <div className='modal-header'>
+                    <h4 className='modal-title' id='exampleModalLabel'>Activate User</h4>
+                    <button type='button' onClick={closeActivateModal} className='close' data-dismiss='modal' aria-label='Close'>
+                      <span aria-hidden='true'>×</span>
+                    </button>
+                  </div>
+                  <div className='modal-body' style={{'height': 'calc(60vh - 55px)', 'overflow': 'auto'}}>
+                    <div className='col-md-12 m-form m-form--state m-form--fit'>
+                      {/* {messageBlock} */}
+                      <div className='form-group m-form__group row'>
+                        <label htmlFor='example-email-input' className='col-4 col-form-label'>Email</label>
+                        <div className='col-8'>
+                          <input className='form-control m-input' type='email' disabled placeholder='Enter Email' value={props.userActionSettings.userData.email} onChange={editEmail} />
+                        </div>
+                      </div>
+                      <div className='form-group m-form__group row'>
+                        <label htmlFor='example-text-input' className='col-4 col-form-label'>Full Name</label>
+                        <div className='col-8'>
+                          <input className='form-control m-input' type='text' disabled placeholder='Enter User Name' value={props.userActionSettings.userData.first_name + ' ' + props.userActionSettings.userData.last_name} onChange={editUsername} />
+                        </div>
+                      </div>
+                      <div className='form-group m-form__group row'>
+                        <label htmlFor='example-email-input' className='col-4 col-form-label'>Password</label>
+                        <div className='col-8'>
+                          <input className='form-control m-input' type='password' placeholder='Enter Password' value={props.userActionSettings.updateUserData.password} onChange={editPassword} />
+                        </div>
+                      </div>
+                      <div className={props.userActionSettings.validPassword ? 'form-group m-form__group row' : 'form-group m-form__group row has-danger'} >
+                        <label htmlFor='example-email-input' className='col-4 col-form-label'>Confirm Password</label>
+                        <div className='col-8'>
+                          <input className='form-control m-input' type='password' placeholder='Enter Password' value={props.userActionSettings.updateUserData.confirm_password} onChange={editConfPassword} />
+                          {!props.userActionSettings.validPassword && (<div className='form-control-feedback'>should matched password</div>)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='modal-footer'>
+                    <button type='button' onClick={closeActivateModal} className='btn btn-outline-danger btn-sm'>Cancel</button>
+                    <button onClick={activateUser} className={'btn btn-outline-info btn-sm ' + activateClass} >Activate Me</button>
                   </div>
                 </div>
               </div>

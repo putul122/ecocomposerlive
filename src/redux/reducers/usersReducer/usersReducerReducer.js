@@ -63,9 +63,12 @@ export const initialState = {
     selectedRole: null,
     isAddModalOpen: false,
     isDeActivateModalOpen: false,
-    deActivateUserData: '',
+    isActivateModalOpen: false,
+    userData: '',
     isUpdateModalOpen: false,
-    updateUserData: '',
+    updateUserData: {},
+    validPassword: true,
+    activateButton: false,
     isConfirmationModalOpen: false
   }
 }

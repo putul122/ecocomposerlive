@@ -347,7 +347,7 @@ class ComponentModelComponent extends React.Component {
     componentWillReceiveProps (nextProps) {
       console.log('Component Model ---------->>', nextProps)
         if (Object.keys(nextProps.startNode).length > 0 && nextProps.startNode.constructor === Object) {
-            if (nextProps.relationships && nextProps.relationships !== this.props.relationships) {
+            if (nextProps.relationships && nextProps.relationships) {
                 console.log('inside if component model')
                 let nodeData = nextProps.relationships
                 let leftCordinates = []
@@ -525,9 +525,11 @@ class ComponentModelComponent extends React.Component {
                     this.forceUpdate()
                 }
             } else {
+                console.log('inner else')
                 clearVisualization()
             }
         } else {
+            console.log('outer else')
             clearVisualization()
         }
     }

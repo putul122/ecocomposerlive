@@ -16,6 +16,7 @@ import sheetsReducer from './sheetsReducer/sheetsReducerReducer'
 import changePasswordReducer from './changePasswordReducer/changePasswordReducerReducer'
 import rolesReducer from './rolesReducer/rolesReducerReducer'
 import editRolesReducer from './editRolesReducer/editRolesReducerReducer'
+import componentModalViewReducer from './componentModalViewReducer/componentModalViewReducerReducer'
 
 export default combineReducers({
     basicReducer,
@@ -34,5 +35,6 @@ export default combineReducers({
     sheetsReducer,
     changePasswordReducer,
     rolesReducer,
-    editRolesReducer
+    editRolesReducer,
+    componentModalViewReducer
 })

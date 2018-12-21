@@ -100,7 +100,7 @@ export default compose(
       this.props.fetchRoles && this.props.fetchRoles()
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       // eslint-disable-next-line
-      // mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     },
     componentDidMount: function () {
       // eslint-disable-next-line
@@ -131,12 +131,12 @@ export default compose(
       if (nextProps.createUserResponse && nextProps.createUserResponse !== '') {
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
-        let userActionSettings = {...this.props.userActionSettings, 'isAddModalOpen': false, 'selectedUser': null, 'selectedEmail': ''}
+        let userActionSettings = {...this.props.userActionSettings, 'isAddModalOpen': false, 'selectedUser': null, 'selectedEmail': '', 'isActivateModalOpen': false, 'updateUserData': {}}
         this.props.setUserActionSettings(userActionSettings)
         if (nextProps.createUserResponse.error_code === null) {
           this.props.fetchUsers && this.props.fetchUsers()
           // eslint-disable-next-line
-          toastr.success('User ' +  nextProps.createUserResponse.resources[0].first_name  +  ' added' , 'Nice!')
+          toastr.success('User ' +  nextProps.createUserResponse.resources[0].first_name  +  ' activated' , 'Nice!')
         } else {
           // eslint-disable-next-line
           toastr.error(nextProps.createUserResponse.error_message, nextProps.createUserResponse.error_code)
@@ -146,7 +146,7 @@ export default compose(
       if (nextProps.deleteUserResponse && nextProps.deleteUserResponse !== '') {
         // eslint-disable-next-line
         mApp && mApp.unblockPage()
-        let userActionSettings = {...this.props.userActionSettings, 'isDeActivateModalOpen': false, 'deActivateUserData': ''}
+        let userActionSettings = {...this.props.userActionSettings, 'isDeActivateModalOpen': false, 'userData': ''}
         this.props.setUserActionSettings(userActionSettings)
         if (nextProps.deleteUserResponse.error_code === null) {
           this.props.fetchUsers && this.props.fetchUsers()

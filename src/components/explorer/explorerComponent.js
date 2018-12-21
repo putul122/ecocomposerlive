@@ -121,7 +121,7 @@ export default function Explorer (props) {
                             isClearable
                             className='col-7 input-sm m-input'
                             placeholder='Enter Component Name'
-                            // cacheOptions
+                            cacheOptions
                             loadOptions={loadOptions}
                             onChange={handleComponentSelect}
                             defaultOptions
