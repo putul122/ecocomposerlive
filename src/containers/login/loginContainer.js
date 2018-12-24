@@ -16,7 +16,8 @@ export function mapStateToProps (state, props) {
 // In Object form, each funciton is automatically wrapped in a dispatch
 export const propsMapping: Callbacks = {
   loginUser: sagaActions.loginActions.loginUser,
-  setLoginProcessStatus: loginActionCreators.setLoginProcessStatus
+  setLoginProcessStatus: loginActionCreators.setLoginProcessStatus,
+  resetResponse: loginActionCreators.resetResponse
 }
 
 // If you want to use the function mapping
@@ -57,15 +58,15 @@ export default compose(
       // }
       if (nextProps.loggedInresponse) {
         console.log('login response', nextProps.loggedInresponse.error_code)
-        if (!nextProps.loggedInresponse.error_code) {
+        if (nextProps.loggedInresponse.error_code === null) {
+          nextProps.resetResponse()
           localStorage.setItem('userAccessToken', nextProps.loggedInresponse.resources[0]['access_token'])
           localStorage.setItem('isLoggedin', true)
           // eslint-disable-next-line
           toastr.success('you logged in successfully.')
-          window.location.href = window.location.origin + '/home'
-          // this.props.history.push('/home')
+          // window.location.href = window.location.origin + '/home'
+          this.props.history.push('/home')
         } else {
-          // error in login
         }
 
         if (nextProps.loggedInresponse !== this.props.loggedInresponse) {
