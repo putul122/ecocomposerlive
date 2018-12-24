@@ -29,7 +29,7 @@ export default function Explorer (props) {
     }
     props.fetchComponents && props.fetchComponents(payload)
     console.log(callback)
-    props.setCallback(callback)
+    // props.setCallback(callback)
     setTimeout(() => {
       callback(componentOptions)
     }, 1000)
@@ -55,9 +55,10 @@ export default function Explorer (props) {
         'componentTypeComponentId': newValue.id
       }
       props.fetchcomponentTypeComponentRelationships && props.fetchcomponentTypeComponentRelationships(payload)
+      console.log('selected value', newValue)
       let startNode = {}
-      startNode.name = newValue.name
-      startNode.title = newValue.name
+      startNode.name = newValue.name.trim()
+      startNode.title = newValue.name.trim()
       let filterSettings = {...props.filterSettings, 'selectedOption': newValue, 'modelRelationshipData': [], filters: [], 'startNode': startNode}
       props.setFilterSettings(filterSettings)
       // eslint-disable-next-line
@@ -75,11 +76,11 @@ export default function Explorer (props) {
         component.label = component.name
         return component
       })
-      console.log('call', props.callback)
-      if (props.callback) {
-        console.log('call callback', componentOptions)
-        props.callback(componentOptions)
-      }
+      // console.log('call', props.callback)
+      // if (props.callback) {
+      //   console.log('call callback', componentOptions)
+      //   props.callback(componentOptions)
+      // }
     } else {}
   }
   if (componentRelationships !== '') {
@@ -130,7 +131,7 @@ export default function Explorer (props) {
                             isClearable
                             className='col-7 input-sm m-input'
                             placeholder='Enter Component Name'
-                            // cacheOptions
+                            cacheOptions
                             loadOptions={loadOptions}
                             onChange={handleComponentSelect}
                             defaultOptions={componentOptions}
@@ -189,6 +190,6 @@ export default function Explorer (props) {
 Explorer.propTypes = {
   components: PropTypes.any,
   filterSettings: PropTypes.any,
-  callback: PropTypes.any,
+  // callback: PropTypes.any,
   componentRelationships: PropTypes.any
 }
