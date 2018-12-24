@@ -553,7 +553,7 @@ return (
   <div>
     <div id='entitlementList'>
       {/* The table structure begins */}
-      <div className='row' style={{'marginTop': '20px'}}>
+      <div className='row'>
         <div className='col-md-12'>
           <div className='m_datatable' id='scrolling_vertical'>
             <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>

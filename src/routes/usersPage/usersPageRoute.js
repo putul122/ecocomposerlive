@@ -3,6 +3,7 @@ import Header from '../../containers/header/headerContainer'
 import LeftNavigation from '../../components/leftNavigation/leftNavComponent'
 import Users from '../../containers/users/usersContainer'
 import Breadcrumb from '../../containers/breadcrumb/breadcrumbContainer'
+import FooterComponent from '../../components/footer/footerComponent'
 
 class UsersPageRoute extends React.Component {
   render () {
@@ -24,6 +25,7 @@ class UsersPageRoute extends React.Component {
             </div>
           </div>
         </div>
+        <FooterComponent />
       </div>
     )
   }

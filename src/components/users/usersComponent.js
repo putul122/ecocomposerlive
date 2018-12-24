@@ -374,15 +374,9 @@ export default function Users (props) {
   }
     return (
       <div>
-        <div className='row'>
-          <div className='col-md-10' />
-          <div className='col-md-2 float-right'>
-            <button onClick={openAddUserModal} className='btn btn-outline-info btn-sm pull-right'>Invite User</button>&nbsp;
-          </div>
-        </div>
         <div id='userList'>
           {/* The table structure begins */}
-          <div className='row' style={{'marginTop': '20px'}}>
+          <div className='row'>
             <div className='col-md-12'>
               <div className='m_datatable' id='scrolling_vertical'>
                 <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
@@ -390,6 +384,13 @@ export default function Users (props) {
                     <div className='m-portlet'>
                       <div className='m-portlet__body'>
                         <div id='m_table_1_wrapper' className='dataTables_wrapper dt-bootstrap4'>
+                          <div className='row'>
+                            <div className='col-md-10' />
+                            <div className='col-md-2 float-right'>
+                              <button onClick={openAddUserModal} className='btn btn-outline-info btn-sm pull-right'>Invite User</button>&nbsp;
+                            </div>
+                          </div>
+                          <br />
                           <div className='row' style={{'marginBottom': '20px'}}>
                             <div className='col-sm-12 col-md-6'>
                               <div className='dataTables_length' id='m_table_1_length' style={{'display': 'flex'}}>

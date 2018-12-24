@@ -11,6 +11,7 @@ export function mapStateToProps (state, props) {
     authenticateUser: state.basicReducer.authenticateUser,
     components: state.explorerReducer.components,
     componentRelationships: state.explorerReducer.componentRelationships,
+    callback: state.explorerReducer.callback,
     filterSettings: state.explorerReducer.filterSettings
   }
 }
@@ -21,6 +22,7 @@ export const propsMapping: Callbacks = {
   fetchComponents: sagaActions.componentTypeComponentActions.fetchComponents,
   fetchcomponentTypeComponentRelationships: sagaActions.componentTypeComponentActions.fetchcomponentTypeComponentRelationships,
   setFilterSettings: actionCreators.setFilterSettings,
+  setCallback: actionCreators.setCallback,
   resetResponse: actionCreators.resetResponse
 }
 
@@ -101,6 +103,8 @@ export default compose(
       }
       if (nextProps.componentRelationships && nextProps.componentRelationships !== '') {
         this.props.resetResponse()
+        // eslint-disable-next-line
+        mApp.unblockPage()
         if (nextProps.componentRelationships.error_code === null) {
           let parent = _.filter(nextProps.componentRelationships.resources, {'relationship_type': 'Parent'})
           let outgoing = _.filter(nextProps.componentRelationships.resources, {'relationship_type': 'ConnectFrom'})

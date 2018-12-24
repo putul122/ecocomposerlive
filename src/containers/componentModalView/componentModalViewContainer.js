@@ -19,8 +19,8 @@ export const propsMapping: Callbacks = {
     fetchUserAuthentication: sagaActions.basicActions.fetchUserAuthentication,
     setCurrentTab: actionCreators.setCurrentTab,
     setModalSettings: actionCreators.setModalSettings,
-    fetchcomponentTypeComponentProperties: sagaActions.componentTypeComponentActions.fetchcomponentTypeComponentProperties,
-    fetchcomponentTypeComponentRelationships: sagaActions.componentTypeComponentActions.fetchcomponentTypeComponentRelationships
+    fetchcomponentTypeComponentProperties: sagaActions.componentModalViewActions.fetchcomponentTypeComponentProperties,
+    fetchcomponentTypeComponentRelationships: sagaActions.componentModalViewActions.fetchcomponentTypeComponentRelationships
 }
 
 // If you want to use the function mapping

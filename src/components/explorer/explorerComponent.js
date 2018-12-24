@@ -19,7 +19,7 @@ export default function Explorer (props) {
   let componentRelationships = props.componentRelationships
   let componentOptions = []
   console.log(props, searchTextBox, userName, email)
-  const loadOptions = (inputValue, callback) => {
+  let loadOptions = (inputValue, callback) => {
     console.log('inputValue', inputValue)
     let payload = {
       'search': inputValue,
@@ -28,9 +28,11 @@ export default function Explorer (props) {
       'recommended': true
     }
     props.fetchComponents && props.fetchComponents(payload)
+    console.log(callback)
+    props.setCallback(callback)
     setTimeout(() => {
       callback(componentOptions)
-    }, 2000)
+    }, 1000)
   }
   let handleInputChange = function (newValue: string) {
     const inputValue = newValue.replace(/\W/g, '')
@@ -58,6 +60,8 @@ export default function Explorer (props) {
       startNode.title = newValue.name
       let filterSettings = {...props.filterSettings, 'selectedOption': newValue, 'modelRelationshipData': [], filters: [], 'startNode': startNode}
       props.setFilterSettings(filterSettings)
+      // eslint-disable-next-line
+      mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
     }
     if (actionMeta.action === 'clear') {
       let filterSettings = {...props.filterSettings, 'selectedOption': null, 'modelRelationshipData': [], filters: [], 'startNode': {}}
@@ -71,6 +75,11 @@ export default function Explorer (props) {
         component.label = component.name
         return component
       })
+      console.log('call', props.callback)
+      if (props.callback) {
+        console.log('call callback', componentOptions)
+        props.callback(componentOptions)
+      }
     } else {}
   }
   if (componentRelationships !== '') {
@@ -97,7 +106,7 @@ export default function Explorer (props) {
       <div>
         <div id='tasksList'>
           {/* The table structure begins */}
-          <div className='row' style={{'marginTop': '20px'}}>
+          <div className='row'>
             <div className='col-md-12'>
               <div className='m-portlet'>
                 <div className='m-portlet__body'>
@@ -121,10 +130,10 @@ export default function Explorer (props) {
                             isClearable
                             className='col-7 input-sm m-input'
                             placeholder='Enter Component Name'
-                            cacheOptions
+                            // cacheOptions
                             loadOptions={loadOptions}
                             onChange={handleComponentSelect}
-                            defaultOptions
+                            defaultOptions={componentOptions}
                             onInputChange={handleInputChange}
                           />
                         </div>
@@ -180,5 +189,6 @@ export default function Explorer (props) {
 Explorer.propTypes = {
   components: PropTypes.any,
   filterSettings: PropTypes.any,
+  callback: PropTypes.any,
   componentRelationships: PropTypes.any
 }

@@ -17,12 +17,13 @@ export const actions = {
 }
 
 export const actionCreators = {
-    setDataLoading: createAction(SET_DATA_LOADING),
-    setCurrentTab: createAction(SET_CURRENT_TAB),
-    setModalSettings: createAction(SET_MODAL_SETTINGS)
+  setDataLoading: createAction(SET_DATA_LOADING),
+  setCurrentTab: createAction(SET_CURRENT_TAB),
+  setModalSettings: createAction(SET_MODAL_SETTINGS)
 }
 
 export const initialState = {
+  component: '',
   componentTypeComponentData: '',
   componentTypeComponentProperties: '',
   componentTypeComponentRelationships: '',

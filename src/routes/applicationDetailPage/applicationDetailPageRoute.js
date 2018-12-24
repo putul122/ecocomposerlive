@@ -1,7 +1,5 @@
 import React from 'react'
 import ApplicationDetail from '../../containers/applicationDetail/applicationDetailContainer'
-// import ApplicationActions from '../../components/applicationActions/applicationActionsComponent'
-// import ApplicationActivity from '../../components/applicationActivity/applicationActivityComponent'
 import Header from '../../containers/header/headerContainer'
 import FooterComponent from '../../components/footer/footerComponent'
 import LeftNavigation from '../../components/leftNavigation/leftNavComponent'
@@ -9,7 +7,6 @@ import Breadcrumb from '../../containers/breadcrumb/breadcrumbContainer'
 
 class applicationDetailPageRoute extends React.Component {
 	render () {
-    console.log('application details param', this)
 		return (
   <div>
     <Header {...this.props} />
@@ -24,10 +21,6 @@ class applicationDetailPageRoute extends React.Component {
             <div className='col-xl-12'>
               <ApplicationDetail {...this.props} />
             </div>
-            {/* <div className='col-sm-2'>
-              <ApplicationActions />
-              {/* <ApplicationActivity /> }
-            </div> */}
           </div>
         </div>
       </div>

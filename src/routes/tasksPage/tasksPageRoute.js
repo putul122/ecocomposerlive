@@ -1,12 +1,9 @@
 import React from 'react'
-// import Components from '../../components/components/componentsComponent'
 import Header from '../../containers/header/headerContainer'
-import Tesks from '../../containers/tasks/tasksContainer'
+import Tasks from '../../containers/tasks/tasksContainer'
 import LeftNavigation from '../../components/leftNavigation/leftNavComponent'
 import FooterComponent from '../../components/footer/footerComponent'
 import Breadcrumb from '../../containers/breadcrumb/breadcrumbContainer'
-// import applicationDetailPageRoute from '../applicationDetailPage/applicationDetailPageRoute'
-// import {Route} from 'react-router-dom'
 
 class TasksPageRoute extends React.Component {
   render () {
@@ -22,21 +19,16 @@ class TasksPageRoute extends React.Component {
         <div className='m-content'>
           <div className='row'>
             <div className='col-xl-12'>
-              <Tesks {...this.props} />
+              <Tasks {...this.props} />
             </div>
           </div>
         </div>
       </div>
     </div>
     <FooterComponent />
-    {/* <Route path={`${this.props.match.path}/:componentTypeId`} component={applicationDetailPageRoute} /> */}
   </div>
 		)
 	}
-	props: {
-    // match: {
-    //   path: '',
-    // }
-  }
+	props: {}
 }
 export default TasksPageRoute

@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from './componentTypeComponent.scss'
+// import styles from './componentTypeComponent.scss'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import debounce from 'lodash/debounce'
@@ -158,7 +158,7 @@ export default function ComponentType (props) {
     }
 
   return (
-    <div className={styles.compborder}>
+    <div className={''}>
       <div className='row'>
         <div className='m-portlet m-portlet--bordered-semi m-portlet--widget-fit m-portlet--full-height m-portlet--skin-light  m-portlet--rounded-force' style={{ width: '100%' }}>
           <div className='m-portlet__head'>
@@ -166,7 +166,7 @@ export default function ComponentType (props) {
               <div className='m-portlet__head-title row'>
                 <div className={' col-md-12'}>
                   <div className='m-input-icon m-input-icon--left'>
-                    <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleInputChange} />
+                    <input type='text' className='form-control m-input col-12' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleInputChange} />
                     <span className='m-input-icon__icon m-input-icon__icon--left'>
                       <span>
                         <i className='la la-search' />
@@ -194,23 +194,23 @@ export default function ComponentType (props) {
                 </div>
               </div>
               <div className='m-widget17__stats'>
-                <div className='m-widget17__items m-widget17__items-col1' style={{ width: '20%' }}>
+                <div className='m-widget17__items m-widget17__items-col1 col-md-2 col-sm-4' style={{ width: '20%' }}>
                   {componentTypeBlockList[0]}
                   {componentTypeBlockList[5]}
                 </div>
-                <div className='m-widget17__items m-widget17__items-col1' style={{ width: '20%' }}>
+                <div className='m-widget17__items m-widget17__items-col1 col-md-2 col-sm-4' style={{ width: '20%' }}>
                   {componentTypeBlockList[1]}
                   {componentTypeBlockList[6]}
                 </div>
-                <div className='m-widget17__items m-widget17__items-col1' style={{ width: '20%' }}>
+                <div className='m-widget17__items m-widget17__items-col1 col-md-2 col-sm-4' style={{ width: '20%' }}>
                   {componentTypeBlockList[2]}
                   {componentTypeBlockList[7]}
                 </div>
-                <div className='m-widget17__items m-widget17__items-col1' style={{ width: '20%' }}>
+                <div className='m-widget17__items m-widget17__items-col1 col-md-2 col-sm-4' style={{ width: '20%' }}>
                   {componentTypeBlockList[3]}
                   {componentTypeBlockList[8]}
                 </div>
-                <div className='m-widget17__items m-widget17__items-col2' style={{ width: '20%' }}>
+                <div className='m-widget17__items m-widget17__items-col2 col-md-2 col-sm-4' style={{ width: '20%' }}>
                   {componentTypeBlockList[4]}
                   {componentTypeBlockList[9]}
                 </div>
@@ -237,6 +237,7 @@ export default function ComponentType (props) {
               </div>
             </div>
           </div>)}
+          <br />
         </div>
       </div>
     </div>

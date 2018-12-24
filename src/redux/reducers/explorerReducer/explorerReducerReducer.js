@@ -7,18 +7,20 @@ import {
 const SET_SELECT_OPTION = 'explorerReducer/SET_SELECT_OPTION'
 const SET_FILTER_SETTINGS = 'explorerReducer/SET_FILTER_SETTINGS'
 const RESET_RESPONSE = 'explorerReducer/RESET_RESPONSE'
+const SET_CALLBACK = 'explorerReducer/SET_CALLBACK'
 
 export const actions = {
   FETCH_COMPONENTS_SUCCESS,
   FETCH_COMPONENT_TYPE_COMPONENT_RELATIONSHIPS_SUCCESS,
   SET_SELECT_OPTION,
   SET_FILTER_SETTINGS,
-  RESET_RESPONSE
+  RESET_RESPONSE,
+  SET_CALLBACK
 }
 
 export const actionCreators = {
   setSelectOption: createAction(SET_SELECT_OPTION),
-  components: '',
+  setCallback: createAction(SET_CALLBACK),
   setFilterSettings: createAction(SET_FILTER_SETTINGS),
   resetResponse: createAction(RESET_RESPONSE)
 }
@@ -28,16 +30,14 @@ export const initialState = {
   components: '',
   componentRelationships: '',
   modelRelationshipData: '',
+  callback: null,
   filterSettings: {
     filters: [],
     modelRelationshipData: [],
     startNode: {},
     setRelationshipData: false,
     selectedOption: null
-  },
-  currentPage: 1,
-  perPage: 10,
-  createTemplateResponse: ''
+  }
 }
 
 export default handleActions(
@@ -61,6 +61,10 @@ export default handleActions(
     [RESET_RESPONSE]: (state, action) => ({
       ...state,
       componentRelationships: ''
+    }),
+    [SET_CALLBACK]: (state, action) => ({
+      ...state,
+      callback: action.payload
     })
   },
   initialState
