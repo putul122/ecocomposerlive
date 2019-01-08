@@ -12,7 +12,8 @@ export function mapStateToProps (state, props) {
     components: state.explorerReducer.components,
     componentRelationships: state.explorerReducer.componentRelationships,
     callback: state.explorerReducer.callback,
-    filterSettings: state.explorerReducer.filterSettings
+    filterSettings: state.explorerReducer.filterSettings,
+    modalSettings: state.explorerReducer.modalSettings
   }
 }
 // In Object form, each funciton is automatically wrapped in a dispatch
@@ -23,7 +24,8 @@ export const propsMapping: Callbacks = {
   fetchcomponentTypeComponentRelationships: sagaActions.componentTypeComponentActions.fetchcomponentTypeComponentRelationships,
   setFilterSettings: actionCreators.setFilterSettings,
   setCallback: actionCreators.setCallback,
-  resetResponse: actionCreators.resetResponse
+  resetResponse: actionCreators.resetResponse,
+  setModalSetting: actionCreators.setModalSetting
 }
 
 // If you want to use the function mapping

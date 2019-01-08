@@ -69,7 +69,10 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
-      console.log('comp will mountct', this.props)
+      let userAccessToken = localStorage.getItem('userAccessToken')
+      if (!userAccessToken) {
+        window.location.href = window.location.origin
+      }
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       const componentTypeId = this.props.match.params.id
       this.props.selectedComponentType(componentTypeId)

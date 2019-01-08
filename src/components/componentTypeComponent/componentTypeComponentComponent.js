@@ -1294,7 +1294,7 @@ export default function ComponentTypeComponent (props) {
                 <h2>{componentTypeComponentName} Model Diagram</h2><br />
                 <div className='row'>
                   <div id='divPaperWrapper' style={divStyle}>
-                    <ComponentModelComponent startNode={startNode} displayAt={'ComponentPage'} relationships={modelRelationshipData} />
+                    <ComponentModelComponent startNode={startNode} onUse={'ComponentPage'} relationships={modelRelationshipData} />
                   </div>
                 </div>
               </div>

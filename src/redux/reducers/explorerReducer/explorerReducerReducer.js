@@ -8,6 +8,7 @@ const SET_SELECT_OPTION = 'explorerReducer/SET_SELECT_OPTION'
 const SET_FILTER_SETTINGS = 'explorerReducer/SET_FILTER_SETTINGS'
 const RESET_RESPONSE = 'explorerReducer/RESET_RESPONSE'
 const SET_CALLBACK = 'explorerReducer/SET_CALLBACK'
+const SET_MODAL_SETTING = 'explorerReducer/SET_MODAL_SETTING'
 
 export const actions = {
   FETCH_COMPONENTS_SUCCESS,
@@ -15,14 +16,16 @@ export const actions = {
   SET_SELECT_OPTION,
   SET_FILTER_SETTINGS,
   RESET_RESPONSE,
-  SET_CALLBACK
+  SET_CALLBACK,
+  SET_MODAL_SETTING
 }
 
 export const actionCreators = {
   setSelectOption: createAction(SET_SELECT_OPTION),
   setCallback: createAction(SET_CALLBACK),
   setFilterSettings: createAction(SET_FILTER_SETTINGS),
-  resetResponse: createAction(RESET_RESPONSE)
+  resetResponse: createAction(RESET_RESPONSE),
+  setModalSetting: createAction(SET_MODAL_SETTING)
 }
 
 export const initialState = {
@@ -37,6 +40,11 @@ export const initialState = {
     startNode: {},
     setRelationshipData: false,
     selectedOption: null
+  },
+  modalSettings: {
+    isPPTModalOpen: false,
+    enterFileName: '',
+    exportValidationClass: 'form-group m-form__group row'
   }
 }
 
@@ -65,6 +73,10 @@ export default handleActions(
     [SET_CALLBACK]: (state, action) => ({
       ...state,
       callback: action.payload
+    }),
+    [SET_MODAL_SETTING]: (state, action) => ({
+      ...state,
+      modalSettings: action.payload
     })
   },
   initialState

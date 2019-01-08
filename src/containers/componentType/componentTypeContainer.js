@@ -41,6 +41,10 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
+      let userAccessToken = localStorage.getItem('userAccessToken')
+      if (!userAccessToken) {
+        window.location.href = window.location.origin
+      }
       this.props.fetchUserAuthentication && this.props.fetchUserAuthentication()
       this.props.setComponentTypeLoading && this.props.setComponentTypeLoading(true)
       this.props.setCurrentPage(1)
