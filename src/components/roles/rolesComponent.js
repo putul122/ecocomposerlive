@@ -1,159 +1,194 @@
 import React from 'react'
-// import _ from 'lodash'
-// import debounce from 'lodash/debounce'
+import _ from 'lodash'
+import debounce from 'lodash/debounce'
 import ReactModal from 'react-modal'
 import PropTypes from 'prop-types'
-import './rolesComponent.scss'
+import styles from './rolesComponent.scss'
 ReactModal.setAppElement('#root')
-// const formatAmount = (x) => {
-//   let parts = x.toString().split('.')
-//   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
-//   if (typeof parts[1] !== 'undefined') {
-//     parts[1] = parts[1].substring(0, 2)
-//   }
-//   return parts.join('.')
-// }
 
 export default function Roles (props) {
-//   console.log(props.currentPage, props.componentTypeComponents)
-//   console.log(props.checkitems)
-//   let searchTextBox
-//   let checkitemList = ''
-//   let totalNoPages
-//   let perPage = props.perPage
-//   let currentPage = props.currentPage
-//   let nextClass = ''
-//   let previousClass = ''
-//   let pageArray = []
-//   let listPage = []
-//   let paginationLimit = 6
-//   let totalCheckItem
+  // console.log('roles props', props.roles)
+  // console.log(props.setRolesActionSettings)
+  // console.log(props.createRolesResponse, props.createRoles)
+  // console.log(props.deleteRoleResponse, props.deleteRole)
+  let searchTextBox
+  let rolesList = ''
+  let totalNoPages
+  let perPage = props.perPage
+  let currentPage = props.currentPage
+  let nextClass = ''
+  let previousClass = ''
+  let pageArray = []
+  let listPage = []
+  let paginationLimit = 6
+  let totalRoles
+  let newRoleName
 
-//   console.log('props', props.setModalOpenStatus)
-//   let handleBlurdropdownChange = function (event) {
-//     console.log('handle Blur change', event.target.value)
-//   }
-//   let handledropdownChange = function (event) {
-//     console.log('handle change', event.target.value, typeof event.target.value)
-//     props.setPerPage(parseInt(event.target.value))
-//   }
+  let createRole = function (event) {
+    event.preventDefault()
+    let payload = {
+      'name': newRoleName.value
+      }
+    props.createRoles(payload)
+    let rolesActionSettings = {...props.rolesActionSettings, 'isAddModalOpen': false}
+    props.setRolesActionSettings(rolesActionSettings)
+  }
 
-//   if (props.checkitems && props.checkitems !== '') {
-//     checkitemList = props.checkitems.resources.map(function (data, index) {
-//       return (
-//         <tr key={index}>
-//           <td><a href={'/checkitems/' + data.id}>{data.name}</a></td>
-//           {/* <td><a href={'/suppliers/' + data.supplier_id}>{data.supplier}</a></td>
-//           <td>{data.purchased}</td>
-//           <td>{data.consumed}</td>
-//           <td>{'R ' + formatAmount(data.cost)}</td>
-//           <td>{'R ' + formatAmount(data.total_cost)}</td> */}
-//           {/* <td>{data.cost}</td> */}
-//         </tr>
-//       )
-//     })
+  // console.log('props', props.setModalOpenStatus)
+  let handleBlurdropdownChange = function (event) {
+    console.log('handle Blur change', event.target.value)
+  }
+  let handledropdownChange = function (event) {
+    console.log('handle change', event.target.value, typeof event.target.value)
+    props.setPerPage(parseInt(event.target.value))
+  }
 
-//     totalCheckItem = props.checkitems.total_count
-//     totalNoPages = Math.ceil(totalCheckItem / perPage)
+  if (props.roles && props.roles !== '') {
+    rolesList = props.roles.resources.map(function (data, index) {
+      return (
+        <tr key={index}>
+          <td>{data.name}</td>
+          <td>
+            <a href={'/edit-roles/' + data.id}><button className='btn btn-outline-info btn-sm'>Edit</button>&nbsp;</a>
+            <button type='button' className='btn btn-outline-danger btn-sm' onClick={(event) => { event.preventDefault(); deleteRoleModal(data) }}>Delete</button>
+          </td>
+        </tr>
+      )
+    })
 
-//     if (currentPage === 1) {
-//       previousClass = 'm-datatable__pager-link--disabled'
-//     }
-//     if (currentPage === totalNoPages) {
-//       nextClass = 'm-datatable__pager-link--disabled'
-//     }
-//     let i = 1
-//     while (i <= totalNoPages) {
-//       let pageParameter = {}
-//       pageParameter.number = i
-//       pageParameter.class = ''
-//       pageArray.push(pageParameter)
-//       i++
-//     }
-//     pageArray = _.chunk(pageArray, paginationLimit)
-//     listPage = _.filter(pageArray, function (group) {
-//       let found = _.filter(group, {'number': currentPage})
-//       if (found.length > 0) { return group }
-//     })
-//   }
+    totalRoles = props.roles.total_count
+    totalNoPages = Math.ceil(totalRoles / perPage)
 
-//   let handleInputChange = debounce((e) => {
-//     console.log(e)
-//     const value = searchTextBox.value
-//     // entitlementsList = ''
-//     let payload = {
-//       'search': value || '',
-//       'page_size': props.perPage,
-//       'page': currentPage
-//     }
-//     // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
-//       props.fetchCheckItems(payload)
-//       // eslint-disable-next-line
-//       mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-//       // props.setComponentTypeLoading(true)
-//     // }
-//     listPage = _.filter(pageArray, function (group) {
-//       let found = _.filter(group, {'number': currentPage})
-//       if (found.length > 0) { return group }
-//     })
-//   }, 500)
-//   let handlePrevious = function (event) {
-//     event.preventDefault()
-//     if (currentPage === 1) {
-//       previousClass = styles.disabled
-//     } else {
-//       let payload = {
-//         'search': searchTextBox.value ? searchTextBox.value : '',
-//         'page_size': props.perPage,
-//         'page': currentPage - 1
-//       }
-//       props.fetchCheckItems(payload)
-//       // eslint-disable-next-line
-//       mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-//       props.setCurrentPage(currentPage - 1)
-//     }
-//     listPage = _.filter(pageArray, function (group) {
-//       let found = _.filter(group, {'number': currentPage - 1})
-//       if (found.length > 0) { return group }
-//     })
-//   }
-// ss
-//   let handlePage = function (page) {
-//     if (page === 1) {
-//       previousClass = 'm-datatable__pager-link--disabled'
-//     } else if (page === totalNoPages) {
-//       nextClass = 'm-datatable__pager-link--disabled'
-//     }
-//     // entitlementsList = ''
-//     let payload = {
-//       'search': searchTextBox.value ? searchTextBox.value : '',
-//       'page_size': props.perPage,
-//       'page': page
-//     }
-//     props.fetchCheckItems(payload)
-//     // eslint-disable-next-line
-//     mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
-//     props.setCurrentPage(page)
+    if (currentPage === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    }
+    if (currentPage === totalNoPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    }
+    let i = 1
+    while (i <= totalNoPages) {
+      let pageParameter = {}
+      pageParameter.number = i
+      pageParameter.class = ''
+      pageArray.push(pageParameter)
+      i++
+    }
+    pageArray = _.chunk(pageArray, paginationLimit)
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage})
+      if (found.length > 0) { return group }
+    })
+  }
 
-//     listPage = _.filter(pageArray, function (group) {
-//       let found = _.filter(group, {'number': page})
-//       if (found.length > 0) { return group }
-//     })
-//   }
+  let handleInputChange = debounce((e) => {
+    console.log(e)
+    const value = searchTextBox.value
+    // entitlementsList = ''
+    let payload = {
+      'search': value || '',
+      'page_size': props.perPage,
+      'page': currentPage
+    }
+    // if (searchTextBox.value.length > 2 || searchTextBox.value.length === 0) {
+      props.fetchRoles(payload)
+      // eslint-disable-next-line
+      mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      // props.setComponentTypeLoading(true)
+    // }
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage})
+      if (found.length > 0) { return group }
+    })
+  }, 500)
+  let handlePrevious = function (event) {
+    event.preventDefault()
+    if (currentPage === 1) {
+      previousClass = styles.disabled
+    } else {
+      let payload = {
+        'search': searchTextBox.value ? searchTextBox.value : '',
+        'page_size': props.perPage,
+        'page': currentPage - 1
+      }
+      props.fetchRoles(payload)
+      // eslint-disable-next-line
+      mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      props.setCurrentPage(currentPage - 1)
+    }
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage - 1})
+      if (found.length > 0) { return group }
+    })
+  }
+
+  let handleNext = function (event) {
+    event.preventDefault()
+    if (currentPage === totalNoPages) {
+      nextClass = styles.disabled
+    } else {
+      let payload = {
+        'search': searchTextBox.value ? searchTextBox.value : '',
+        'page_size': props.perPage,
+        'page': currentPage + 1
+      }
+      // entitlementsList = ''
+      props.fetchRoles(payload)
+      // eslint-disable-next-line
+      mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+      props.setCurrentPage(currentPage + 1)
+    }
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': currentPage + 1})
+      if (found.length > 0) { return group }
+    })
+  }
+
+  let handlePage = function (page) {
+    if (page === 1) {
+      previousClass = 'm-datatable__pager-link--disabled'
+    } else if (page === totalNoPages) {
+      nextClass = 'm-datatable__pager-link--disabled'
+    }
+    // entitlementsList = ''
+    let payload = {
+      'search': searchTextBox.value ? searchTextBox.value : '',
+      'page_size': props.perPage,
+      'page': page
+    }
+    props.fetchRoles(payload)
+    // eslint-disable-next-line
+    mApp && mApp.block('#entitlementList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+    props.setCurrentPage(page)
+
+    listPage = _.filter(pageArray, function (group) {
+      let found = _.filter(group, {'number': page})
+      if (found.length > 0) { return group }
+    })
+  }
 let addRole = function () {
   let rolesActionSettings = {...props.rolesActionSettings, 'isAddModalOpen': true}
   props.setRolesActionSettings(rolesActionSettings)
 }
-let deleteRole = function () {
-  let rolesActionSettings = {...props.rolesActionSettings, 'isDeleteModalOpen': true}
+let deleteRoleModal = function (data) {
+  console.log('abc', data)
+  let rolesActionSettings = {...props.rolesActionSettings, 'isDeleteModalOpen': true, 'deleteRoleData': data}
   props.setRolesActionSettings(rolesActionSettings)
+}
+let deleteTheRole = function () {
+   // eslint-disable-next-line
+   mApp.blockPage({overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})
+  let payload = {}
+  payload.role_id = props.rolesActionSettings.deleteRoleData.id
+  console.log(payload)
+  props.deleteRole(payload)
+  closeDeleteModal()
 }
 let closeDeleteModal = function () {
   let rolesActionSettings = {...props.rolesActionSettings, 'isDeleteModalOpen': false}
   props.setRolesActionSettings(rolesActionSettings)
 }
 let closeModal = function () {
-  let rolesActionSettings = {...props.rolesActionSettings, isAddModalOpen: false}
+  let rolesActionSettings = {...props.rolesActionSettings, 'isAddModalOpen': false}
   props.setRolesActionSettings(rolesActionSettings)
 }
 return (
@@ -180,7 +215,7 @@ return (
                         <div className='col-sm-12 col-md-6'>
                           <div className='dataTables_length' id='m_table_1_length' style={{'display': 'flex'}}>
                             <h5 style={{'margin': '8px'}}>Show</h5>
-                            <select value={''} name='m_table_1_length' aria-controls='m_table_1' className='custom-select custom-select-sm form-control form-control-sm' style={{'height': '40px'}}>
+                            <select value={props.perPage} name='m_table_1_length' onBlur={handleBlurdropdownChange} onChange={handledropdownChange} aria-controls='m_table_1' className='custom-select custom-select-sm form-control form-control-sm' style={{'height': '40px'}}>
                               <option value={10}>10</option>
                               <option value={25}>25</option>
                               <option value={50}>50</option>
@@ -195,7 +230,7 @@ return (
                             <div style={{'display': 'flex'}}>
                               <h5 style={{'margin': '10px'}}>Search</h5>
                               <div className='m-input-icon m-input-icon--left'>
-                                <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' />
+                                <input type='text' className='form-control m-input' placeholder='Search...' id='generalSearch' ref={input => (searchTextBox = input)} onKeyUp={handleInputChange} />
                                 <span className='m-input-icon__icon m-input-icon__icon--left'>
                                   <span>
                                     <i className='la la-search' />
@@ -216,19 +251,11 @@ return (
                           </tr>
                         </thead>
                         <tbody>
-                          <tr>
-                            <td>
-                              Architect
-                            </td>
-                            <td>
-                              <a href='/edit-roles'><button className='btn btn-outline-info btn-sm'>Edit</button>&nbsp;</a>
-                              <button type='button' onClick={deleteRole} className='btn btn-outline-danger btn-sm'>Delete</button>
-                            </td>
-                          </tr>
+                          {rolesList}
                         </tbody>
                       </table>
                     </div>
-                    {/* <div className='row'>
+                    <div className='row'>
                       <div className='col-md-12' id='scrolling_vertical'>
                         <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll pull-right' id='scrolling_vertical' style={{}}>
                           <div className='m-datatable__pager m-datatable--paging-loaded clearfix'>
@@ -249,7 +276,7 @@ return (
                           </div>
                         </div>
                       </div>
-                    </div> */}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -285,20 +312,20 @@ return (
                   <div className='form-group m-form__group row'>
                     <label htmlFor='example-input' className='col-2 col-form-label'>Name</label>
                     <div className='col-8'>
-                      <input className='form-control m-input' placeholder='Enter Name' value={''} id='example-email-input' />
+                      <input className='form-control m-input' ref={input => (newRoleName = input)} placeholder='Enter Name' id='example-email-input' autoComplete='off' />
                     </div>
                   </div>
                   <div className='form-group m-form__group row'>
                     <label htmlFor='example-input' className='col-2 col-form-label'>Description</label>
                     <div className='col-8'>
-                      <textarea className='form-control m-input' placeholder='Enter Description' value={''} />
+                      <textarea className='form-control m-input' placeholder='Enter Description' />
                     </div>
                   </div>
                 </div>
               </div>
               <div className='modal-footer'>
                 <button type='button' onClick={closeModal} className='btn btn-outline-danger btn-sm'>Cancel</button>
-                <button onClick={addRole} className='btn btn-outline-info btn-sm' >Add Role</button>
+                <button className='btn btn-outline-info btn-sm' onClick={createRole} >Add Role</button>
               </div>
             </div>
           </div>
@@ -320,11 +347,11 @@ return (
               </div>
               <div className='modal-body'>
                 <p>Are you sure?</p>
-                <p>Name: </p>
+                <p>{props.rolesActionSettings.deleteRoleData.name} </p>
               </div>
               <div className='modal-footer'>
                 <button type='button' onClick={closeDeleteModal} id='m_login_signup' className={'btn btn-sm btn-outline-info'}>Cancel</button>
-                <button type='button' className={'btn btn-sm btn-outline-info'} onClick={''}>Delete</button>
+                <button type='button' className={'btn btn-sm btn-outline-info'} onClick={deleteTheRole}>Delete</button>
               </div>
             </div>
           </div>
@@ -338,5 +365,7 @@ return (
   }
   Roles.propTypes = {
     rolesActionSettings: PropTypes.any,
-    setRolesActionSettings: PropTypes.func
- }
+    roles: PropTypes.any,
+    currentPage: PropTypes.any,
+    perPage: PropTypes.any
+  }

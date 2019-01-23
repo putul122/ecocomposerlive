@@ -12,7 +12,7 @@ const api = {
       return 'https://account-eco-dev.ecoconductor.com/users/' + userId
     },
     getExternalUsers: 'https://account-eco-dev.ecoconductor.com/external_users',
-    getRoles: 'https://account-eco-dev.ecoconductor.com/roles',
+    // getRoles: 'https://account-eco-dev.ecoconductor.com/roles',
     getActivityMessage: function () {
         return 'https://ecoconductor-dev-api-notification.azurewebsites.net/messages'
     },
@@ -81,7 +81,18 @@ const api = {
         return 'https://model-eco-dev.ecoconductor.com/meta_model_perspectives/' + perspectiveId
     },
     getMetaModelPerspectives: 'https://ecoconductor-dev-api-model.azurewebsites.net/meta_model_perspectives',
-    forgotPassword: 'https://account-eco-dev.ecoconductor.com/user_passwords'
+    forgotPassword: 'https://account-eco-dev.ecoconductor.com/user_passwords',
+    getRoles: 'https://account-eco-dev.ecoconductor.com/roles',
+    createRole: 'https://account-eco-dev.ecoconductor.com/roles',
+    deleteRole: function (roleId) {
+        return 'https://account-eco-dev.ecoconductor.com/roles/' + roleId
+    },
+    getRole: function (roleId) {
+        return 'https://account-eco-dev.ecoconductor.com/roles/' + roleId
+    },
+    updateRole: function (roleId) {
+        return 'https://account-eco-dev.ecoconductor.com/roles/' + roleId
+    }
   }
 
 export default api

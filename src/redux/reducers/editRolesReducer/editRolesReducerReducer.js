@@ -1,35 +1,41 @@
-import { handleActions } from 'redux-actions'
-// import { LOGIN_USER_SUCCESS } from '../../sagas/login/loginSaga'
+import { createAction, handleActions } from 'redux-actions'
+import { UPDATE_ROLE_SUCCESS, FETCH_ROLE_BY_ID_SUCCESS } from '../../sagas/roles/rolesSaga'
 // Name Spaced Action Types
-// const SET_LOGIN_PROCESS_STATUS = 'BasicReducer/SET_LOGIN_PROCESS_STATUS'
+const SET_UPDATE_ROLE_VALUE = 'editRolesReducer/SET_UPDATE_ROLE_VALUE'
 
 export const actions = {
-    // LOGIN_USER_SUCCESS,
-    // SET_LOGIN_PROCESS_STATUS
+  UPDATE_ROLE_SUCCESS,
+  FETCH_ROLE_BY_ID_SUCCESS,
+  SET_UPDATE_ROLE_VALUE
 }
 
 export const actionCreators = {
 //   setLoginProcessStatus: createAction(SET_LOGIN_PROCESS_STATUS)
+  setUpdateRoleValue: createAction(SET_UPDATE_ROLE_VALUE)
 }
 
 export const initialState = {
-  // editRolesActionSettings: {
-  //   isAddModalOpen: false,
-  //   isDeleteModalOpen: false
-  // }
+  rolesData: '',
+  updateRoleResponse: '',
+  updateRoleValue: {
+    'name': ''
+  }
 }
 
 export default handleActions(
   {
-    // [LOGIN_USER_SUCCESS]: (state, action) => ({
-    //     ...state,
-    //     loggedInresponse: action.payload,
-    //     isLoggedin: action.payload.error_code === null || false
-    // }),
-    // [SET_LOGIN_PROCESS_STATUS]: (state, action) => ({
-    //   ...state,
-    //   loginProcess: action.payload
-    // })
+    [UPDATE_ROLE_SUCCESS]: (state, action) => ({
+      ...state,
+      updateRoleResponse: action.payload
+    }),
+    [FETCH_ROLE_BY_ID_SUCCESS]: (state, action) => ({
+      ...state,
+      rolesData: action.payload
+    }),
+    [SET_UPDATE_ROLE_VALUE]: (state, action) => ({
+      ...state,
+      updateRoleValue: action.payload
+    })
   },
   initialState
 )

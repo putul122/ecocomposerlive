@@ -211,7 +211,7 @@ export default class Root extends Component {
         <Route exact path='/forgot_password' component={(props) => this.loadView('forgotPassword', props)} />
         <Route exact path='/change_password' component={(props) => this.loadView('changePassword', props)} />
         <Route exact path='/roles' component={(props) => this.loadView('roles', props)} />
-        <Route exact path='/edit-roles' component={(props) => this.loadView('editRoles', props)} />
+        <Route exact path='/edit-roles/:id' component={(props) => this.loadView('editRoles', props)} />
       </Switch>
     </BrowserRouter>
   </AppWrapper>
