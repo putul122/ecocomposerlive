@@ -193,23 +193,22 @@ let closeModal = function () {
 }
 return (
   <div>
-    <div className='row'>
-      {/* <div className='col-md-9'>
-        <h2>Roles</h2>
-      </div> */}
-      <div className='col-md-12'>
-        <button type='button' onClick={addRole} className='btn btn-outline-info btn-sm' style={{'float': 'right'}}>Add role</button>&nbsp;
-      </div>
-    </div>
     <div id='entitlementList'>
       {/* The table structure begins */}
-      <div className='row' style={{'marginTop': '20px'}}>
+      <div className='row'>
         <div className='col-md-12'>
           <div className='m_datatable' id='scrolling_vertical'>
             <div className='m_datatable m-datatable m-datatable--default m-datatable--loaded m-datatable--scroll' id='scrolling_vertical' style={{}}>
               <div>
                 <div className='m-portlet'>
                   <div className='m-portlet__body'>
+                    <div className='row'>
+                      <div className='col-md-10' />
+                      <div className='col-md-2 float-right'>
+                        <button type='button' onClick={addRole} className='btn btn-outline-info btn-sm' style={{'float': 'right'}}>Add role</button>&nbsp;
+                      </div>
+                    </div>
+                    <br />
                     <div id='m_table_1_wrapper' className='dataTables_wrapper dt-bootstrap4'>
                       <div className='row' style={{'marginBottom': '20px'}}>
                         <div className='col-sm-12 col-md-6'>
