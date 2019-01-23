@@ -140,7 +140,7 @@ export default compose(
         mApp && mApp.unblock('#ModelPerspectiveList')
         let modalSettings = {...this.props.modalSettings, 'updateResponse': nextProps.updateMetaModelPerspectiveResponse, 'apiData': []}
         this.props.setModalSetting(modalSettings)
-        let payload = {'meta_model_perspective_id': modalSettings.selectedMetaModel.perspective}
+        let payload = {'meta_model_perspective_id': modalSettings.selectedMetaModel.id}
         nextProps.fetchModelPrespectives(payload)
         // eslint-disable-next-line
         mApp.block('#ModelPerspectiveList', {overlayColor:'#000000',type:'loader',state:'success',message:'Processing...'})

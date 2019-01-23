@@ -54,6 +54,7 @@ export const initialState = {
     apiData: [],
     updateResponse: null,
     isFileLoading: false,
+    isImportButtonEnabled: false,
     exportValidationClass: 'form-group m-form__group row'
   }
 }
