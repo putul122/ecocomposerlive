@@ -3,7 +3,7 @@ import { compose, lifecycle } from 'recompose'
 import Roles from '../../components/roles/rolesComponent'
 import { actions as sagaActions } from '../../redux/sagas/'
 import { actionCreators } from '../../redux/reducers/rolesReducer/rolesReducerReducer'
-// import { actionCreators as basicActionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
+import { actionCreators as basicActionCreators } from '../../redux/reducers/basicReducer/basicReducerReducer'
 // import { actionCreators as newDiscussionActionCreators } from '../../redux/reducers/newDiscussionReducer/newDiscussionReducerReducer'
 // Global State
 export function mapStateToProps (state, props) {
@@ -27,6 +27,7 @@ export const propsMapping: Callbacks = {
   setPerPage: actionCreators.setPerPage,
   createRoles: sagaActions.rolesActions.createRoles,
   deleteRole: sagaActions.rolesActions.deleteRole,
+  setBreadcrumb: basicActionCreators.setBreadcrumb,
   resetResponse: actionCreators.resetResponse
 }
 
@@ -59,6 +60,25 @@ export default compose(
   connect(mapStateToProps, propsMapping),
   lifecycle({
     componentWillMount: function () {
+      let breadcrumb = {
+        title: 'Roles',
+        items: [
+          {
+            name: 'Home',
+            href: '/home',
+            separator: false
+          },
+          {
+            separator: true
+          },
+          {
+            name: 'Roles',
+            href: '/roles',
+            separator: false
+          }
+        ]
+      }
+      this.props.setBreadcrumb && this.props.setBreadcrumb(breadcrumb)
       let userAccessToken = localStorage.getItem('userAccessToken')
       if (!userAccessToken) {
         window.location.href = window.location.origin

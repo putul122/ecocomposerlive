@@ -1,8 +1,7 @@
 import React from 'react'
 import Roles from '../../containers/roles/rolesContainer'
-// import ApplicationActions from '../../components/applicationActions/applicationActionsComponent'
-// import ApplicationActivity from '../../components/applicationActivity/applicationActivityComponent'
 import Header from '../../containers/header/headerContainer'
+import Breadcrumb from '../../containers/breadcrumb/breadcrumbContainer'
 import FooterComponent from '../../components/footer/footerComponent'
 import LeftNavigation from '../../components/leftNavigation/leftNavComponent'
 
@@ -13,8 +12,11 @@ class rolesPageRoute extends React.Component {
   <div>
     <Header {...this.props} />
     <div className='m-grid__item m-grid__item--fluid m-grid m-grid--ver-desktop m-grid--desktop m-body'>
-      <LeftNavigation />
+      <LeftNavigation {...this.props} />
       <div className='m-grid__item m-grid__item--fluid m-wrapper'>
+        {/* <!-- BEGIN: Subheader --> */}
+        <Breadcrumb />
+        {/* <!-- END: Subheader --> */}
         <div className='m-content'>
           <div className='row'>
             <div className='col-sm-12'>

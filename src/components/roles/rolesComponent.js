@@ -194,11 +194,11 @@ let closeModal = function () {
 return (
   <div>
     <div className='row'>
-      <div className='col-md-9'>
+      {/* <div className='col-md-9'>
         <h2>Roles</h2>
-      </div>
-      <div className='col-md-3'>
-        <button type='button' onClick={addRole} className='btn btn-outline-info btn-sm'>Add role</button>&nbsp;
+      </div> */}
+      <div className='col-md-12'>
+        <button type='button' onClick={addRole} className='btn btn-outline-info btn-sm' style={{'float': 'right'}}>Add role</button>&nbsp;
       </div>
     </div>
     <div id='entitlementList'>
